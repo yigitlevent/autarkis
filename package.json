@@ -1,0 +1,53 @@
+{
+	"name": "autarkis-client",
+	"author": "Yiğit Levent",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build"
+	},
+	"dependencies": {
+		"@supabase/supabase-js": "^1.11.9",
+		"@types/node": "^15.0.1",
+		"@types/react": "^17.0.4",
+		"@types/react-dom": "^17.0.3",
+		"@types/styled-components": "^5.1.9",
+		"@typescript-eslint/eslint-plugin": "^4.22.0",
+		"@typescript-eslint/parser": "^4.22.0",
+		"@wellyshen/use-web-animations": "^0.7.0",
+		"eslint": "^7.25.0",
+		"eslint-plugin-json": "^2.1.2",
+		"eslint-plugin-react": "^7.23.2",
+		"react": "^17.0.2",
+		"react-basic-select": "^0.2.4",
+		"react-dom": "^17.0.2",
+		"react-query": "^3.15.1",
+		"react-scripts": "4.0.3",
+		"react-toastify": "^7.0.4",
+		"styled-components": "^5.2.3",
+		"typescript": "^4.2.4"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"engines": {
+		"node": ">=15.14.0",
+		"npm": ">=7.8.0"
+	}
+}

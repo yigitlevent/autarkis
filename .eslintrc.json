@@ -46,7 +46,7 @@
 			{ "selector": "property", "format": ["camelCase", "snake_case"] },
 			{ "selector": "typeLike", "format": ["PascalCase"] },
 			{ "selector": "method", "format": ["camelCase"] },
-			{ "selector": "classProperty", "format": ["camelCase"], "leadingUnderscore": "allow" }
+			{ "selector": "classProperty", "format": ["camelCase", "snake_case"], "leadingUnderscore": "allow" }
 		],
 		"react/react-in-jsx-scope": "off",
 		"react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],

@@ -1,11 +1,12 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
 
-import { MakeRequest } from "../../../function/makeRequest";
 import { SortObjects } from "../../../function/utility";
 
-import { useListChronicleCharacters } from "../../../hooks/useQueries";
+import { ClientContext } from "../../../contexts/Contexts";
+
+import { DatabaseClient, useListChronicleCharacters } from "../../../hooks/useQueries";
 
 import { Icon } from "../../shared/Icon";
 import { Button } from "../../shared/Inputs";
@@ -26,15 +27,33 @@ const Row = styled.div`
 	grid-template-rows: auto;
 `;
 
-export function List({ chronicleUUID, sheetDisplayType }: aut.props.CharacterList): JSX.Element | null {
-	const { data, status, error, refetch } = useListChronicleCharacters(chronicleUUID);
+export function List({ chronicleUUID, chronicleName, sheetDisplayType }: aut.props.CharacterList): JSX.Element | null {
+	const { clientState } = useContext(ClientContext);
 
-	const character = (type: aut.short.ListChange): void => {
-		const characterUUID = (document.getElementsByName("character.uuid")[0] as HTMLInputElement).value;
+	const { data, status, error, refetch } = useListChronicleCharacters(clientState !== "offline", chronicleUUID);
 
-		MakeRequest(`/chro/char/${type}`, { chroKey: chronicleUUID, charKey: characterUUID })
-			.catch((errors) => { toast.error(`Submit failed. \n ${errors.data.join(" \n ")}`); })
-			.then(() => { refetch(); });
+	const addCharacter = (): void => {
+		const characterUUID = (document.getElementById("character_uuid") as HTMLInputElement).value;
+
+		DatabaseClient.from("characters").update({ chronicle_uuid: chronicleUUID, chronicle_name: chronicleName })
+			.eq("uuid", characterUUID).is("chronicle_uuid", null).is("chronicle_name", null).single()
+			.then((response) => {
+				if (response.error) { /* TODO: toast */ }
+				else { }
+				refetch();
+			});
+	};
+
+	const removeCharacter = (): void => {
+		const characterUUID = (document.getElementById("character_uuid") as HTMLInputElement).value;
+
+		DatabaseClient.from("characters").update({ chronicle_uuid: null, chronicle_name: null })
+			.eq("uuid", characterUUID).eq("chronicle_uuid", chronicleUUID).eq("chronicle_name", chronicleName).single()
+			.then((response) => {
+				if (response.error) { /* TODO: toast */ }
+				else { }
+				refetch();
+			});
 	};
 
 	return (
@@ -49,14 +68,14 @@ export function List({ chronicleUUID, sheetDisplayType }: aut.props.CharacterLis
 						? <Extras>
 
 							<Icon size={24} name={"add"} hover brightness float={"right"} title>
-								<Button value={""} onClick={() => { character("add"); }} />
+								<Button value={""} onClick={() => { addCharacter(); }} />
 							</Icon>
 
 							<Icon size={24} name={"remove"} hover brightness float={"right"} title>
-								<Button value={""} onClick={() => { character("remove"); }} />
+								<Button value={""} onClick={() => { removeCharacter(); }} />
 							</Icon>
 
-							<input className="extra" type="text" name="character.uuid" placeholder={"Character UUID"} />
+							<input className="extra" type="text" id="character_uuid" placeholder={"Character UUID"} />
 
 						</Extras>
 						: null
@@ -75,8 +94,10 @@ export function List({ chronicleUUID, sheetDisplayType }: aut.props.CharacterLis
 
 								<Icon size={21} name={(character.editable) ? "edit_on" : "edit_off"} hover brightness title>
 									<Button value={""} onClick={() => {
+										/** TODO: Fix this
 										MakeRequest("/chro/char/editable", { charKey: character.uuid, editable: !character.editable })
 											.then().catch().finally(() => { refetch(); });
+											*/
 									}} />
 								</Icon>
 

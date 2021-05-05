@@ -1,6 +1,5 @@
 import styled from "styled-components";
-
-import { useAnimations } from "../../hooks/useAnimations";
+import { Spin } from "../../theme/_keyframes";
 
 const SpinnerWrapper = styled.div<{ overlay?: boolean; size?: [string, string]; }>`
 	width: ${p => (p.size ? p.size[0] : "100%")};
@@ -27,14 +26,13 @@ const SpinnerInner = styled.div`
 	border-left-color: transparent;
 	border-right-color: transparent;
 	translate: 0 40%;
+	animation: ${Spin} 2s linear infinite;
 `;
 
 export function Spinner({ overlay, size }: { overlay?: boolean; size?: [string, string]; }): JSX.Element {
-	const { spin } = useAnimations();
-
 	return (
 		<SpinnerWrapper overlay={overlay} size={size}>
-			<SpinnerInner ref={spin.ref} />
+			<SpinnerInner />
 		</SpinnerWrapper>
 	);
 }

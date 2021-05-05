@@ -2,7 +2,7 @@
 
 ## About
 
-[Autarkis](https://autarkis.herokuapp.com/) is an **unofficial** web application that helps players save, upload, download, and view their [Vampire the Masquerade 5th Edition](https://worldofdarkness.com/) characters. All characters created can be exported as a `.autarkis` (internally `json`) file, or can be stored in the server-side database.
+[Autarkis](https://autarkis.herokuapp.com/) is an **unofficial** web application that helps players save, upload, download, and view their [Vampire the Masquerade 5th Edition](https://worldofdarkness.com/) characters. All characters created can be exported as a `.autarkis` (internally `json`) file, or can be stored in the online database.
 
 ## Features
 
@@ -44,21 +44,17 @@ Portions of the materials are the copyrights and trademarks of Paradox Interacti
 
 ## Self-hosting
 
-This package is created for Heroku, with React, Expressjs and PostgreSQL. Go through the classic `npm i` routine and such after installing PostgreSQL database and node. You can configure your development environment variables in `./server/.env`. You can find the variables you need in `./server/environment.ts` or in example `.env` file.
+This package is created for Heroku, with React. Go through the classic `npm i` routine and such after node and creating a Supabase database. You can configure your development environment variables in `.env`. You can find the variables you need in `.env.example` file.
 
 ### Scripts
 
 #### npm run build
 
-Builds both Client and Server-side code. This is also used by Heroku.
+Builds client. This is also used by Heroku.
 
 #### npm run start
 
-This is used by Heroku to start the application.
-
-#### npm run dev
-
-This is used during development. This starts both the server (on port `4000`), and the client (on port `3000`).
+Start the client.
 
 ## Development
 

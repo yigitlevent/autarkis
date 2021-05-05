@@ -5,9 +5,13 @@ export function CleanData(string: string): string {
 }
 
 export function CleanString(string: string): string {
-	const temp = string.split(" ");
-	temp[0] = temp[0].toLowerCase();
-	return temp.join().replaceAll("&", "").replaceAll("/", "").replaceAll(",", "").replaceAll("-", "");
+	return string.toLowerCase().replaceAll(" ", "_").replaceAll("/", "_").replaceAll(",", "_").replaceAll("-", "_");
+}
+
+export function DirtyString(string: string): string {
+	const parts = string.split("_");
+	parts.map((val) => CapitalizeFirstLetter(val));
+	return parts.join(" ");
 }
 
 export function CapitalizeFirstLetter(str: string): string {

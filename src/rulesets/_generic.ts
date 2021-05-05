@@ -8,6 +8,10 @@ export class Text implements aut.classes.Text {
 	current = "";
 }
 
+export class Switch implements aut.classes.Switch {
+	current = false;
+}
+
 export class Textarea implements aut.classes.Textarea {
 	current = "";
 }

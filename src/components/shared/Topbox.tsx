@@ -1,7 +1,5 @@
 import styled from "styled-components";
 
-import { useAnimations } from "../../hooks/useAnimations";
-
 const Wrapper = styled.div`
 	width: 100vw;
 	height: 100vh;
@@ -9,7 +7,6 @@ const Wrapper = styled.div`
 	position: fixed;
 	top: 0;
 	left: 0;
-	opacity: 0;
 	z-index: 2000;
 `;
 
@@ -89,10 +86,8 @@ export const TopboxButton = styled.input.attrs({ type: "button" })`
 `;
 
 export function Topbox({ children, title, formRef, otherChildren }: aut.props.Topbox): JSX.Element {
-	const { fadeIn } = useAnimations();
-
 	return (
-		<Wrapper ref={fadeIn.ref}>
+		<Wrapper>
 			<Form ref={formRef}>
 				<TopboxTitle>{title}</TopboxTitle>
 

@@ -11,5 +11,5 @@ export const SheetContext = createContext({
 	sheetCategory: undefined as (undefined | "character" | "chronicle"),
 	sheetUUID: undefined as (undefined | string),
 	sheetRuleset: undefined as (undefined | aut.ruleset.Names),
-	changeSheet: (() => { /* */ }) as (type: undefined | "character" | "chronicle", uuid: undefined | string, ruleset: "v5Modern" | "none" | undefined, refetch: boolean) => void
+	changeSheet: (() => { /* */ }) as (type: undefined | "character" | "chronicle", uuid: undefined | string, ruleset: aut.ruleset.Names | "none" | undefined, refetch: boolean) => void
 });

@@ -1,34 +1,6 @@
-import { Checkbox, Dot, PreCheckbox, PseudoCheckbox, Text, Textarea } from "./_generic";
 
-class V5ModernChronicle {
-	[key: string]: {
-		[key: string]: boolean | string | string[] | any[];
-	};
+import { Checkbox, Dot, PreCheckbox, PseudoCheckbox, Switch, Text, Textarea } from "./_generic";
 
-	_primary = {
-		uuid: "",
-		updatedAt: "",
-		createdAt: "",
-		ruleset: "" // TODO: Remove
-	};
-
-	_rules = {
-		ruleset: "", // TODO: v5Modern
-		experience: "", // TODO: Freeform, V5 Costs
-		chargen: "" // TODO: Freeform, V5 Points
-	};
-
-	basics = {
-		name: "",
-		storyteller: ""
-	};
-
-	discord = {
-		enabled: false,
-		server: "",
-		channel: ""
-	};
-}
 
 class V5ModernCharacter {
 	[key: string]: {
@@ -39,27 +11,27 @@ class V5ModernCharacter {
 
 	_primary = {
 		uuid: { text: new Text() },
-		chronicleUUID: { text: new Text() },
-		updatedAt: { text: new Text() },
-		createdAt: { text: new Text() },
-		ruleset: { text: new Text() }, // TODO: Remove
-		editable: { text: new Text() } // TODO: Remove
-	};
+		chronicle_uuid: { text: new Text() },
+		player_uuid: { text: new Text() },
 
-	_rules = {
+		editable: { switch: new Switch() }, // TODO: Remove
+
 		ruleset: { text: new Text() }, // TODO: v5Modern
 		experience: { text: new Text() }, // TODO: Freeform, V5 Costs
-		chargen: { text: new Text() } // TODO: Freeform, V5 Points
+		chargen: { text: new Text() }, // TODO: Freeform, V5 Points
+
+		updated_at: { text: new Text() },
+		created_at: { text: new Text() }
 	};
 
 	basics = {
 		name: { text: new Text() },
 		clan: { text: new Text() },
 		sect: { text: new Text() },
-		player: { text: new Text() },
-		predatorType: { text: new Text() },
-		ranktitle: { text: new Text() },
-		chronicle: { text: new Text() },
+		player_name: { text: new Text() },
+		predator_type: { text: new Text() },
+		rank_title: { text: new Text() },
+		chronicle_name: { text: new Text() },
 		ambition: { text: new Text() },
 		desire: { text: new Text() }
 	};
@@ -78,7 +50,7 @@ class V5ModernCharacter {
 
 	skills = {
 		academics: { dot: new Dot(5), text: new Text() },
-		animalKen: { dot: new Dot(5), text: new Text() },
+		animal_ken: { dot: new Dot(5), text: new Text() },
 		athletics: { dot: new Dot(5), text: new Text() },
 		awareness: { dot: new Dot(5), text: new Text() },
 		brawl: { dot: new Dot(5), text: new Text() },
@@ -108,118 +80,118 @@ class V5ModernCharacter {
 
 	disciplines = {
 		animalism: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		animalism1: { text: new Text() },
-		animalism2: { text: new Text() },
-		animalism3: { text: new Text() },
-		animalism4: { text: new Text() },
-		animalism5: { text: new Text() },
+		animalism_1: { text: new Text() },
+		animalism_2: { text: new Text() },
+		animalism_3: { text: new Text() },
+		animalism_4: { text: new Text() },
+		animalism_5: { text: new Text() },
 
 		auspex: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		auspex1: { text: new Text() },
-		auspex2: { text: new Text() },
-		auspex3: { text: new Text() },
-		auspex4: { text: new Text() },
-		auspex5: { text: new Text() },
+		auspex_1: { text: new Text() },
+		auspex_2: { text: new Text() },
+		auspex_3: { text: new Text() },
+		auspex_4: { text: new Text() },
+		auspex_5: { text: new Text() },
 
-		bloodSorcery: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		bloodSorcery1: { text: new Text() },
-		bloodSorcery2: { text: new Text() },
-		bloodSorcery3: { text: new Text() },
-		bloodSorcery4: { text: new Text() },
-		bloodSorcery5: { text: new Text() },
+		blood_sorcery: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
+		blood_sorcery1: { text: new Text() },
+		blood_sorcery2: { text: new Text() },
+		blood_sorcery3: { text: new Text() },
+		blood_sorcery4: { text: new Text() },
+		blood_sorcery5: { text: new Text() },
 
 		celerity: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		celerity1: { text: new Text() },
-		celerity2: { text: new Text() },
-		celerity3: { text: new Text() },
-		celerity4: { text: new Text() },
-		celerity5: { text: new Text() },
+		celerity_1: { text: new Text() },
+		celerity_2: { text: new Text() },
+		celerity_3: { text: new Text() },
+		celerity_4: { text: new Text() },
+		celerity_5: { text: new Text() },
 
 		dominate: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		dominate1: { text: new Text() },
-		dominate2: { text: new Text() },
-		dominate3: { text: new Text() },
-		dominate4: { text: new Text() },
-		dominate5: { text: new Text() },
+		dominate_1: { text: new Text() },
+		dominate_2: { text: new Text() },
+		dominate_3: { text: new Text() },
+		dominate_4: { text: new Text() },
+		dominate_5: { text: new Text() },
 
 		fortitude: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		fortitude1: { text: new Text() },
-		fortitude2: { text: new Text() },
-		fortitude3: { text: new Text() },
-		fortitude4: { text: new Text() },
-		fortitude5: { text: new Text() },
+		fortitude_1: { text: new Text() },
+		fortitude_2: { text: new Text() },
+		fortitude_3: { text: new Text() },
+		fortitude_4: { text: new Text() },
+		fortitude_5: { text: new Text() },
 
 		obfuscate: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		obfuscate1: { text: new Text() },
-		obfuscate2: { text: new Text() },
-		obfuscate3: { text: new Text() },
-		obfuscate4: { text: new Text() },
-		obfuscate5: { text: new Text() },
+		obfuscate_1: { text: new Text() },
+		obfuscate_2: { text: new Text() },
+		obfuscate_3: { text: new Text() },
+		obfuscate_4: { text: new Text() },
+		obfuscate_5: { text: new Text() },
 
 		oblivion: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		oblivion1: { text: new Text() },
-		oblivion2: { text: new Text() },
-		oblivion3: { text: new Text() },
-		oblivion4: { text: new Text() },
-		oblivion5: { text: new Text() },
+		oblivion_1: { text: new Text() },
+		oblivion_2: { text: new Text() },
+		oblivion_3: { text: new Text() },
+		oblivion_4: { text: new Text() },
+		oblivion_5: { text: new Text() },
 
 		potence: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		potence1: { text: new Text() },
-		potence2: { text: new Text() },
-		potence3: { text: new Text() },
-		potence4: { text: new Text() },
-		potence5: { text: new Text() },
+		potence_1: { text: new Text() },
+		potence_2: { text: new Text() },
+		potence_3: { text: new Text() },
+		potence_4: { text: new Text() },
+		potence_5: { text: new Text() },
 
 		presence: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		presence1: { text: new Text() },
-		presence2: { text: new Text() },
-		presence3: { text: new Text() },
-		presence4: { text: new Text() },
-		presence5: { text: new Text() },
+		presence_1: { text: new Text() },
+		presence_2: { text: new Text() },
+		presence_3: { text: new Text() },
+		presence_4: { text: new Text() },
+		presence_5: { text: new Text() },
 
 		protean: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		protean1: { text: new Text() },
-		protean2: { text: new Text() },
-		protean3: { text: new Text() },
-		protean4: { text: new Text() },
-		protean5: { text: new Text() },
+		protean_1: { text: new Text() },
+		protean_2: { text: new Text() },
+		protean_3: { text: new Text() },
+		protean_4: { text: new Text() },
+		protean_5: { text: new Text() },
 
-		thinbloodAlchemy: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
-		thinbloodAlchemy1: { text: new Text() },
-		thinbloodAlchemy2: { text: new Text() },
-		thinbloodAlchemy3: { text: new Text() },
-		thinbloodAlchemy4: { text: new Text() },
-		thinbloodAlchemy5: { text: new Text() },
+		thin_blood_alchemy: { precheckbox: new PreCheckbox(), dot: new Dot(5) },
+		thin_blood_alchemy_1: { text: new Text() },
+		thin_blood_alchemy_2: { text: new Text() },
+		thin_blood_alchemy_3: { text: new Text() },
+		thin_blood_alchemy_4: { text: new Text() },
+		thin_blood_alchemy_5: { text: new Text() },
 
-		custom0: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
-		custom01: { text: new Text() },
-		custom02: { text: new Text() },
-		custom03: { text: new Text() },
-		custom04: { text: new Text() },
-		custom05: { text: new Text() },
+		custom_0: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
+		custom_0_1: { text: new Text() },
+		custom_0_2: { text: new Text() },
+		custom_0_3: { text: new Text() },
+		custom_0_4: { text: new Text() },
+		custom_0_5: { text: new Text() },
 
-		custom1: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
-		custom11: { text: new Text() },
-		custom12: { text: new Text() },
-		custom13: { text: new Text() },
-		custom14: { text: new Text() },
-		custom15: { text: new Text() },
+		custom_1: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
+		custom_1_1: { text: new Text() },
+		custom_1_2: { text: new Text() },
+		custom_1_3: { text: new Text() },
+		custom_1_4: { text: new Text() },
+		custom_1_5: { text: new Text() },
 
-		custom2: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
-		custom21: { text: new Text() },
-		custom22: { text: new Text() },
-		custom23: { text: new Text() },
-		custom24: { text: new Text() },
-		custom25: { text: new Text() }
+		custom_2: { precheckbox: new PreCheckbox(), text: new Text(), dot: new Dot(5) },
+		custom_2_1: { text: new Text() },
+		custom_2_2: { text: new Text() },
+		custom_2_3: { text: new Text() },
+		custom_2_4: { text: new Text() },
+		custom_2_5: { text: new Text() }
 	};
 
-	theBlood = {
-		health: { dot: new Dot(15), pseudocheckbox: new PseudoCheckbox(15, ["empty", "slash", "cross"], "v5Modern") },
-		willpower: { dot: new Dot(15), pseudocheckbox: new PseudoCheckbox(15, ["empty", "slash", "cross"], "v5Modern") },
+	the_blood = {
+		health: { dot: new Dot(15), pseudocheckbox: new PseudoCheckbox(15, ["empty", "slash", "cross"], "v5_modern") },
+		willpower: { dot: new Dot(15), pseudocheckbox: new PseudoCheckbox(15, ["empty", "slash", "cross"], "v5_modern") },
 		hunger: { checkbox: new Checkbox(5) },
 		resonance: { text: new Text(), checkbox: new Checkbox(3) },
-		humanity: { pseudocheckbox: new PseudoCheckbox(10, ["empty", "slash", "square"], "v5Modern") },
-		bloodPotency: { dot: new Dot(10) },
+		humanity: { pseudocheckbox: new PseudoCheckbox(10, ["empty", "slash", "square"], "v5_modern") },
+		blood_potency: { dot: new Dot(10) },
 		generation: { text: new Text() },
 
 		total: { textarea: new Text() },
@@ -227,24 +199,24 @@ class V5ModernCharacter {
 		current: { textarea: new Text() },
 		notes: { textarea: new Textarea() },
 
-		rouseCheck: { text: new Text() },
-		bloodSurge: { text: new Text() },
-		mendAmount: { text: new Text() },
-		powerBonus: { text: new Text() },
-		baneSeverity: { text: new Text() },
-		feedingPenalty: { textarea: new Textarea() }
+		rouse_check: { text: new Text() },
+		blood_surge: { text: new Text() },
+		mend_amount: { text: new Text() },
+		power_bonus: { text: new Text() },
+		bane_severity: { text: new Text() },
+		feeding_penalty: { textarea: new Textarea() }
 	};
 
 	advantages = {
-		advantages0: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages1: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages2: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages3: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages4: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages5: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages6: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages7: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		advantages8: { text: new Text(), dot: new Dot(5), textarea: new Textarea() }
+		advantages_0: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_1: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_2: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_3: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_4: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_5: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_6: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_7: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		advantages_8: { text: new Text(), dot: new Dot(5), textarea: new Textarea() }
 	};
 
 	clan = {
@@ -254,9 +226,9 @@ class V5ModernCharacter {
 	};
 
 	profile = {
-		mortalDays: { textarea: new Textarea() },
+		mortal_days: { textarea: new Textarea() },
 		description: { textarea: new Textarea() },
-		kindredNights: { textarea: new Textarea() },
+		kindred_nights: { textarea: new Textarea() },
 		bane: { textarea: new Textarea() },
 		compulsion: { textarea: new Textarea() },
 		notes: { textarea: new Textarea() }
@@ -269,27 +241,27 @@ class V5ModernCharacter {
 	};
 
 	haven = {
-		haven0: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		haven1: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
-		haven2: { text: new Text(), dot: new Dot(5), textarea: new Textarea() }
+		haven_0: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		haven_1: { text: new Text(), dot: new Dot(5), textarea: new Textarea() },
+		haven_2: { text: new Text(), dot: new Dot(5), textarea: new Textarea() }
 	};
 
 	equipment = {
-		weapon0: { text: new Text(), dot: new Dot(5) },
-		weapon1: { text: new Text(), dot: new Dot(5) },
-		weapon2: { text: new Text(), dot: new Dot(5) },
-		weapon3: { text: new Text(), dot: new Dot(5) },
-		weapon4: { text: new Text(), dot: new Dot(5) },
-		armor0: { text: new Text(), dot: new Dot(6) },
-		armor1: { text: new Text(), dot: new Dot(6) },
-		armor2: { text: new Text(), dot: new Dot(6) },
-		armor3: { text: new Text(), dot: new Dot(6) },
-		armor4: { text: new Text(), dot: new Dot(6) },
-		other0: { text: new Text() },
-		other1: { text: new Text() },
-		other2: { text: new Text() },
-		other3: { text: new Text() },
-		other4: { text: new Text() },
+		weapon_0: { text: new Text(), dot: new Dot(5) },
+		weapon_1: { text: new Text(), dot: new Dot(5) },
+		weapon_2: { text: new Text(), dot: new Dot(5) },
+		weapon_3: { text: new Text(), dot: new Dot(5) },
+		weapon_4: { text: new Text(), dot: new Dot(5) },
+		armor_0: { text: new Text(), dot: new Dot(6) },
+		armor_1: { text: new Text(), dot: new Dot(6) },
+		armor_2: { text: new Text(), dot: new Dot(6) },
+		armor_3: { text: new Text(), dot: new Dot(6) },
+		armor_4: { text: new Text(), dot: new Dot(6) },
+		other_0: { text: new Text() },
+		other_1: { text: new Text() },
+		other_2: { text: new Text() },
+		other_3: { text: new Text() },
+		other_4: { text: new Text() },
 	};
 }
 
@@ -409,13 +381,13 @@ const V5ModernCharacterSheet: aut.ruleset.SheetLayout = [
 				{ title: "Health", align: "center", isReadOnly: true, inputs: ["dot"], dot: { amount: 15 } },
 				{ title: "Health", align: "center", inputs: ["pseudocheckbox"], pseudocheckbox: { amount: 15, possibleValues: ["empty", "slash", "cross"] } },
 
-				{ title: "empty0", inputs: [] },
+				{ title: "empty 0", inputs: [] },
 
 				{ title: "Willpower", showTitle: true, boldTitle: true, isRollable: true, align: "center", inputs: [] },
 				{ title: "Willpower", align: "center", isReadOnly: true, inputs: ["dot"], dot: { amount: 15 } },
 				{ title: "Willpower", align: "center", inputs: ["pseudocheckbox"], pseudocheckbox: { amount: 15, possibleValues: ["empty", "slash", "cross"] } },
 
-				{ title: "empty1", inputs: [] },
+				{ title: "empty 1", inputs: [] },
 
 				{ title: "Humanity", showTitle: true, isRollable: true, align: "center", inputs: ["pseudocheckbox"], pseudocheckbox: { amount: 10, possibleValues: ["empty", "slash", "square"] } },
 				{ title: "Hunger", showTitle: true, inputs: ["checkbox"], checkbox: { amount: 5 } },
@@ -425,7 +397,7 @@ const V5ModernCharacterSheet: aut.ruleset.SheetLayout = [
 				{ title: "Blood Potency", showTitle: true, inputs: ["dot"], dot: { amount: 10 } },
 				{ title: "Generation", showTitle: true, inputs: ["text"] },
 
-				{ title: "empty3", inputs: [] },
+				{ title: "empty 3", inputs: [] },
 
 				{ title: "Experience", showTitle: true, boldTitle: true, align: "center", inputs: [] },
 				{ title: "Total", showTitle: true, isReadOnly: true, inputs: ["text"] },
@@ -467,7 +439,7 @@ const V5ModernCharacterSheet: aut.ruleset.SheetLayout = [
 				{ title: "Auspex 3", inputs: ["text"] },
 				{ title: "Auspex 4", inputs: ["text"] },
 				{ title: "Auspex 5", inputs: ["text"] },
-				
+
 				{ title: "empty1", inputs: [] },
 
 				{ title: "Blood Sorcery", showTitle: true, inputs: ["precheckbox", "dot"], dot: { amount: 5 } },
@@ -511,7 +483,7 @@ const V5ModernCharacterSheet: aut.ruleset.SheetLayout = [
 				{ title: "Obfuscate 3", inputs: ["text"] },
 				{ title: "Obfuscate 4", inputs: ["text"] },
 				{ title: "Obfuscate 5", inputs: ["text"] },
-				
+
 				{ title: "empty1", inputs: [] },
 
 				{ title: "Oblivion", showTitle: true, inputs: ["precheckbox", "dot"], dot: { amount: 5 } },
@@ -703,53 +675,52 @@ const V5ModernCharacterSheet: aut.ruleset.SheetLayout = [
 
 const V5BloodPotency: aut.ruleset.BloodPotency = [
 	{ // 0
-		bloodSurge: 1, mendAmount: 1, powerBonus: 0, rouseCheck: 0, baneSeverity: 0,
-		feedingPenalty: "No effect"
+		blood_surge: 1, mend_amount: 1, power_bonus: 0, rouse_check: 0, bane_severity: 0,
+		feeding_penalty: "No effect"
 	},
 	{ // 1
-		bloodSurge: 2, mendAmount: 1, powerBonus: 0, rouseCheck: 1, baneSeverity: 2,
-		feedingPenalty: "No effect"
+		blood_surge: 2, mend_amount: 1, power_bonus: 0, rouse_check: 1, bane_severity: 2,
+		feeding_penalty: "No effect"
 	},
 	{ // 2
-		bloodSurge: 2, mendAmount: 2, powerBonus: 1, rouseCheck: 1, baneSeverity: 2,
-		feedingPenalty: "Animal and bagged blood slakes half Hunger."
+		blood_surge: 2, mend_amount: 2, power_bonus: 1, rouse_check: 1, bane_severity: 2,
+		feeding_penalty: "Animal and bagged blood slakes half Hunger."
 	},
 	{ // 3
-		bloodSurge: 3, mendAmount: 2, powerBonus: 1, rouseCheck: 2, baneSeverity: 3,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger."
+		blood_surge: 3, mend_amount: 2, power_bonus: 1, rouse_check: 2, bane_severity: 3,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger."
 	},
 	{ // 4
-		bloodSurge: 3, mendAmount: 3, powerBonus: 2, rouseCheck: 2, baneSeverity: 3,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 1 less Hunger per human."
+		blood_surge: 3, mend_amount: 3, power_bonus: 2, rouse_check: 2, bane_severity: 3,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 1 less Hunger per human."
 	},
 	{ // 5
-		bloodSurge: 4, mendAmount: 3, powerBonus: 2, rouseCheck: 3, baneSeverity: 4,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 1 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
+		blood_surge: 4, mend_amount: 3, power_bonus: 2, rouse_check: 3, bane_severity: 4,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 1 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
 	},
 	{ // 6
-		bloodSurge: 4, mendAmount: 3, powerBonus: 3, rouseCheck: 3, baneSeverity: 4,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
+		blood_surge: 4, mend_amount: 3, power_bonus: 3, rouse_check: 3, bane_severity: 4,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
 	},
 	{ // 7
-		bloodSurge: 5, mendAmount: 3, powerBonus: 3, rouseCheck: 4, baneSeverity: 5,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
+		blood_surge: 5, mend_amount: 3, power_bonus: 3, rouse_check: 4, bane_severity: 5,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 2."
 	},
 	{ // 8
-		bloodSurge: 5, mendAmount: 4, powerBonus: 4, rouseCheck: 4, baneSeverity: 5,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
+		blood_surge: 5, mend_amount: 4, power_bonus: 4, rouse_check: 4, bane_severity: 5,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
 	},
 	{ // 9
-		bloodSurge: 6, mendAmount: 4, powerBonus: 4, rouseCheck: 5, baneSeverity: 6,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
+		blood_surge: 6, mend_amount: 4, power_bonus: 4, rouse_check: 5, bane_severity: 6,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 2 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
 	},
 	{ // 10
-		bloodSurge: 6, mendAmount: 5, powerBonus: 5, rouseCheck: 5, baneSeverity: 6,
-		feedingPenalty: "Animal and bagged blood slakes no Hunger. Slake 3 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
+		blood_surge: 6, mend_amount: 5, power_bonus: 5, rouse_check: 5, bane_severity: 6,
+		feeding_penalty: "Animal and bagged blood slakes no Hunger. Slake 3 less Hunger per human. Must drain and kill a human to reduce Hunger below 3."
 	},
 ];
 
-export const V5Modern: aut.ruleset.Ruleset<typeof V5ModernChronicle, typeof V5ModernCharacter> = {
-	chronicle: V5ModernChronicle,
+export const V5Modern: aut.ruleset.Ruleset<typeof V5ModernCharacter> = {
 	character: V5ModernCharacter,
 	basics: V5ModernRules,
 	characterSheet: V5ModernCharacterSheet,

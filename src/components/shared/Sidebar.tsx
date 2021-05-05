@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import { ClientContext } from "../../contexts/Contexts";
 
-import { MakeRequest } from "../../function/makeRequest";
+import { DatabaseClient } from "../../hooks/useQueries";
 
 import { Icon } from "./Icon";
 import { IconLink } from "./Link";
@@ -48,12 +48,11 @@ const SidebarWrapper = styled.div`
 	}
 `;
 
-export function Topbar(): JSX.Element {
+export function Sidebar(): JSX.Element {
 	const { clientState, setClientState } = useContext(ClientContext);
 
-	const logoutRequest = () => {
-		MakeRequest("/user/logout")
-			.finally(() => { setClientState("loggedout"); });
+	const signOut = async (): Promise<void> => {
+		DatabaseClient.auth.signOut().then(() => { setClientState("signedout"); });
 	};
 
 	return (
@@ -76,8 +75,8 @@ export function Topbar(): JSX.Element {
 					<Icon size={24} name={"discord"} hover />
 				</IconLink>
 
-				{(clientState === "loggedin")
-					? <IconLink onClick={() => { logoutRequest(); }} title="Logout">
+				{(clientState === "signedin")
+					? <IconLink onClick={signOut} title="Logout">
 						<Icon size={24} name={"logout"} hover />
 					</IconLink>
 					: null

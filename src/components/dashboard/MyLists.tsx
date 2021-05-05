@@ -57,7 +57,7 @@ export function MyLists(): JSX.Element {
 								<MyListsRow key={index}
 									sheetData={{
 										name: chro.name, uuid: chro.uuid,
-										date: chro.created_at, creator: chro.creator,
+										date: chro.created_at, creator: chro.storyteller_name,
 										ruleset: chro.ruleset, type: "chronicle"
 									}}
 								/>
@@ -79,7 +79,7 @@ export function MyLists(): JSX.Element {
 								<MyListsRow key={index}
 									sheetData={{
 										name: char.name, uuid: char.uuid,
-										date: char.created_at, creator: char.creator,
+										date: char.created_at, creator: char.player_name,
 										ruleset: char.ruleset, type: "character"
 									}}
 								/>

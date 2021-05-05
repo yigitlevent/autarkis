@@ -7,7 +7,7 @@ import { ClientContext, SheetContext } from "../contexts/Contexts";
 
 import { useListCharacters, useListChronicles } from "../hooks/useQueries";
 
-import { Topbar } from "./shared/Sidebar";
+import { Sidebar } from "./shared/Sidebar";
 import { MainBox } from "./shared/Box";
 import { ConfirmBox } from "./shared/ConfirmBox";
 
@@ -61,7 +61,7 @@ export function Dashboard(): JSX.Element {
 		<SheetContext.Provider value={{ sheetCategory, sheetUUID, sheetRuleset, changeSheet }}>
 			<MainBox>
 				<MyLists />
-				<Topbar />
+				<Sidebar />
 			</MainBox>
 
 			{(isRulesetSelectOpen)

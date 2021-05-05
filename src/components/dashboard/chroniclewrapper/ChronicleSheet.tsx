@@ -56,55 +56,64 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 			{deleteBox}
 
 			<Extras>
-				<input className="hide" type="file" name="c.misc.file" ref={importRef} multiple={false}
+				<input className="hide" type="file" id="c.misc.file" ref={importRef} multiple={false}
 					onChange={(event) => { chronicle.import(event); }} accept=".chro.autarkis"
 				/>
 
 				<Icon size={24} name={"close"} hover brightness float={"right"} title>
-					<Button name="s.misc.close" value="" onClick={() => { changeSheet(undefined, undefined, "none", true); }} />
+					<Button id="s.misc.close" value="" onClick={() => { changeSheet(undefined, undefined, "none", true); }} />
 				</Icon>
 
 				{(sheetDisplayType !== "new")
 					? <Icon size={24} name={(sheetDisplayType === "view") ? "edit_off" : "edit_on"} hover brightness float={"right"} title>
-						<Button name="s.misc.edit_switch" value="" onClick={() => { switchSheetDisplayType(); }} />
+						<Button id="s.misc.edit_switch" value="" onClick={() => { switchSheetDisplayType(); }} />
 					</Icon>
 					: null
 				}
 
-				{(sheetDisplayType !== "view" && clientState !== "offline")
+				{(clientState !== "offline" && sheetDisplayType === "new")
+					? <Icon size={24} name={"save"} hover brightness float={"right"} title>
+						<Submit id="s.misc.submit" value={""} noBg
+							onClick={(event) => {
+								event.preventDefault();
+								chronicle.insert()
+									.then(() => { changeSheet(undefined, undefined, "none", true); });
+							}}
+						/>
+					</Icon>
+					: null
+				}
+
+				{(clientState !== "offline" && sheetDisplayType === "edit")
 					? <Fragment>
 						<Icon size={24} name={"save"} hover brightness float={"right"} title>
-							<Submit name="s.misc.submit" value={""} noBg
+							<Submit id="s.misc.submit" value={""} noBg
 								onClick={(event) => {
 									event.preventDefault();
-									chronicle.submit(sheetDisplayType)
+									chronicle.update()
 										.then(() => { changeSheet(undefined, undefined, "none", true); });
 								}}
 							/>
 						</Icon>
-
-						{(sheetDisplayType !== "new")
-							? <Icon size={24} name={"delete"} hover brightness float={"right"} title>
-								<Submit name="s.misc.submit" value={""} noBg
-									onClick={(event) => {
-										event.preventDefault();
-										deleteChronicle();
-									}}
-								/>
-							</Icon>
-							: null
-						}
+						<Icon size={24} name={"delete"} hover brightness float={"right"} title>
+							<Submit id="s.misc.submit" value={""} noBg
+								onClick={(event) => {
+									event.preventDefault();
+									deleteChronicle();
+								}}
+							/>
+						</Icon>
 					</Fragment>
 					: null
 				}
 
 				<Icon size={24} name={"export"} hover brightness float={"right"} title>
-					<Button name="c.misc.export" value={""} onClick={(event) => { chronicle.export(event); }} />
+					<Button id="c.misc.export" value={""} onClick={(event) => { chronicle.export(event); }} />
 				</Icon>
 
 				{(sheetDisplayType === "new" || sheetDisplayType === "edit")
 					? <Icon size={24} name={"import"} hover brightness float={"right"} title>
-						<Button name="c.misc.import" value={""} onClick={() => { importRef.current?.click(); }} />
+						<Button id="c.misc.import" value={""} onClick={() => { importRef.current?.click(); }} />
 					</Icon>
 					: null
 				}
@@ -118,12 +127,12 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 
 					<Row>
 						<label className="extra">Storyteller</label>
-						<input className="extra" type="text" name="s.basics.storyteller" readOnly />
+						<input className="extra" type="text" id="s.storyteller_name" readOnly />
 					</Row>
 
 					<Row>
 						<label className="extra">Chronicle Name</label>
-						<input className="extra" type="text" name="s.basics.name"
+						<input className="extra" type="text" id="s.name"
 							readOnly={(sheetDisplayType !== "new") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -137,7 +146,7 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 
 					<Row>
 						<label className="extra">Bot Enabled</label>
-						<input className="extra" type="checkbox" name="s.discord.enabled"
+						<input className="extra" type="checkbox" id="s.discord_enabled"
 							disabled={(sheetDisplayType === "view") ? true : false}
 							onClick={changeSheetValue}
 						/>
@@ -145,7 +154,7 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 
 					<Row>
 						<label className="extra">Server ID</label>
-						<input className="extra" type="text" name="s.discord.server"
+						<input className="extra" type="text" id="s.discord_server"
 							readOnly={(sheetDisplayType === "view") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -153,7 +162,7 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 
 					<Row>
 						<label className="extra">Channel</label>
-						<input className="extra" type="text" name="s.discord.channel"
+						<input className="extra" type="text" id="s.discord_channel"
 							readOnly={(sheetDisplayType === "view") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -163,7 +172,7 @@ export function ChronicleSheet({ sheetDisplayType, chronicle, switchSheetDisplay
 
 			</Wrapper>
 
-		</DashboardForm>
+		</DashboardForm >
 	);
 }
 

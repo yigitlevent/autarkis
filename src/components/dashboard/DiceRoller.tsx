@@ -33,7 +33,7 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 
 	const [rulesetName] = useState(character?.data._primary.ruleset.text.current as aut.ruleset.Names);
 
-	const [parts] = useState((event.target as any).name.split("."));
+	const [parts] = useState((event.target as any).id.split("."));
 	const [result, setResult] = useState<undefined | string>(undefined);
 
 	const [selectedAbilities, setSelectedAbilities] = useState<string[]>([]);
@@ -44,6 +44,10 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 	);
 
 	const getPoolSize = useCallback((category: string, name: string, type: "number" | "checkbox" | "dot" | "pseudocheckbox" | "text", pcValue?: string): number | string => {
+		console.log(category);
+		console.log(name);
+		console.log(type);
+
 		if (type === "pseudocheckbox" && pcValue) { return (character?.data[category][name].pseudocheckbox as PseudoCheckbox).getAmount(pcValue); }
 		else if (type === "number") { return parseInt(character?.data[category][name].text.current as string); }
 		else if (type === "text") { return character?.data[category][name].text.current as string; }
@@ -54,10 +58,12 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 		const data: { [key: string]: number | boolean; } = {};
 
 		if (ref && ref.current) {
+			console.log(ref.current);
+
 			for (let i = 0; i < ref.current.length; i++) {
 				const current = ref.current[i] as HTMLInputElement;
-				if (current.type === "checkbox") { data[current.name] = current.checked; }
-				else if (current.name.length > 0) { data[current.name] = parseInt(current.value); }
+				if (current.type === "checkbox") { data[current.id] = current.checked; }
+				else if (current.id.length > 0) { data[current.id] = parseInt(current.value); }
 			}
 		}
 
@@ -78,17 +84,17 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 			abilityBonus += getPoolSize(current[0], current[1], "dot") as number;
 		}
 
-		const basePoolInput = (document.getElementsByName("basePool")[0] as HTMLInputElement);
+		const basePoolInput = (document.getElementById("basePool") as HTMLInputElement);
 		if (basePoolInput) basePoolInput.value = abilityBonus.toString();
 
 		let pool = abilityBonus;
 
 		if (data["modifierPool"]) pool += (data["modifierPool"] as number);
-		if (data["hasSurge"]) pool += getPoolSize("theBlood", "bloodSurge", "number") as number;
-		if (data["hasHumanity"]) pool += Math.floor((getPoolSize("theBlood", "humanity", "pseudocheckbox", (Rulesets.getRuleset(rulesetName)).basics.pseudoCheckboxInputs.square) as number) / 3);
+		if (data["hasSurge"]) pool += getPoolSize("the_blood", "blood_surge", "number") as number;
+		if (data["hasHumanity"]) pool += Math.floor((getPoolSize("the_blood", "humanity", "pseudocheckbox", (Rulesets.getRuleset(rulesetName)).basics.pseudoCheckboxInputs.square) as number) / 3);
 		if (data["hasSpeciality"]) pool += 1;
 
-		const input = (document.getElementsByName("totalPool")[0] as HTMLInputElement);
+		const input = (document.getElementById("totalPool") as HTMLInputElement);
 		if (input) input.value = Math.max(1, pool).toString();
 	}, [rulesetName, selectedAbilities, getData, getPoolSize]);
 
@@ -166,6 +172,8 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 		}
 	];
 
+	console.log(parts);
+
 	return (
 		<Topbox
 			title={title}
@@ -200,20 +208,20 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 
 					<TopboxChildren columns={2}>
 						<label>Base Pool</label>
-						<input type="number" name="basePool" readOnly defaultValue={defaultMainValue} onChange={onValueChange} />
+						<input type="number" id="basePool" readOnly defaultValue={defaultMainValue} onChange={onValueChange} />
 					</TopboxChildren>
 
 					<TopboxChildren columns={2}>
 						<label>Modifier</label>
-						<input type="number" name="modifierPool" min={-50} max={50} defaultValue={0} onChange={onValueChange} />
+						<input type="number" id="modifierPool" min={-50} max={50} defaultValue={0} onChange={onValueChange} />
 					</TopboxChildren>
 
 					{(parts[4] === "willpower")
 						? <TopboxChildren columns={3}>
 							<label>Humanity?</label>
-							<input type="checkbox" name="hasHumanity" onChange={onValueChange} defaultChecked={true} />
+							<input type="checkbox" id="hasHumanity" onChange={onValueChange} defaultChecked={true} />
 							<input type="number" readOnly
-								defaultValue={getPoolSize("theBlood", "humanity", "pseudocheckbox", (Rulesets.getRuleset(rulesetName)).basics.pseudoCheckboxInputs.square)}
+								defaultValue={getPoolSize("the_blood", "humanity", "pseudocheckbox", (Rulesets.getRuleset(rulesetName)).basics.pseudoCheckboxInputs.square)}
 							/>
 						</TopboxChildren>
 						: null
@@ -224,27 +232,27 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 
 							<TopboxChildren columns={2}>
 								<label>Speciality?</label>
-								<input type="checkbox" name="hasSpeciality" onChange={onValueChange} />
+								<input type="checkbox" id="hasSpeciality" onChange={onValueChange} />
 							</TopboxChildren>
 
 							<TopboxChildren columns={2}>
 								<label>Rouse #</label>
-								<input type="number" name="rouse" min={0} max={50} defaultValue={0} />
+								<input type="number" id="rouse" min={0} max={50} defaultValue={0} />
 							</TopboxChildren>
 
 							<TopboxChildren columns={3}>
 								<label>Blood Surge?</label>
-								<input type="checkbox" name="hasSurge" onChange={onValueChange} />
+								<input type="checkbox" id="hasSurge" onChange={onValueChange} />
 								<input type="number" readOnly
-									defaultValue={getPoolSize("theBlood", "bloodSurge", "number") as number}
+									defaultValue={getPoolSize("the_blood", "blood_surge", "number") as number}
 								/>
 							</TopboxChildren>
 
 							<TopboxChildren columns={3}>
 								<label>Hunger?</label>
-								<input type="checkbox" name="hasHunger" defaultChecked={true} />
+								<input type="checkbox" id="hasHunger" defaultChecked={true} />
 								<input type="number" readOnly
-									defaultValue={getPoolSize("theBlood", "hunger", "checkbox")}
+									defaultValue={getPoolSize("the_blood", "hunger", "checkbox")}
 								/>
 							</TopboxChildren>
 
@@ -260,14 +268,14 @@ export function DiceRoller({ event, character, setDiceRoller }: aut.props.DiceRo
 					{(parts[3] === "standard" || parts[4] === "willpower" || parts[4] === "humanity")
 						? <TopboxChildren columns={2} topBorder>
 							<label>Difficulty</label>
-							<input type="number" name="difficulty" min={1} max={10} defaultValue={1} />
+							<input type="number" id="difficulty" min={1} max={10} defaultValue={1} />
 						</TopboxChildren>
 						: <TopboxChildren columns={2} topBorder />
 					}
 
 					<TopboxChildren columns={2} topBorder>
 						<label>Total Pool</label>
-						<input type="number" name="totalPool" min={0} max={100} defaultValue={defaultMainValue} readOnly />
+						<input type="number" id="totalPool" min={0} max={100} defaultValue={defaultMainValue} readOnly />
 					</TopboxChildren>
 
 				</Fragment>

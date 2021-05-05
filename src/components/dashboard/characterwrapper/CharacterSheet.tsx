@@ -65,65 +65,71 @@ export function CharacterSheet({ sheetDisplayType, character, switchSheetDisplay
 
 			<DashboardForm ref={formRef}>
 				<Extras>
-					<input className="hide" type="file" name="c.misc.file" ref={importRef} multiple={false}
+					<input className="hide" type="file" id="c.misc.file" ref={importRef} multiple={false}
 						onChange={(event) => { character.import(event); }} accept=".char.autarkis"
 					/>
 
 					<Icon size={24} name={"close"} hover brightness float={"right"} title>
-						<Button name="s.misc.close" value="" onClick={() => { changeSheet(undefined, undefined, "none", true); }} />
+						<Button id="s.misc.close" value="" onClick={() => { changeSheet(undefined, undefined, "none", true); }} />
 					</Icon>
 
 					{(sheetDisplayType !== "new")
 						? <Icon size={24} name={(sheetDisplayType === "view") ? "edit_off" : "edit_on"} hover brightness float={"right"} title>
-							<Button name="s.misc.edit_switch" value="" onClick={() => { switchSheetDisplayType(); }} />
+							<Button id="s.misc.edit_switch" value="" onClick={() => { switchSheetDisplayType(); }} />
 						</Icon>
 						: null
 					}
 
-					{(sheetDisplayType !== "view" && clientState !== "offline")
-						? <Fragment>
-							{(character.editable)
-								? <Icon size={24} name={"save"} hover brightness float={"right"} title>
-									<Submit name="s.misc.submit" value={""} noBg
-										onClick={(event) => {
-											event.preventDefault();
-											character.submit(sheetDisplayType)
-												.then(() => { changeSheet(undefined, undefined, "none", true); });
-										}}
-									/>
-								</Icon>
-								: null
-							}
+					{(clientState !== "offline" && sheetDisplayType === "new")
+						? <Icon size={24} name={"save"} hover brightness float={"right"} title>
+							<Submit id="s.misc.submit" value={""} noBg
+								onClick={(event) => {
+									event.preventDefault();
+									character.insert()
+										.then(() => { changeSheet(undefined, undefined, "none", true); });
+								}}
+							/>
+						</Icon>
+						: null
+					}
 
-							{(sheetDisplayType !== "new")
-								? <Icon size={24} name={"delete"} hover brightness float={"right"} title>
-									<Submit name="s.misc.submit" value={""} noBg
-										onClick={(event) => {
-											event.preventDefault();
-											deleteCharacter();
-										}}
-									/>
-								</Icon>
-								: null
-							}
+					{(clientState !== "offline" && sheetDisplayType === "edit")
+						? <Fragment>
+							<Icon size={24} name={"save"} hover brightness float={"right"} title>
+								<Submit id="s.misc.submit" value={""} noBg
+									onClick={(event) => {
+										event.preventDefault();
+										character.update()
+											.then(() => { changeSheet(undefined, undefined, "none", true); });
+									}}
+								/>
+							</Icon>
+							<Icon size={24} name={"delete"} hover brightness float={"right"} title>
+								<Submit id="s.misc.submit" value={""} noBg
+									onClick={(event) => {
+										event.preventDefault();
+										deleteCharacter();
+									}}
+								/>
+							</Icon>
 						</Fragment>
 						: null
 					}
 
 					<Icon size={24} name={"export"} hover brightness float={"right"} title>
-						<Button name="c.misc.export" value={""} onClick={(event) => { character.export(event); }} />
+						<Button id="c.misc.export" value={""} onClick={(event) => { character.export(event); }} />
 					</Icon>
 
 					{(sheetDisplayType === "new" || sheetDisplayType === "edit")
 						? <Icon size={24} name={"import"} hover brightness float={"right"} title>
-							<Button name="c.misc.import" value={""} onClick={() => { importRef.current?.click(); }} />
+							<Button id="c.misc.import" value={""} onClick={() => { importRef.current?.click(); }} />
 						</Icon>
 						: null
 					}
 
 					{(sheetDisplayType === "view" || clientState === "offline")
 						? <Icon size={22} name={"roll"} hover brightness float={"right"} title>
-							<Button name="c.misc.roll.standard.standard" value="" onClick={(event) => { setDiceRoller(event); }} />
+							<Button id="c.misc.roll.standard.standard" value="" onClick={(event) => { setDiceRoller(event); }} />
 						</Icon>
 						: null
 					}

@@ -1,10 +1,10 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { Character } from "../../classes/Character";
 
 import { SheetContext } from "../../contexts/Contexts";
 
-import { useGetCharacter } from "../../hooks/useQueries";
+import { DatabaseClient } from "../../hooks/useQueries";
 import { useSheetDisplayType } from "../../hooks/useSheetDisplayType";
 
 import { Box } from "../shared/Box";
@@ -18,30 +18,33 @@ export function CharacterWrapper(): JSX.Element {
 
 	const [sheetDisplayType, switchSheetDisplayType] = useSheetDisplayType((sheetUUID) ? "view" : "new");
 
-	const { data, status, error } = useGetCharacter(sheetUUID);
-
 	const [character, setCharacter] = useState<undefined | aut.classes.Character>(undefined);
 
 	useEffect(() => {
-		if (sheetRuleset) setCharacter(new Character(data, sheetRuleset));
-	}, [sheetRuleset, data, status]);
+		if (sheetRuleset) {
+			if (sheetUUID) {
+				DatabaseClient.from("characters").select("*").eq("uuid", sheetUUID).single()
+					.then((response) => {
+						if (response.error) { }
+						else { setCharacter(new Character(response.data, sheetRuleset)); }
+					});
+			}
+			else {
+				setCharacter(new Character(undefined, sheetRuleset));
+			}
+		}
+	}, [sheetRuleset, sheetUUID]);
 
 	return (
-		(status === "loading")
+		(character === undefined)
 			? <Spinner />
 			: <Box width={"1000px"} zIndex={2}>
 				<Title>{sheetDisplayType.toUpperCase()} CHARACTER</Title>
-
-				{(character)
-					? <CharacterSheet
-						sheetDisplayType={sheetDisplayType}
-						character={character}
-						switchSheetDisplayType={switchSheetDisplayType}
-					/>
-					: (status === "error")
-						? <span>Error: {(error as any).message}</span>
-						: <Fragment />
-				}
+				<CharacterSheet
+					sheetDisplayType={sheetDisplayType}
+					character={character}
+					switchSheetDisplayType={switchSheetDisplayType}
+				/>
 			</Box>
 	);
 }

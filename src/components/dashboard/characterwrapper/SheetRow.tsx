@@ -76,7 +76,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			new Array<JSX.Element>(rowData.pseudocheckbox.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<PseudoCheckbox
-						name={`${nameString}.pseudocheckbox.${i}`}
+						id={`${nameString}.pseudocheckbox.${i}`}
 						key={`${nameString}.pseudocheckbox.${i}`}
 						readOnly={(rowData.isReadOnly || sheetDisplayType === "view")}
 						onClick={changeSheetValue}
@@ -87,7 +87,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			new Array<JSX.Element>(rowData.checkbox.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<Checkbox
-						name={`${nameString}.checkbox.${i}`}
+						id={`${nameString}.checkbox.${i}`}
 						key={`${nameString}.checkbox.${i}`}
 						disabled={(rowData.isReadOnly || sheetDisplayType === "view")}
 						onClick={changeSheetValue}
@@ -98,7 +98,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			new Array<JSX.Element>(rowData.dot.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<Dot
-						name={`${nameString}.dot.${i}`}
+						id={`${nameString}.dot.${i}`}
 						key={`${nameString}.dot.${i}`}
 						disabled={(rowData.isReadOnly || sheetDisplayType === "view")}
 						onClick={changeSheetValue}
@@ -114,7 +114,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 
 			{(rowData.inputs.includes("precheckbox"))
 				? <Checkbox key={`${nameString}.precheckbox`}
-					name={`${nameString}.precheckbox`}
+					id={`${nameString}.precheckbox`}
 					disabled={(sheetDisplayType === "view")}
 					onClick={changeSheetValue}
 				/>
@@ -122,8 +122,8 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			}
 
 			{(rowData.isRollable && (sheetDisplayType === "view" || clientState === "offline"))
-				? <Icon size={18} name="roll" hover brightness title>
-					<Button name={`c.misc.roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setDiceRoller(event); }} />
+				? <Icon size={18} name={"roll"} hover brightness title>
+					<Button id={`c.misc.roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setDiceRoller(event); }} />
 				</Icon>
 				: null
 			}
@@ -137,7 +137,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 				? <Input
 					type="text"
 					align={rowData.align}
-					name={`${nameString}.text`}
+					id={`${nameString}.text`}
 					key={`${nameString}.text`}
 					readOnly={(rowData.isReadOnly || sheetDisplayType === "view") ? true : false}
 					onChange={changeSheetValue}
@@ -154,7 +154,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 				? <Textarea
 					height={rowData.textarea.amount * 24}
 					columns={gridData.columnAmount}
-					name={`${nameString}.textarea`}
+					id={`${nameString}.textarea`}
 					readOnly={(rowData.isReadOnly || sheetDisplayType === "view")}
 					onChange={changeSheetValue}
 				/>

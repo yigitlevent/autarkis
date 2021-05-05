@@ -1,9 +1,9 @@
-import { StrictMode, useEffect, useState } from "react";
+import { StrictMode, useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { Session, Provider } from "@supabase/supabase-js";
+import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide } from "react-toastify";
-import { createClient } from "@supabase/supabase-js";
 
 import styled, { ThemeProvider } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,10 +12,15 @@ import { DarkTheme } from "./theme/_themes";
 
 import { ClientContext } from "./contexts/Contexts";
 
+import { DatabaseClient, GlobalQueryClient } from "./hooks/useQueries";
+
 import { Spinner } from "./components/shared/Spinner";
 import { StyledToast } from "./components/shared/StyledToast";
 
-import { Entrance } from "./components/Entrance";
+import { MainBox } from "./components/shared/Box";
+import { Button } from "./components/shared/Inputs";
+import { Sidebar } from "./components/shared/Sidebar";
+
 import { Dashboard } from "./components/Dashboard";
 
 const MainWrapper = styled.div`
@@ -50,50 +55,36 @@ const DarkPackLogo = styled.a`
 	}
 `;
 
-export const DatabaseClient = createClient(
-	"https://ekuxtwwwiddozwwdkfjx.supabase.co",
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMDAyNjAwNiwiZXhwIjoxOTM1NjAyMDA2fQ.M9cEgca7EvBJY52LCNIKnZpYc4ZmfEjQAHUJ6p5t26Y"
-);
-
-export const GlobalQueryClient = new QueryClient({
-	defaultOptions: {
-		queries: { staleTime: Infinity, retry: false },
-	},
-});
-
 function App(): JSX.Element {
-	const [clientState, setClientState] = useState<aut.short.ClientState>("precheck");
+	const [clientState, setClientState] = useState<aut.short.ClientState>("presign");
 	const [clientUsername, setClientUsername] = useState<undefined | string>(undefined);
 
-	const { data, error } = DatabaseClient.auth.onAuthStateChange(
-		(event, session) => {
-			console.log("event");
-			console.log(event);
-			console.log(session);
+	const signIn = async (provider: Provider): Promise<void> => {
+		await DatabaseClient.auth.signIn({ provider: provider }, { redirectTo: process.env.REACT_APP_REDIRECT_URL });
+	};
+
+	const setSessionData = useCallback((session: Session | null) => {
+		if (session) {
+			setClientUsername(session.user.user_metadata.full_name);
+			setClientState("signedin");
 		}
-	);
+		else {
+			setClientUsername(undefined);
+			setClientState("signedout");
+		}
+	}, []);
 
 	useEffect(() => {
-		console.log("data");
-		console.log(data);
-		console.log(error);
+		const session = DatabaseClient.auth.session();
+		setSessionData(session);
+		const subscription = DatabaseClient.auth.onAuthStateChange((event, session) => { setSessionData(session); });
+		return () => { subscription?.data?.unsubscribe(); };
+	}, [setSessionData]);
 
-		if (clientState === "precheck") {
-			const session = DatabaseClient.auth.session();
-
-			console.log("session");
-			console.log(session);
-
-			if (session) {
-				setClientUsername(session.user.user_metadata.full_name);
-				setClientState("loggedin");
-			}
-			else {
-				setClientUsername(undefined);
-				setClientState("loggedout");
-			}
-		}
-	}, [data, error, clientState]);
+	useEffect(() => {
+		window.addEventListener("offline", () => { setClientState("offline"); });
+		return () => { window.removeEventListener("offline", () => { setClientState("offline"); }); };
+	}, []);
 
 	return (
 		<ThemeProvider theme={DarkTheme}>
@@ -116,11 +107,14 @@ function App(): JSX.Element {
 
 			<ClientContext.Provider value={{ clientState, clientUsername, setClientState, setClientUsername }}>
 				<MainWrapper>
-					{(clientState === "precheck")
+					{(clientState === "presign")
 						? <Spinner overlay={false} size={["100vw", "100vh"]} />
-						: (clientState === "loggedin")
+						: (clientState === "signedin")
 							? <Dashboard />
-							: <Entrance />
+							: <MainBox>
+								<Button onClick={() => signIn("github")} value={"Sign in using Github"} />
+								<Sidebar />
+							</MainBox>
 					}
 				</MainWrapper>
 			</ClientContext.Provider>

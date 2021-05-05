@@ -3,9 +3,10 @@ import { toast } from "react-toastify";
 import { Checkbox, Dot } from "../rulesets/_generic";
 import { Rulesets } from "../rulesets/_rulesets";
 
-import { MakeRequest } from "../function/makeRequest";
 import { RollDicePool } from "../function/rollDicePool";
-import { CleanData, CleanString } from "../function/utility";
+import { CleanString } from "../function/utility";
+
+import { DatabaseClient } from "../hooks/useQueries";
 
 export class Character implements aut.classes.Character {
 	readonly type = "character";
@@ -18,30 +19,21 @@ export class Character implements aut.classes.Character {
 		this.data._primary.ruleset.text.current = ruleset;
 
 		if (rawData) {
-			const raw = JSON.parse(CleanData(rawData.data));
+			const temp = rawData.data as any;
 
-			// Ugly af
-			for (const block in raw) {
+			for (const block in temp) {
 				if (!this.data[block]) continue;
-				for (const row in raw[block]) {
+
+				for (const row in temp[block]) {
 					if (!this.data[block][row]) continue;
-					for (const type in raw[block][row]) {
+
+					for (const type in temp[block][row]) {
 						if (!this.data[block][row][type]) continue;
-						this.data[block][row][type].current = raw[block][row][type].current;
+
+						this.data[block][row][type].current = temp[block][row][type].current;
 					}
 				}
 			}
-
-			this.editable = rawData.editable;
-
-			this.data._primary.uuid.text.current = rawData.uuid;
-			this.data._primary.chronicleUUID.text.current = rawData.chronicle_uuid;
-			this.data._primary.createdAt.text.current = rawData.created_at;
-			this.data._primary.updatedAt.text.current = rawData.updated_at;
-			this.data._primary.ruleset.text.current = rawData.ruleset;
-
-			this.data.basics.player.text.current = rawData.creator;
-			this.data.basics.chronicle.text.current = rawData.chronicle_name;
 
 			console.log(this.data);
 		}
@@ -52,7 +44,7 @@ export class Character implements aut.classes.Character {
 
 	changeValue(event: aut.short.Events): void {
 		const target = event.target as HTMLInputElement;
-		const targetName = target.name; 				// "c.attributes.manipulation.dot.1" 
+		const targetName = target.id; 				// "c.attributes.manipulation.dot.1" 
 		const names = targetName.split("."); 			// [ "c", "attributes", "manipulation", "dot", "1" ]
 		const cleanName = names.slice(0, -1).join("."); // "c.attributes.manipulation.dot" 
 
@@ -78,11 +70,11 @@ export class Character implements aut.classes.Character {
 				const max = (this.data[block][row][type] as aut.classes.Dot | aut.classes.Checkbox)._amount;
 
 				for (let i = 0; i < num; i++) {
-					(document.getElementsByName(`${cleanName}.${i}`)[0] as HTMLInputElement).checked = true;
+					(document.getElementById(`${cleanName}.${i}`) as HTMLInputElement).checked = true;
 				}
 
 				for (let i = num + 1; i < max; i++) {
-					(document.getElementsByName(`${cleanName}.${i}`)[0] as HTMLInputElement).checked = false;
+					(document.getElementById(`${cleanName}.${i}`) as HTMLInputElement).checked = false;
 				}
 
 				if (num === 0 && !(target.checked)) {
@@ -95,7 +87,7 @@ export class Character implements aut.classes.Character {
 
 			if (type === "pseudocheckbox") {
 				const newValue = (this.data[block][row][type] as aut.classes.PseudoCheckbox).nextValue(num);
-				(document.getElementsByName(targetName)[0] as HTMLInputElement).value = newValue;
+				(document.getElementById(targetName) as HTMLInputElement).value = newValue;
 			}
 		}
 
@@ -113,12 +105,12 @@ export class Character implements aut.classes.Character {
 
 					if (value) {
 						if (type === "precheckbox") {
-							const input = document.getElementsByName(`c.${block}.${row}.${type}`)[0] as HTMLInputElement;
+							const input = document.getElementById(`c.${block}.${row}.${type}`) as HTMLInputElement;
 							if (input) input.checked = value as boolean;
 						}
 
 						if (type === "text" || type === "textarea") {
-							const input = document.getElementsByName(`c.${block}.${row}.${type}`)[0] as HTMLInputElement;
+							const input = document.getElementById(`c.${block}.${row}.${type}`) as HTMLInputElement;
 							if (input) input.value = value as string;
 						}
 
@@ -126,7 +118,7 @@ export class Character implements aut.classes.Character {
 							const amount = (this.data[block][row][type] as Checkbox | Dot)._amount;
 
 							for (let i = 0; i < amount; i++) {
-								const input = document.getElementsByName(`c.${block}.${row}.${type}.${i}`)[0] as HTMLInputElement;
+								const input = document.getElementById(`c.${block}.${row}.${type}.${i}`) as HTMLInputElement;
 								if (input) input.checked = (i < value) ? true : false;
 							}
 						}
@@ -135,7 +127,7 @@ export class Character implements aut.classes.Character {
 							const length = (this.data[block][row][type].current as string[]).length;
 
 							for (let i = 0; i < length; i++) {
-								const input = document.getElementsByName(`c.${block}.${row}.${type}.${i}`)[0] as HTMLInputElement;
+								const input = document.getElementById(`c.${block}.${row}.${type}.${i}`) as HTMLInputElement;
 								if (input) input.value = (value as string[])[i];
 							}
 						}
@@ -176,30 +168,52 @@ export class Character implements aut.classes.Character {
 		});
 	}
 
-	delete(): Promise<void> {
-		const data: aut.request.character.DeleteOrGet = {
-			charKey: this.data._primary.uuid.text.current
+	insert(): Promise<void> {
+		const data = {
+			name: this.data.basics.name.text.current,
+			player_name: DatabaseClient.auth.user()?.user_metadata.full_name,
+			player_uuid: DatabaseClient.auth.user()?.id,
+			ruleset: this.data._primary.ruleset.text.current,
+			data: this.data
 		};
 
-		return MakeRequest("/char/delete", data)
-			.then(() => { toast.success("Character deleted."); })
-			.catch((errors) => { toast.error(`Submit failed. \n ${errors.data.join(" \n ")}`); });
+		return new Promise<void>((resolve, reject) => {
+			DatabaseClient.from("characters").insert(data)
+				.then((response) => {
+					if (response.error) { toast.error("Character cannot be inserted."); reject(); }
+					else { toast.success("Character inserted."); resolve(); }
+				});
+		});
 	}
 
-	submit(type: aut.short.SheetDisplayType): Promise<void> {
-		const data: aut.request.character.NewOrEdit = {
-			charName: this.data.basics.name.text.current,
-			charKey: this.data._primary.uuid.text.current,
-			charData: JSON.stringify(this.data)
+	update(): Promise<void> {
+		const data = {
+			data: this.data
 		};
 
-		return MakeRequest(`/char/${type}`, data)
-			.then(() => { toast.success("Character saved."); })
-			.catch((errors) => { toast.error(`Submit failed. \n ${errors.data.join(" \n ")}`); });
+		return new Promise<void>((resolve, reject) => {
+			DatabaseClient.from("characters").update(data)
+				.match({ uuid: this.data._primary.uuid.text.current }).single()
+				.then((response) => {
+					if (response.error) { toast.error("Character cannot be updated."); reject(); }
+					else { toast.success("Character updated."); resolve(); }
+				});
+		});
+	}
+
+	delete(): Promise<void> {
+		return new Promise<void>((resolve, reject) => {
+			DatabaseClient.from("characters").delete()
+				.match({ uuid: this.data._primary.uuid.text.current }).single()
+				.then((response) => {
+					if (response.error) { toast.error("Character cannot be deleted."); reject(); }
+					else { toast.success("Character deleted."); resolve(); }
+				});
+		});
 	}
 
 	rollStandard(title: string, difficulty: number, pool: number, hasHunger: boolean, hasSurge: boolean, rouse: number, offline: boolean): string {
-		const message: aut.request.dice.Roll = {
+		const message = {
 			charName: this.data.basics.name.text.current,
 			charKey: this.data._primary.uuid.text.current,
 			title: title,
@@ -213,7 +227,7 @@ export class Character implements aut.classes.Character {
 
 		message.difficulty = difficulty.toString();
 
-		const hungerPool: number = (hasHunger) ? this.data.theBlood.hunger.checkbox.current : 0;
+		const hungerPool: number = (hasHunger) ? this.data.the_blood.hunger.checkbox.current as number : 0;
 
 		const normalRoll: aut.data.Roll = RollDicePool(Math.max(0, pool - hungerPool));
 		const hungerRoll: aut.data.Roll = RollDicePool(Math.min(pool, hungerPool));
@@ -233,7 +247,7 @@ export class Character implements aut.classes.Character {
 		if (normalRoll.results.length > 0) message.normalResults = normalRoll.results.join(", ");
 		if (hungerRoll.results.length > 0) message.hungerResults = hungerRoll.results.join(", ");
 
-		// const charRouseAmount = parseInt(this.data.theBlood.rouseCheck.text.current);
+		// const charRouseAmount = parseInt(this.data.theb_lood.rouseCheck.text.current);
 
 		if (hasSurge && rouse > 0) {
 			message.infoRouse = `Make ${rouse + 1} Rouse Checks.`;
@@ -262,7 +276,7 @@ export class Character implements aut.classes.Character {
 	}
 
 	rollCheck(title: string, difficulty: number, pool: number, offline: boolean): string {
-		const message: aut.request.dice.Roll = {
+		const message = {
 			charName: this.data.basics.name.text.current,
 			charKey: this.data._primary.uuid.text.current,
 			title: title,
@@ -301,7 +315,7 @@ export class Character implements aut.classes.Character {
 	}
 
 	rollCompulsion(title: string, offline: boolean): string {
-		const message: aut.request.dice.Roll = {
+		const message = {
 			charName: this.data.basics.name.text.current,
 			charKey: this.data._primary.uuid.text.current,
 			title: title,
@@ -336,38 +350,40 @@ export class Character implements aut.classes.Character {
 		return result;
 	}
 
-	private sendRoll(message: aut.request.dice.Roll): void {
-		if (this.data._primary.chronicleUUID.text.current === "") {
+	private sendRoll(message: any): void {
+		if (this.data._primary.chronicle_uuid.text.current === "") {
 			toast.error("Character does not have a Chronicle.");
 		}
 		else {
-			MakeRequest("/dice/roll", { ...message })
+			
+
+			/*MakeRequest("/dice/roll", { ...message })
 				.then(undefined)
-				.catch(() => toast.error("Could not send the result to the Discord."));
+				.catch(() => toast.error("Could not send the result to the Discord."));*/
 		}
 	}
 
 	// TODO: This is a ruleset-specific calculation, it should be moved into the ruleset
 	private calculateValues(): void {
 		// Everything that determined by Blood Potency
-		const bloodPotency = this.data.theBlood?.bloodPotency.dot.current;
+		const bloodPotency = this.data.the_blood?.blood_potency.dot.current as number;
 		if (bloodPotency >= 0) {
-			const row = (Rulesets.getRuleset("v5Modern")).misc.bloodPotency[bloodPotency];
+			const row = (Rulesets.getRuleset("v5_modern")).misc.bloodPotency[bloodPotency];
 
-			this.data.theBlood.bloodSurge.text.current = row["bloodSurge"].toString();
-			this.data.theBlood.mendAmount.text.current = row["mendAmount"].toString();
-			this.data.theBlood.powerBonus.text.current = row["powerBonus"].toString();
-			this.data.theBlood.rouseCheck.text.current = row["rouseCheck"].toString();
-			this.data.theBlood.baneSeverity.text.current = row["baneSeverity"].toString();
-			this.data.theBlood.feedingPenalty.textarea.current = row["feedingPenalty"];
+			this.data.the_blood.blood_surge.text.current = row["blood_surge"].toString();
+			this.data.the_blood.mend_amount.text.current = row["mend_amount"].toString();
+			this.data.the_blood.power_bonus.text.current = row["power_bonus"].toString();
+			this.data.the_blood.rouse_check.text.current = row["rouse_check"].toString();
+			this.data.the_blood.bane_severity.text.current = row["bane_severity"].toString();
+			this.data.the_blood.feeding_penalty.textarea.current = row["feeding_penalty"];
 		}
 
-		if (this.data.theBlood) {
+		if (this.data.the_blood) {
 			// Health Calculation
-			this.data.theBlood.health.dot.current = 3 + this.data.attributes.stamina.dot.current;
+			this.data.the_blood.health.dot.current = 3 + this.data.attributes.stamina.dot.current;
 
 			// Willpower Calculation
-			this.data.theBlood.willpower.dot.current = this.data.attributes.composure.dot.current + this.data.attributes.resolve.dot.current;
+			this.data.the_blood.willpower.dot.current = this.data.attributes.composure.dot.current + this.data.attributes.resolve.dot.current;
 		}
 	}
 }

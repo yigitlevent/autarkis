@@ -6,7 +6,7 @@ namespace aut {
 
 		type Events = React.MouseEvent<HTMLInputElement, MouseEvent> | React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>;
 
-		type ClientState = "offline" | "loggedin" | "loggedout" | "precheck";
+		type ClientState = "offline" | "signedin" | "signedout" | "presign";
 
 		type SheetDisplayType = "new" | "edit" | "view";
 
@@ -71,6 +71,7 @@ namespace aut {
 
 		interface CharacterList {
 			chronicleUUID: string;
+			chronicleName: string;
 			sheetDisplayType: aut.short.SheetDisplayType;
 		}
 
@@ -158,89 +159,6 @@ namespace aut {
 
 	}
 
-	namespace request {
-
-		type Types = aut.request.user.Register | aut.request.user.Login |
-		aut.request.chronicle.NewOrEdit | aut.request.chronicle.DeleteOrGet | aut.request.chronicle.CharacterAddOrRemove |
-		aut.request.character.NewOrEdit | aut.request.character.DeleteOrGet | aut.request.character.SwitchEditable |
-		aut.request.dice.Roll;
-
-		namespace user {
-
-			interface Register {
-				username: string;
-				email: string;
-				password: string;
-				passwordrepeat: string;
-				"g-recaptcha-response": string;
-			}
-
-			interface Login {
-				username: string;
-				password: string;
-				"g-recaptcha-response": string;
-			}
-
-		}
-
-		namespace chronicle {
-
-			interface NewOrEdit {
-				chroName: string;
-				chroKey: string;
-				discordEnabled: boolean;
-				discordServer: string;
-				discordChannel: string;
-			}
-
-			interface CharacterAddOrRemove {
-				chroKey: string;
-				charKey: string;
-			}
-
-			interface DeleteOrGet {
-				chroKey: string;
-			}
-
-		}
-
-		namespace character {
-
-			interface NewOrEdit {
-				charName: string;
-				charKey: string;
-				charData: string;
-			}
-
-			interface DeleteOrGet {
-				charKey: string;
-			}
-
-			interface SwitchEditable {
-				charKey: string;
-				editable: boolean;
-			}
-
-		}
-
-		namespace dice {
-
-			interface Roll {
-				charName: string;
-				charKey: string;
-				title: string;
-				normalResults: string;
-				hungerResults: string;
-				results: string;
-				difficulty: string;
-				infoRouse: string,
-				infoWillpower: string;
-			}
-
-		}
-
-	}
-
 	namespace classes {
 
 		class AutarkisObject {
@@ -251,17 +169,14 @@ namespace aut {
 			import: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 			delete: () => Promise<void>;
-			submit: (displayType: aut.short.SheetDisplayType) => Promise<void>;
+			insert: () => Promise<void>;
+			update: () => Promise<void>;
 		}
 
 		class Chronicle extends AutarkisObject {
 			readonly type = "chronicle";
 
-			data: {
-				[key: string]: {
-					[key: string]: boolean | string | string[] | any[];
-				};
-			} = {};
+			data: { [key: string]: { [key: string]: Text | Switch; }; } = {};
 		}
 
 		class Character extends AutarkisObject {
@@ -271,7 +186,7 @@ namespace aut {
 			data: {
 				[key: string]: {
 					[key: string]: {
-						[key: string]: Text | Dot | Checkbox | PreCheckbox | PseudoCheckbox | Textarea;
+						[key: string]: Text | Switch | Dot | Checkbox | PreCheckbox | PseudoCheckbox | Textarea;
 					};
 				};
 			} = {};
@@ -287,6 +202,10 @@ namespace aut {
 
 		class Text {
 			current: string;
+		}
+
+		class Switch {
+			current: boolean;
 		}
 
 		class Textarea {
@@ -318,10 +237,9 @@ namespace aut {
 
 	namespace ruleset {
 
-		type Names = "v5Modern";
+		type Names = "v5_modern";
 
-		interface Ruleset<Chronicle, Character> {
-			chronicle: Chronicle;
+		interface Ruleset<Character> {
 			character: Character;
 			basics: aut.ruleset.Basics;
 			characterSheet: aut.ruleset.SheetLayout;
@@ -381,12 +299,12 @@ namespace aut {
 
 		interface BloodPotencyRow {
 			[key: string]: number | string;
-			bloodSurge: number;
-			mendAmount: number;
-			powerBonus: number;
-			rouseCheck: number;
-			baneSeverity: number;
-			feedingPenalty: string;
+			blood_surge: number;
+			mend_amount: number;
+			power_bonus: number;
+			rouse_check: number;
+			bane_severity: number;
+			feeding_penalty: string;
 		}
 
 	}
@@ -410,10 +328,10 @@ namespace aut {
 		}
 
 		interface Chronicle {
-			id: number;
 			uuid: string;
 			name: string;
-			creator: string;
+			storyteller_name: string;
+			storyteller_uuid: string;
 			ruleset: aut.ruleset.Names;
 			discord_enabled: boolean;
 			discord_server: string;
@@ -423,11 +341,11 @@ namespace aut {
 		}
 
 		interface Character {
-			id: number;
 			uuid: string;
 			name: string;
-			creator: string;
-			data: string;
+			player_name: string;
+			player_uuid: string;
+			data: aut.classes.Character;
 			ruleset: aut.ruleset.Names;
 			editable: boolean;
 			chronicle_uuid: string;

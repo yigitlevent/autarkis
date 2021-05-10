@@ -4,8 +4,8 @@
 -   **NEW:** `TestWrapper` elements are now ruleset-dependent.
 -   **NEW:** Test types are not ruleset-dependent.
 -   **NEW:** `Test` class now controls all things dice. 
--   **NEW:** Crippling Injury test. #5 
--   **NEW:** Dice probability calculations. #1
+-   **NEW:** Crippling Injury test. [#5](https://github.com/yigitlevent/autarkis/issues/5)
+-   **NEW:** Dice probability calculations. [#1](https://github.com/yigitlevent/autarkis/issues/1)
 -   **NEW:** `HTTPS` environment variable.
 -   **NEW:** `Content-Security-Policy` in `index.html`.
 -   **NEW:** `Switch` checkbox type.

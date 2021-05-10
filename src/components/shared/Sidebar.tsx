@@ -48,8 +48,18 @@ const SidebarWrapper = styled.div`
 	}
 `;
 
+const SidebarContentRow = styled.div`
+	width: 100%;
+`;
+
+const SidebarContent = styled.div`
+	float: left;
+	padding: 4px;
+	margin: 4px 2px;
+`;
+
 export function Sidebar(): JSX.Element {
-	const { clientState, setClientState } = useContext(ClientContext);
+	const { clientUsername, clientState, setClientState } = useContext(ClientContext);
 
 	const signOut = async (): Promise<void> => {
 		DatabaseClient.auth.signOut().then(() => { setClientState("signedout"); });
@@ -64,7 +74,16 @@ export function Sidebar(): JSX.Element {
 				{(clientState === "offline") ? <Sub>Offline</Sub> : ""}
 			</Title>
 
-			<div>{/* TODO: Fill here with account stuff */}</div>
+
+			{(clientState === "signedin")
+				? <SidebarContentRow>
+					<SidebarContent>Hello, {clientUsername}</SidebarContent>
+					<IconLink onClick={signOut} title="Logout">
+						<Icon size={24} name={"logout"} hover />
+					</IconLink>
+				</SidebarContentRow>
+				: null
+			}
 
 			<IconWrapper>
 				<IconLink href="https://github.com/yigitlevent/autarkis" title="Autarkis Github Repository" target="_blank" rel="noopener noreferrer">
@@ -74,13 +93,6 @@ export function Sidebar(): JSX.Element {
 				<IconLink href="https://discord.gg/w23ayKCKKZ" title="Autarkis Bot Discord Server" target="_blank" rel="noopener noreferrer">
 					<Icon size={24} name={"discord"} hover />
 				</IconLink>
-
-				{(clientState === "signedin")
-					? <IconLink onClick={signOut} title="Logout">
-						<Icon size={24} name={"logout"} hover />
-					</IconLink>
-					: null
-				}
 			</IconWrapper>
 		</SidebarWrapper>
 	);

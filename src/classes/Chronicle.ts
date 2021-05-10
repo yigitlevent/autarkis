@@ -37,8 +37,8 @@ export class Chronicle implements aut.classes.Chronicle {
 
 	changeValue(event: aut.short.Events): void {
 		const target = event.target as HTMLInputElement;
-		const targetID = target.id; 			// "s.basics.name" 
-		const name = targetID.split(".")[1]; 	// [ "s", "basics" ]
+		const targetID = target.id; 			// "basics.name" 
+		const name = targetID.split(".")[0]; 	// "basics"
 
 		if (target.type === "checkbox") this.data[name].switch.current = target.checked;
 		else if (target.type === "text") this.data[name].text.current = target.value;
@@ -46,42 +46,10 @@ export class Chronicle implements aut.classes.Chronicle {
 
 	placeSheetData(): void {
 		for (const block in this.data) {
-			const el = document.getElementById(`s.${block}`) as HTMLInputElement;
+			const el = document.getElementById(`${block}`) as HTMLInputElement;
 			if (el && el.type === "checkbox") el.checked = this.data[block].switch.current as boolean;
 			else if (el && el.type === "text") el.value = this.data[block].text.current as string;
 		}
-	}
-
-	export(event: React.FormEvent<HTMLInputElement>): void {
-		event.preventDefault();
-
-		/* TODO: Fix this
-		if (this.data.basics.name.length > 0) {
-			const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data));
-			const downloadAnchorNode = document.createElement("a");
-			downloadAnchorNode.setAttribute("href", dataStr);
-			downloadAnchorNode.setAttribute("download", `${CleanString(this.data.basics.name)}.chro.autarkis`);
-			document.body.appendChild(downloadAnchorNode); // required for firefox
-			downloadAnchorNode.click();
-			downloadAnchorNode.remove();
-
-			toast.success("Character file exported.");
-		}
-		else { toast.error("Please enter a valid character name."); }
-		*/
-	}
-
-	import(event: React.ChangeEvent<HTMLInputElement>): void {
-		const file = new FileReader();
-		file.readAsText((event.target.files as FileList)[0], "UTF-8");
-
-		file.addEventListener("load", (e) => {
-			if (e && e.target && e.target.result) {
-				this.data = JSON.parse(e.target.result as string);
-				this.placeSheetData();
-				toast.success("Character file imported.");
-			}
-		});
 	}
 
 	insert(): Promise<void> {

@@ -118,7 +118,7 @@ export const GlobalStyle = createGlobalStyle`
 			vertical-align: middle;
 
 			&:checked {
-				background: ${(props: aut.theme.StyleProps) => props.theme.element.backgroundLight} !important;
+				background: ${(props: aut.theme.StyleProps) => props.theme.element.backgroundLight};
 			}
 
 			&:disabled {

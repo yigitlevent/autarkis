@@ -20,7 +20,7 @@ export function useListChronicleCharacters(online: boolean, uuid: undefined | st
 export function useListChronicles(online: boolean): UseQueryResult<aut.server.Chronicle[], null> {
 	const query = useQuery<aut.server.Chronicle[], null>("ChroList",
 		async () => {
-			const list = await DatabaseClient.from("chronicles").select("*").eq("storyteller_uuid", DatabaseClient.auth.session()?.user.id);
+			const list = await DatabaseClient.from("chronicles").select("*").eq("storyteller_uuid", DatabaseClient.auth.session()?.user?.id);
 			return list.data as aut.server.Chronicle[];
 		},
 		{ enabled: (online) ? true : false }
@@ -32,7 +32,7 @@ export function useListChronicles(online: boolean): UseQueryResult<aut.server.Ch
 export function useListCharacters(online: boolean): UseQueryResult<aut.server.Character[], null> {
 	const query = useQuery<aut.server.Character[], null>("CharList",
 		async () => {
-			const list = await DatabaseClient.from("characters").select("*").eq("player_uuid", DatabaseClient.auth.session()?.user.id);
+			const list = await DatabaseClient.from("characters").select("*").eq("player_uuid", DatabaseClient.auth.session()?.user?.id);
 			return list.data as aut.server.Character[];
 		},
 		{ enabled: (online) ? true : false }

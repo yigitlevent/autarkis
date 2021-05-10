@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const Wrapper = styled.div`
+export const Topbox = styled.div`
 	width: 100vw;
 	height: 100vh;
 	background: ${(props: aut.theme.StyleProps) => props.theme.transparent};
@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 	z-index: 2000;
 `;
 
-const Form = styled.form`
+export const TopboxBox = styled.div<{ columns?: number; }>`
 	width: 360px;
 	max-width: 100%;
 	height: auto;
@@ -20,26 +20,29 @@ const Form = styled.form`
 	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	${p => (p.columns === 3 ? "grid-template-columns: 1fr 1fr 1fr;" : "grid-template-columns: 1fr 1fr;")}
+	grid-template-columns: ${p => (p.columns) ? `repeat(${p.columns}, 1fr)` : "1fr 1fr"};
 	grid-template-rows: auto;
-	grid-auto-rows: 30px;
+	grid-auto-rows: minmax(30px, auto);
 `;
 
-export const TopboxTitle = styled.div`
+export const TopboxTitle = styled.div<{ columns?: number; }>`
 	width: 100%;
 	font-size: 1.6em;
 	padding: 0 4px;
 	border-bottom: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 	margin: 4px 0;
 
-	grid-column: span 2;
+	grid-column: span ${p => (p.columns) ? p.columns : "2"};
 `;
 
-export const TopboxChildren = styled.div<{ columns: -1 | 0 | 1 | 2 | 3; topBorder?: boolean; span?: number; }>`
+export const TopboxChildren = styled.div<{ columns: -3 | -2 | -1 | 0 | 1 | 2 | 3; topBorder?: boolean; span?: number; center?: boolean; }>`
 	grid-column: span ${p => (p.span ? p.span : 1)};
 
 	display: grid;
 	grid-template-rows: 24px;
+	${p => (p.columns === -3 ? "grid-template-columns: max-content 1fr;" : "")}	
+	${p => (p.columns === -2 ? "grid-template-columns: 1fr 1fr 1fr 1fr;" : "")}	
 	${p => (p.columns === -1 ? "grid-template-columns: 1fr 1fr 1fr;" : "")}	
 	${p => (p.columns === 0 ? "grid-template-columns: 1fr 1fr;" : "")}	
 	${p => (p.columns === 1 ? "grid-template-columns: 1fr;" : "")}	
@@ -47,9 +50,16 @@ export const TopboxChildren = styled.div<{ columns: -1 | 0 | 1 | 2 | 3; topBorde
 	${p => (p.columns === 3 ? "grid-template-columns: 1fr 18px 24px;" : "")}	
 
 	justify-items: center;
-	
-	padding: 2px 4px;
+	align-self: start;
+
+	${p => (p.center ? "text-align: center;" : "text-align: left;")}
+
 	border-top: ${p => (p.topBorder ? (props: aut.theme.StyleProps) => props.theme.box.border : "none")};	
+
+	& > *:not(input[type="button"], .bs_select) {
+		justify-self: stretch;
+		justify-content: space-between;
+	}
 
 	& > label {
 		width: 100%;
@@ -58,9 +68,10 @@ export const TopboxChildren = styled.div<{ columns: -1 | 0 | 1 | 2 | 3; topBorde
 		padding: 4px 4px;
 	}
 	
-	& > select {
+	& > * > select {
 		width: 100%;
 		text-align: left;
+		grid-column: span 2;
 	}
 
 	& > input[type="number"] {
@@ -84,19 +95,3 @@ export const TopboxButton = styled.input.attrs({ type: "button" })`
 	width: 80px;
 	margin-top: 1px;
 `;
-
-export function Topbox({ children, title, formRef, otherChildren }: aut.props.Topbox): JSX.Element {
-	return (
-		<Wrapper>
-			<Form ref={formRef}>
-				<TopboxTitle>{title}</TopboxTitle>
-
-				{children}
-
-			</Form>
-
-			{otherChildren}
-
-		</Wrapper>
-	);
-}

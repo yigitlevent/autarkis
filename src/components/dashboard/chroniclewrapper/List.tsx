@@ -56,6 +56,18 @@ export function List({ chronicleUUID, chronicleName, sheetDisplayType }: aut.pro
 			});
 	};
 
+	const switchCharacterEditability = (editable: boolean): void => {
+		const characterUUID = (document.getElementById("character_uuid") as HTMLInputElement).value;
+
+		DatabaseClient.from("characters").update({ editable: editable })
+			.eq("uuid", characterUUID).single()
+			.then((response) => {
+				if (response.error) { /* TODO: toast */ }
+				else { }
+				refetch();
+			});
+	};
+
 	return (
 		(status === "loading")
 			? <Spinner />
@@ -93,12 +105,7 @@ export function List({ chronicleUUID, chronicleName, sheetDisplayType }: aut.pro
 								</Icon>
 
 								<Icon size={21} name={(character.editable) ? "edit_on" : "edit_off"} hover brightness title>
-									<Button value={""} onClick={() => {
-										/** TODO: Fix this
-										MakeRequest("/chro/char/editable", { charKey: character.uuid, editable: !character.editable })
-											.then().catch().finally(() => { refetch(); });
-											*/
-									}} />
+									<Button value={""} onClick={() => { switchCharacterEditability(!character.editable); }} />
 								</Icon>
 
 								<span className="name">{character.name}</span>

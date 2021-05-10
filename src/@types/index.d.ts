@@ -12,8 +12,6 @@ namespace aut {
 
 		type ListChange = "add" | "remove";
 
-		type RollTypes = "attributes" | "skills" | "disciplines" | "standard" | "rouse_check" | "willpower" | "humanity" | "compulsion";
-
 	}
 
 	namespace props {
@@ -26,10 +24,11 @@ namespace aut {
 			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; type: "character" | "chronicle"; };
 		}
 
-		interface DiceRoller {
+		interface TestWrapper {
 			event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-			character: undefined | aut.classes.Character;
-			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+			sheetDisplayType: aut.short.SheetDisplayType;
+			character: aut.classes.Character;
+			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 		}
 
 		interface Box {
@@ -50,9 +49,6 @@ namespace aut {
 
 		interface Topbox {
 			children?: JSX.Element | JSX.Element[];
-			title: string;
-			formRef?: React.RefObject<HTMLFormElement>;
-			otherChildren?: JSX.Element | JSX.Element[];
 		}
 
 		interface ConfirmBox {
@@ -83,8 +79,9 @@ namespace aut {
 
 		interface SheetBlock {
 			sheetDisplayType: aut.short.SheetDisplayType;
-			blockData: aut.ruleset.SheetBlock;
-			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+			blockData: aut.ruleset.CharacterSheetBlock;
+			ruleset: aut.ruleset.Names;
+			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 			changeSheetValue: (event: aut.short.Events) => void;
 		}
 
@@ -92,8 +89,10 @@ namespace aut {
 			sheetDisplayType: aut.short.SheetDisplayType;
 			blockTitle: string;
 			rowData: aut.ruleset.SheetRow;
-			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+			ruleset: aut.ruleset.Names;
+			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 			changeSheetValue: (event: aut.short.Events) => void;
+			changeSelected?: (values: Option[]) => void;
 		}
 
 	}
@@ -107,6 +106,41 @@ namespace aut {
 			ones: number;
 		}
 
+		interface TestData {
+			title: string;
+			type: string;
+			pools: { [key: string]: number; };
+			flags: { [key: string]: boolean; };
+			misc: { [key: string]: number; };
+			character: {
+				uuid: string;
+				name: string;
+				blood_potency: number;
+				aggravated_damage: number;
+			};
+		}
+
+		interface TestResult {
+			character: {
+				uuid: string;
+				name: string;
+			};
+			title: string;
+			type: string;
+			test: {
+				results: { [key: string]: number[]; };
+				result: string;
+				difficulty: number;
+			};
+			info: ([string] | [string, number])[];
+		}
+
+		interface Distributions {
+			success: number[];
+			critical: number[];
+		}
+
+		interface ProbabilityResult { [key: string]: number; }
 	}
 
 	namespace theme {
@@ -165,9 +199,6 @@ namespace aut {
 			changeValue: (event: aut.short.Events) => void;
 			placeSheetData: () => void;
 
-			export: (event: React.FormEvent<HTMLInputElement>) => void;
-			import: (event: React.ChangeEvent<HTMLInputElement>) => void;
-
 			delete: () => Promise<void>;
 			insert: () => Promise<void>;
 			update: () => Promise<void>;
@@ -191,9 +222,8 @@ namespace aut {
 				};
 			} = {};
 
-			rollStandard: (title: string, difficulty: number, pool: number, hasHunger: boolean, hasSurge: boolean, rouse: number, offline: boolean) => string;
-			rollCheck: (title: string, difficulty: number, pool: number, offline: boolean) => string;
-			rollCompulsion: (title: string, offline: boolean) => string;
+			export: (event: React.FormEvent<HTMLInputElement>) => void;
+			import: (event: React.ChangeEvent<HTMLInputElement>) => void;
 		}
 
 		class PreCheckbox {
@@ -239,61 +269,95 @@ namespace aut {
 
 		type Names = "v5_modern";
 
+		type TestFunction = (testData: aut.data.TestData) => aut.data.TestResult;
+		type ProbabilityFunction = (testData: aut.data.TestData) => aut.data.ProbabilityResult;
+
 		interface Ruleset<Character> {
-			character: Character;
 			basics: aut.ruleset.Basics;
-			characterSheet: aut.ruleset.SheetLayout;
-			misc: {
+			character: Character;
+			characterSheet: aut.ruleset.CharacterSheetLayout;
+			characterMisc: {
 				[key: string]: any;
 			};
+			tests: aut.ruleset.TestSheets;
+		}
+
+		interface TestSheets { [key: string]: TestSheet; }
+
+		interface TestSheet {
+			title: string;
+			testFunction: aut.ruleset.TestFunction;
+			probabilityFunction: aut.ruleset.ProbabilityFunction;
+			children: (aut.ruleset.SheetRow & aut.ruleset.TestSheetExtras)[];
+		}
+
+		type DefaultValue = [string] | [string, string, aut.ruleset.InputTypes] | [string, string, "pseudocheckbox", string, "unmarked" | "count" | "count/3"];
+
+		interface TestSheetExtras {
+			addTo?: string;
+			isPool?: true;
+			difficulty?: true;
+			defaultChecked?: true;
+			defaultValue?: aut.ruleset.DefaultValue;
 		}
 
 		interface Basics {
+			[key: string]: string[] | { [key: string]: string; },
 			pseudoCheckboxInputs: { [key: string]: string; };
 			attributes: string[];
 			skills: string[];
 			disciplines: string[];
 		}
 
-		type SheetLayout = SheetBlock[];
+		type CharacterSheetLayout = CharacterSheetBlock[];
 
-		interface SheetBlock {
+		interface CharacterSheetBlock {
 			title: string;
 			showTitle: boolean;
-			columns: SheetColumn[];
+			columns: ShetColumn[];
 		}
 
-		type SheetColumn = SheetRow[];
+		type ShetColumn = SheetRow[];
 
 		interface SheetRow {
 			title: string;
 
 			showTitle?: true;
 			boldTitle?: true;
-			isRollable?: true;
+			isTestable?: true;
 			isReadOnly?: true;
 			align?: "center" | "right";
 
 			inputs: InputTypes[];
 
 			// text?: {};
+			// number?: {};
+			// precheckbox?: {};
+			// postcheckbox?: {};
+
 			dot?: {
 				amount: 5 | 6 | 10 | 15;
 			};
+
 			checkbox?: {
 				amount: 3 | 5 | 10 | 15;
 			};
-			// precheckbox?: {};
+
 			pseudocheckbox?: {
 				amount: 3 | 5 | 10 | 15;
 				possibleValues: string[];
 			};
+
 			textarea?: {
 				amount: 2 | 3 | 4 | 5 | 6;
 			};
+
+			select?: {
+				categories: string[];
+			};
 		}
 
-		type InputTypes = "text" | "dot" | "checkbox" | "precheckbox" | "pseudocheckbox" | "textarea";
+		type InputTypes = "text" | "number" | "dot" | "checkbox" | "precheckbox" | "postcheckbox" | "pseudocheckbox" | "textarea" | "select";
 
 		type BloodPotency = BloodPotencyRow[];
 
@@ -353,7 +417,5 @@ namespace aut {
 			created_at: string;
 			updated_at: string;
 		}
-
 	}
-
 }

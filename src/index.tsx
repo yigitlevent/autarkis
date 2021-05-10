@@ -64,7 +64,7 @@ function App(): JSX.Element {
 	};
 
 	const setSessionData = useCallback((session: Session | null) => {
-		if (session) {
+		if (session && session.user) {
 			setClientUsername(session.user.user_metadata.full_name);
 			setClientState("signedin");
 		}

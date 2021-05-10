@@ -1,19 +1,20 @@
 import { Fragment, useState } from "react";
 
-import { Subtitle, BlockWrapper, ColumnWrapper } from "../../shared/Sheet";
+import { Subtitle, BlockWrapper, ColumnWrapper } from "../Sheet";
 
-import { SheetRow } from "./SheetRow";
+import { Row } from "./Row";
 
-export function SheetBlock({ sheetDisplayType, blockData, setDiceRoller, changeSheetValue }: aut.props.SheetBlock): JSX.Element {
+export function Column({ sheetDisplayType, blockData, ruleset, setTester: setDiceRoller, changeSheetValue }: aut.props.SheetBlock): JSX.Element {
 	const [isHidden, setIsHidden] = useState(false);
 
 	const columns = blockData.columns.map((column, index) => {
 		const rows = column.map((row, i) => {
-			return (<SheetRow key={`${row.title}_${index}_${i}`}
+			return (<Row key={`${row.title}_${index}_${i}`}
 				sheetDisplayType={sheetDisplayType}
 				blockTitle={blockData.title}
 				rowData={row}
-				setDiceRoller={setDiceRoller}
+				ruleset={ruleset}
+				setTester={setDiceRoller}
 				changeSheetValue={changeSheetValue}
 			/>);
 		});

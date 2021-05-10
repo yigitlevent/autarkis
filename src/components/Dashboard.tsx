@@ -10,10 +10,12 @@ import { useListCharacters, useListChronicles } from "../hooks/useQueries";
 import { Sidebar } from "./shared/Sidebar";
 import { MainBox } from "./shared/Box";
 import { ConfirmBox } from "./shared/ConfirmBox";
+import { TopboxChildren } from "./shared/Topbox";
 
 import { MyLists } from "./dashboard/MyLists";
 import { CharacterWrapper } from "./dashboard/CharacterWrapper";
 import { ChronicleWrapper } from "./dashboard/ChronicleWrapper";
+import { DirtyString } from "../function/utility";
 
 export function Dashboard(): JSX.Element {
 	const { clientState } = useContext(ClientContext);
@@ -55,6 +57,7 @@ export function Dashboard(): JSX.Element {
 		setSelectVal(undefined);
 		setSheetRuleset(undefined);
 		changeSheet(undefined, undefined, undefined, false);
+		setIsRulesetSelectOpen(false);
 	}, [changeSheet]);
 
 	return (
@@ -68,11 +71,14 @@ export function Dashboard(): JSX.Element {
 				? <ConfirmBox
 					title={"Ruleset Selection"}
 					innerHTML={
-						<Select
-							options={Rulesets.getRulesetNames()} search closeOnSelect showAsText
-							placeholder={"Choose a Ruleset for your chronicle."}
-							onSelectedChange={(values) => { setSelectVal(values[0].name as aut.ruleset.Names); }}
-						/>
+						<TopboxChildren columns={1} span={1}>
+							<Select
+								options={Rulesets.getRulesetNames().map((v) => { return { name: DirtyString(v), value: v }; })}
+								search closeOnSelect showAsText
+								placeholder={"Choose a Ruleset for your chronicle."}
+								onSelectedChange={(values) => { setSelectVal(values[0].value as aut.ruleset.Names); }}
+							/>
+						</TopboxChildren>
 					}
 					button={"Confirm"}
 					callback={selectorCallback}

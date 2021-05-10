@@ -12,6 +12,11 @@ export const Input = styled.input<{ align?: string; columns?: number; }>`
 	grid-column: span ${p => p.columns};
 `;
 
+export const NumberInput = styled(Input)`
+	padding: 0 !important;
+	text-align: center;
+`;
+
 export const Textarea = styled.textarea<{ columns: number; height?: number; }>`
 	width: 100% !important;
 	height:  ${p => (p.height) ? `${p.height}px` : "100%"} !important;
@@ -46,11 +51,28 @@ export const Dot = styled(Checkbox)`
 	border-radius: 100%;
 `;
 
+export const Switch = styled(Checkbox)`
+	&::after {
+		content: "✘";
+		margin: -4px 1px 0px;
+		font-size: 0.95em;
+		display: block;
+	}
+	
+	&:checked {
+		background: ${(props: aut.theme.StyleProps) => props.theme.element.background}!important;
+
+		&::after {
+			content: "✔";
+		}
+	}
+`;
+
 export const PseudoCheckbox = styled.input.attrs({ type: "text" })`
 	height: 14px !important;
 	width: 14px !important;
 	border: none!important;
-	background-color: ${(props: aut.theme.StyleProps) => props.theme.element.background}!important;
+	background: ${(props: aut.theme.StyleProps) => props.theme.element.background}!important;
 	appearance: none;
 	cursor: pointer !important;
 	margin: auto 1px !important;

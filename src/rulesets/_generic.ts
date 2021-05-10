@@ -62,8 +62,12 @@ export class PseudoCheckbox implements aut.classes.PseudoCheckbox {
 		return this.current.filter((x) => x === "").length;
 	}
 
-	getAmount(value: string): number {
-		return this.current.filter((x) => x === value).length;
+	getUnmarked(emptyDots: number): number {
+		return this.getEmpty() - emptyDots;
+	}
+
+	getAmount(value: string, ruleset: aut.ruleset.Names): number {
+		return this.current.filter((x) => x === (Rulesets.getRuleset(ruleset)).basics.pseudoCheckboxInputs[value]).length;
 	}
 }
 

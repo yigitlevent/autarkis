@@ -1,12 +1,14 @@
 import { Fragment, useContext, useState } from "react";
 import styled from "styled-components";
+import Select, { Group } from "react-basic-select";
 
 import { CleanString } from "../../../function/utility";
 
 import { ClientContext } from "../../../contexts/Contexts";
 
-import { Input, Textarea, Button, Checkbox, PseudoCheckbox, Dot, InputGroup } from "../../shared/Inputs";
+import { Input, NumberInput, Textarea, Button, Checkbox, Switch, PseudoCheckbox, Dot, InputGroup } from "../../shared/Inputs";
 import { Icon } from "../../shared/Icon";
+import { Rulesets } from "../../../rulesets/_rulesets";
 
 const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }>`
 	display: grid;
@@ -17,10 +19,10 @@ const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }
 	text-align: ${p => (p.align) ? p.align : "initial"};
 `;
 
-export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller, changeSheetValue }: aut.props.SheetRow): JSX.Element {
+export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester: setDiceRoller, changeSheetValue, changeSelected }: aut.props.SheetRow): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
-	const [nameString] = useState(`c.${(sheetDisplayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`);
+	const [nameString] = useState(`${(sheetDisplayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`);
 
 	const [gridData] = useState(() => {
 		const tempColumnWidths: string[] = [];
@@ -32,7 +34,7 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			tempColumnAmount++;
 		}
 
-		if (rowData.isRollable && (sheetDisplayType === "view" || clientState === "offline")) {
+		if (rowData.isTestable && (sheetDisplayType === "view" || clientState === "offline")) {
 			tempColumnWidths.push("20px");
 			tempColumnAmount++;
 		}
@@ -42,8 +44,23 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 			tempColumnAmount++;
 		}
 
+		if (rowData.inputs.includes("select")) {
+			tempColumnWidths.push("4fr");
+			tempColumnAmount++;
+		}
+
 		if (rowData.inputs.includes("text")) {
 			tempColumnWidths.push("4fr");
+			tempColumnAmount++;
+		}
+
+		if (rowData.inputs.includes("postcheckbox")) {
+			tempColumnWidths.push("21px");
+			tempColumnAmount++;
+		}
+
+		if (rowData.inputs.includes("number")) {
+			tempColumnWidths.push("26px");
 			tempColumnAmount++;
 		}
 
@@ -109,6 +126,23 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 		return elements;
 	});
 
+	const createSelectOptions = (categories: string[]) => {
+		const options: Group[] = [];
+
+		for (const category in categories) {
+			const name = categories[category];
+			options.push({
+				name: name,
+				value: name.toLowerCase(),
+				options: ((Rulesets.getRuleset(ruleset)).basics[name.toLowerCase()] as string[]).sort().map((v) => {
+					return { name: v, value: CleanString(v) };
+				})
+			});
+		}
+
+		return options;
+	};
+
 	return (
 		<RowWrapper key={nameString} align={rowData.align} columns={gridData.columnWidths} rows={gridData.rowWidths}>
 
@@ -121,15 +155,28 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 				: null
 			}
 
-			{(rowData.isRollable && (sheetDisplayType === "view" || clientState === "offline"))
+			{(rowData.isTestable && (sheetDisplayType === "view" || clientState === "offline"))
 				? <Icon size={18} name={"roll"} hover brightness title>
-					<Button id={`c.misc.roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setDiceRoller(event); }} />
+					<Button id={`roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setDiceRoller(event); }} />
 				</Icon>
 				: null
 			}
 
 			{(rowData.showTitle)
 				? <label className={(rowData.boldTitle) ? "bold" : ""} key={`${nameString}.label`}>{rowData.title}</label>
+				: null
+			}
+
+			{(rowData.inputs.includes("select") && rowData.select && changeSelected)
+				? <Select
+					options={createSelectOptions(rowData.select.categories)}
+					onSelectedChange={changeSelected}
+					multi={true}
+					search={true}
+					appendGroupValue={true}
+					showAsText={true}
+					placeholder={rowData.title}
+				/>
 				: null
 			}
 
@@ -145,6 +192,25 @@ export function SheetRow({ sheetDisplayType, blockTitle, rowData, setDiceRoller,
 				: null
 			}
 
+			{(rowData.inputs.includes("postcheckbox"))
+				? <Switch key={`${nameString}.postcheckbox`}
+					id={`${nameString}.postcheckbox`}
+					onClick={changeSheetValue}
+				/>
+				: null
+			}
+
+			{(rowData.inputs.includes("number"))
+				? <NumberInput
+					type="number"
+					align={rowData.align}
+					id={`${nameString}.number`}
+					key={`${nameString}.number`}
+					readOnly={(rowData.isReadOnly) ? true : false}
+					onChange={changeSheetValue}
+				/>
+				: null
+			}
 			{(rowData.inputs.includes("dot") || rowData.inputs.includes("pseudocheckbox") || rowData.inputs.includes("checkbox"))
 				? <InputGroup>{inputGroup}</InputGroup>
 				: null

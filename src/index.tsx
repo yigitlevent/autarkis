@@ -59,6 +59,9 @@ function App(): JSX.Element {
 	const [clientState, setClientState] = useState<aut.short.ClientState>("presign");
 	const [clientUsername, setClientUsername] = useState<undefined | string>(undefined);
 
+	// TODO: Delete later
+	console.log(process.env.NODE_ENV);
+
 	const signIn = async (provider: Provider): Promise<void> => {
 		await DatabaseClient.auth.signIn({ provider: provider }, { redirectTo: process.env.REACT_APP_REDIRECT_URL });
 	};
@@ -126,7 +129,6 @@ function App(): JSX.Element {
 
 ReactDOM.render(
 	<StrictMode>
-		{process.env.NODE_ENV}
 		<QueryClientProvider client={GlobalQueryClient}>
 			<ReactQueryDevtools initialIsOpen={true} position={"top-right"} />
 			<App />

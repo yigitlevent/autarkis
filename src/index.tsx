@@ -126,6 +126,7 @@ function App(): JSX.Element {
 
 ReactDOM.render(
 	<StrictMode>
+		{process.env.NODE_ENV}
 		<QueryClientProvider client={GlobalQueryClient}>
 			<ReactQueryDevtools initialIsOpen={true} position={"top-right"} />
 			<App />

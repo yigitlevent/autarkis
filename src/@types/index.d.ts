@@ -12,6 +12,8 @@ namespace aut {
 
 		type ListChange = "add" | "remove";
 
+		type SheetCategory = "generator" | "character" | "chronicle";
+
 	}
 
 	namespace props {
@@ -21,7 +23,7 @@ namespace aut {
 		}
 
 		interface MyListRow {
-			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; type: "character" | "chronicle"; };
+			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; category: aut.short.SheetCategory; };
 		}
 
 		interface TestWrapper {
@@ -219,7 +221,7 @@ namespace aut {
 		}
 
 		class Generator {
-			
+
 		}
 
 		class AutarkisObject {

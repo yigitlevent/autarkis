@@ -20,7 +20,7 @@ import { DirtyString } from "../function/utility";
 export function Dashboard(): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
-	const [sheetCategory, setSheetCategory] = useState<undefined | "character" | "chronicle">(undefined);
+	const [sheetCategory, setSheetCategory] = useState<undefined | aut.short.SheetCategory>(undefined);
 	const [sheetUUID, setSheetUUID] = useState<undefined | string>(undefined);
 	const [sheetRuleset, setSheetRuleset] = useState<undefined | aut.ruleset.Names>(undefined);
 
@@ -30,10 +30,10 @@ export function Dashboard(): JSX.Element {
 	const { refetch: chronicleRefetch } = useListChronicles(clientState !== "offline");
 	const { refetch: characterRefetch } = useListCharacters(clientState !== "offline");
 
-	const changeSheet = useCallback((type: undefined | "character" | "chronicle", uuid: undefined | string, ruleset: undefined | "none" | aut.ruleset.Names, refetch: boolean): void => {
+	const changeSheet = useCallback((category: undefined | aut.short.SheetCategory, uuid: undefined | string, ruleset: undefined | "none" | aut.ruleset.Names, refetch: boolean): void => {
 		setSheetRuleset(undefined);
 
-		setSheetCategory(type);
+		setSheetCategory(category);
 		setSheetUUID(uuid);
 
 		if (ruleset === "none") { setIsRulesetSelectOpen(false); }

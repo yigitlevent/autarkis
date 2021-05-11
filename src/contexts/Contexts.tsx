@@ -8,8 +8,8 @@ export const ClientContext = createContext({
 });
 
 export const SheetContext = createContext({
-	sheetCategory: undefined as (undefined | "character" | "chronicle"),
+	sheetCategory: undefined as (undefined | aut.short.SheetCategory),
 	sheetUUID: undefined as (undefined | string),
 	sheetRuleset: undefined as (undefined | aut.ruleset.Names),
-	changeSheet: (() => { /* */ }) as (type: undefined | "character" | "chronicle", uuid: undefined | string, ruleset: aut.ruleset.Names | "none" | undefined, refetch: boolean) => void
+	changeSheet: (() => { /* */ }) as (category: undefined | aut.short.SheetCategory, uuid: undefined | string, ruleset: aut.ruleset.Names | "none" | undefined, refetch: boolean) => void
 });

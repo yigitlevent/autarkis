@@ -58,7 +58,7 @@ export function MyLists(): JSX.Element {
 									sheetData={{
 										name: chro.name, uuid: chro.uuid,
 										date: chro.created_at, creator: chro.storyteller_name,
-										ruleset: chro.ruleset, type: "chronicle"
+										ruleset: chro.ruleset, category: "chronicle"
 									}}
 								/>
 							)}
@@ -68,7 +68,8 @@ export function MyLists(): JSX.Element {
 
 			<Wrapper>
 				<Subtitle>MY CHARACTERS</Subtitle>
-				<Button className="button" type="button" value="Create New Character" onClick={() => { changeSheet("character", undefined, undefined, false); }} />
+				<Button className="button" type="button" value="New Freeform Character" onClick={() => { changeSheet("character", undefined, undefined, false); }} />
+				<Button className="button" type="button" value="New Generated Character" onClick={() => { changeSheet("generator", undefined, undefined, false); }} />
 
 				{(clientState !== "offline" && characterList.status === "loading")
 					? <Spinner />
@@ -80,7 +81,7 @@ export function MyLists(): JSX.Element {
 									sheetData={{
 										name: char.name, uuid: char.uuid,
 										date: char.created_at, creator: char.player_name,
-										ruleset: char.ruleset, type: "character"
+										ruleset: char.ruleset, category: "character"
 									}}
 								/>
 							)}

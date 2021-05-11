@@ -36,7 +36,7 @@ export function MyListsRow({ sheetData }: aut.props.MyListRow): JSX.Element {
 			uuid: sheetData.uuid,
 			date: `Created At: ${splitDateTime[1].split(".")[0]}, ${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`,
 			creator: sheetData.creator,
-			type: sheetData.type,
+			category: sheetData.category,
 			ruleset: sheetData.ruleset
 		};
 	});
@@ -56,7 +56,7 @@ export function MyListsRow({ sheetData }: aut.props.MyListRow): JSX.Element {
 				<Icon size={21} name={"secret_key"} hover brightness />
 			</Button>
 
-			<Link className="name" onClick={() => { changeSheet(data.type, data.uuid, data.ruleset, false); }}>{data.name}</Link>
+			<Link className="name" onClick={() => { changeSheet(data.category, data.uuid, data.ruleset, false); }}>{data.name}</Link>
 
 			<span className={"hide"}>{data.creator}</span>
 		</Row>

@@ -195,6 +195,33 @@ namespace aut {
 
 	namespace classes {
 
+		class Test {
+			_character: aut.classes.Character;
+			_ruleset: aut.ruleset.Names;
+
+			title: string;
+			type: string;
+			testFunction: aut.ruleset.TestFunction;
+			probabilityFunction: aut.ruleset.ProbabilityFunction;
+
+			poolContributors: { [key: string]: { [key: string]: number; }; } = {};
+			pools: { [key: string]: number; } = {};
+
+			flags: { [key: string]: boolean; } = {};
+
+			misc: { [key: string]: number; } = {};
+
+			placeSheetData: () => void;
+			changeValue: (event: aut.short.Events) => void;
+			changeSelected: (values: Option[]) => void;
+			calculateProbabilities: () => aut.data.ProbabilityResult;
+			roll: (offlineTest: boolean) => aut.data.TestResult;
+		}
+
+		class Generator {
+			
+		}
+
 		class AutarkisObject {
 			changeValue: (event: aut.short.Events) => void;
 			placeSheetData: () => void;

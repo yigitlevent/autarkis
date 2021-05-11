@@ -4,7 +4,7 @@ import { Dot, PseudoCheckbox } from "../rulesets/_generic";
 
 import { CleanString } from "../function/utility";
 
-export class Test {
+export class Test implements aut.classes.Test {
 	_character: aut.classes.Character;
 	_ruleset: aut.ruleset.Names;
 

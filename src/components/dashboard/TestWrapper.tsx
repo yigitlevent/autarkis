@@ -42,7 +42,7 @@ export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props
 	const [probabilityTopbox, setProbabilityTopbox] = useState<JSX.Element>(<Fragment />);
 	const [resultTopbox, setResultTopbox] = useState<JSX.Element>(<Fragment />);
 
-	const changeSheetValue = useCallback((valueEvent: aut.short.Events): void => {
+	const changeSheetValue = useCallback((valueEvent: aut.Events): void => {
 		if (basics) {
 			basics.tester.changeValue(valueEvent);
 			basics.tester.placeSheetData();

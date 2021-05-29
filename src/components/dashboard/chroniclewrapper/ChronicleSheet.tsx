@@ -45,14 +45,14 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 		);
 	}, [database, removeSheet, sheetID]);
 
-	const changeSheetValue = useCallback((event: aut.short.Events) => {
+	const changeSheetValue = useCallback((event: aut.Events) => {
 		if (displayType !== "view") setters.changeValue(event);
 	}, [displayType, setters]);
 
 	return (
 		<Dashboard>
 
-			{deleteBox}
+			{(data) ? deleteBox : <Fragment />}
 
 			<Extras>
 				<Icon size={24} name={"close"} hover brightness float={"right"} title>

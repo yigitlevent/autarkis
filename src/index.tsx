@@ -42,7 +42,7 @@ const DarkPackLogo = styled.a`
 `;
 
 function App(): JSX.Element {
-	const [clientState, setClientState] = useState<aut.short.ClientState>("presign");
+	const [clientState, setClientState] = useState<aut.ClientState>("presign");
 	const [clientUsername, setClientUsername] = useState<undefined | string>(undefined);
 
 	// TODO: Delete later

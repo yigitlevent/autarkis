@@ -17,12 +17,12 @@ namespace aut {
 		}
 
 		interface SheetList {
-			createSheet: (category: aut.short.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
+			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
 		}
 
 		interface SheetListRow {
-			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; category: aut.short.SheetCategory; };
-			createSheet: (category: aut.short.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
+			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; category: aut.SheetCategory; };
+			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
 		}
 
 		interface CharacterSheet {
@@ -90,25 +90,25 @@ namespace aut {
 		interface CharacterList {
 			chronicleUUID: string;
 			chronicleName: string;
-			sheetDisplayType: aut.short.SheetDisplayType;
+			sheetDisplayType: aut.SheetDisplayType;
 		}
 
 		interface SheetBlock {
-			sheetDisplayType: aut.short.SheetDisplayType;
+			sheetDisplayType: aut.SheetDisplayType;
 			blockData: aut.ruleset.CharacterSheetBlock;
 			ruleset: aut.ruleset.Names;
 			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.short.Events) => void;
+			changeSheetValue: (event: aut.Events) => void;
 			changeSelected: (values: Option[], id?: string) => void;
 		}
 
 		interface SheetRow {
-			sheetDisplayType: aut.short.SheetDisplayType;
+			sheetDisplayType: aut.SheetDisplayType;
 			blockTitle: string;
 			rowData: aut.ruleset.SheetRow;
 			ruleset: aut.ruleset.Names;
 			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.short.Events) => void;
+			changeSheetValue: (event: aut.Events) => void;
 			changeSelected: (values: Option[], id?: string) => void;
 		}
 

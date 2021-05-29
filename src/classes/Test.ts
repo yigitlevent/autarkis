@@ -3,7 +3,7 @@ import { Dot, PseudoCheckbox } from "../rulesets/_generic";
 import { CleanString } from "../function/utility";
 
 export class Test implements aut.classes.Test {
-	_data: aut.short.GenericCharacterData;
+	_data: aut.data.GenericCharacterData;
 	_ruleset: aut.ruleset.Names;
 
 	title: string;
@@ -18,7 +18,7 @@ export class Test implements aut.classes.Test {
 
 	misc: { [key: string]: number; } = {}; // HOLDS: difficulty: true
 
-	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, characterData: aut.short.GenericCharacterData) {
+	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, characterData: aut.data.GenericCharacterData) {
 		this._data = characterData;
 		this._ruleset = ruleset;
 
@@ -58,7 +58,7 @@ export class Test implements aut.classes.Test {
 		this.calculatePools();
 	}
 
-	private getDefaultValue(array: aut.ruleset.DefaultValue, characterData: aut.short.GenericCharacterData): number {
+	private getDefaultValue(array: aut.ruleset.DefaultValue, characterData: aut.data.GenericCharacterData): number {
 		if (array.length === 3 || array.length === 5) {
 			const row = characterData[array[0]][array[1]];
 
@@ -121,7 +121,7 @@ export class Test implements aut.classes.Test {
 		}
 	}
 
-	changeValue(event: aut.short.Events): void {
+	changeValue(event: aut.Events): void {
 		const target = event.target as HTMLInputElement;
 		const row = target.id.split(".")[1];
 		const type = target.id.split(".")[2];

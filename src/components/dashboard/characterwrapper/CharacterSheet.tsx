@@ -47,7 +47,7 @@ export function CharacterSheet({ sheetID, removeSheet, moveSheet, characterObjec
 		);
 	}, [data.basics.name.text, database, removeSheet, sheetID]);
 
-	const changeSheetValue = useCallback((event: aut.short.Events) => {
+	const changeSheetValue = useCallback((event: aut.Events) => {
 		if (displayType !== "view") {
 			setters.changeValue(event);
 			// REMOVE: setChangeTime(Date.now());

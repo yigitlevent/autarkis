@@ -3,11 +3,11 @@ namespace aut {
 	namespace hooks {
 
 		type UseCharacterReturns = [
-			aut.short.SheetDisplayType,
-			aut.short.GenericCharacterData,
+			aut.SheetDisplayType,
+			aut.GenericCharacterData,
 			{
-				setDisplayType: (newDisplayType?: aut.short.SheetDisplayType | undefined) => void,
-				changeValue: (event: aut.short.Events) => void,
+				setDisplayType: (newDisplayType?: aut.SheetDisplayType | undefined) => void,
+				changeValue: (event: aut.Events) => void,
 				changeSelected: (options: rbs.Option[], id: string) => void;
 			},
 			{
@@ -18,11 +18,11 @@ namespace aut {
 		];
 
 		type UseChronicleReturns = [
-			aut.short.SheetDisplayType,
-			aut.short.GenericChronicleData,
+			aut.SheetDisplayType,
+			aut.GenericChronicleData,
 			{
-				setDisplayType: (newDisplayType?: aut.short.SheetDisplayType | undefined) => void,
-				changeValue: (event: aut.short.Events) => void;
+				setDisplayType: (newDisplayType?: aut.SheetDisplayType | undefined) => void,
+				changeValue: (event: aut.Events) => void;
 			},
 			{
 				insert: () => Promise<void>,

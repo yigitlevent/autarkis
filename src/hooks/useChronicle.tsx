@@ -13,7 +13,7 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 	const [rawData, setRawData] = useState<aut.server.Chronicle>();
 	const [displayType, setDisplayType] = useSheetDisplayType((chronicleUUID) ? "view" : "new");
 
-	const generateDataLayout = useCallback((): aut.short.GenericCharacterDataLayout => {
+	const generateDataLayout = useCallback((): aut.data.GenericCharacterDataLayout => {
 		const sheetLayout = new GenericChronicle();
 
 		sheetLayout.ruleset.text.current = chronicleRuleset;
@@ -22,7 +22,7 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 		return sheetLayout;
 	}, [chronicleRuleset, uuid]);
 
-	const setLoadedData = useCallback((chronicleRawData: aut.server.Chronicle, layout: aut.short.GenericCharacterDataLayout): aut.short.GenericCharacterDataLayout => {
+	const setLoadedData = useCallback((chronicleRawData: aut.server.Chronicle, layout: aut.data.GenericCharacterDataLayout): aut.data.GenericCharacterDataLayout => {
 		if (rawData) {
 			for (const key in chronicleRawData) {
 				const keyProper = key as keyof typeof chronicleRawData;
@@ -34,9 +34,9 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 		return layout;
 	}, [rawData]);
 
-	const [data, setData] = useState<aut.short.GenericChronicleData>(generateDataLayout() as any);
+	const [data, setData] = useState<aut.data.GenericChronicleData>(generateDataLayout() as any);
 
-	const changeValue = useCallback((event: aut.short.Events): void => {
+	const changeValue = useCallback((event: aut.Events): void => {
 		const target = event.target as HTMLInputElement;
 		const targetID = target.id; 			// "basics.name" 
 		const name = targetID.split(".")[0]; 	// "basics"

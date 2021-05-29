@@ -16,7 +16,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 	const [rawData, setRawData] = useState<aut.server.Character>();
 	const [displayType, setDisplayType] = useSheetDisplayType((characterUUID) ? "view" : "new");
 
-	const generateDataLayout = useCallback((): aut.short.GenericCharacterDataLayout => {
+	const generateDataLayout = useCallback((): aut.data.GenericCharacterDataLayout => {
 		const newData: { [key: string]: { [key: string]: { [key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select; }; }; } = {};
 		const sheetLayout = (Rulesets.getRuleset(ruleset)).characterSheet;
 
@@ -72,7 +72,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 		return newData;
 	}, [characterRuleset, ruleset]);
 
-	const setLoadedData = useCallback((characterRawData: aut.server.Character, layout: aut.short.GenericCharacterDataLayout): aut.short.GenericCharacterDataLayout => {
+	const setLoadedData = useCallback((characterRawData: aut.server.Character, layout: aut.data.GenericCharacterDataLayout): aut.data.GenericCharacterDataLayout => {
 		const temp = characterRawData.data as any;
 
 		for (const block in temp) {
@@ -102,7 +102,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 		return layout;
 	}, []);
 
-	const [data, setData] = useState<aut.short.GenericCharacterData>(generateDataLayout() as any);
+	const [data, setData] = useState<aut.data.GenericCharacterData>(generateDataLayout() as any);
 
 	// TODO: This is a ruleset-specific calculation, it should be moved into the ruleset
 	const calculateValues = useCallback((): void => {
@@ -173,7 +173,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 		}
 	}, [data]);
 
-	const changeValue = useCallback((event: aut.short.Events): void => {
+	const changeValue = useCallback((event: aut.Events): void => {
 		const target = event.target as HTMLInputElement;
 		const targetName = target.id; 					// "attributes.manipulation.dot.1" 
 		const names = targetName.split("."); 			// [ "attributes", "manipulation", "dot", "1" ]

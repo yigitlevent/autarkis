@@ -5,28 +5,28 @@ import { V5ModernCharacterAdvantages, V5ModernCharacterAdvantagesFlat, V5ModernC
 export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	{
 		text: "Choose your Generation",
-		condition: (character: aut.classes.Character): [boolean, string] => {
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
 			return [
-				character.data.the_blood.generation.select.current.length === 1,
+				characterData.the_blood.generation.select.current.length === 1,
 				"Generation select is located under 'The Blood'."
 			];
 		}
 	},
 	{
 		text: "Choose your Clan",
-		condition: (character: aut.classes.Character): [boolean, string] => {
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
 			return [
-				character.data.basics.clan.select.current.length === 1,
+				characterData.basics.clan.select.current.length === 1,
 				"Clan select is located at the top of the sheet."
 			];
 		}
 	},
 	{
 		text: "Choose your Predator type",
-		condition: (character: aut.classes.Character): [boolean, string] => {
-			const clan = character.data.basics.clan.select.current;
-			const generation = character.data.the_blood.generation.select.current;
-			const predatorType = character.data.basics.predator_type.select.current;
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
+			const clan = characterData.basics.clan.select.current;
+			const generation = characterData.the_blood.generation.select.current;
+			const predatorType = characterData.basics.predator_type.select.current;
 
 			if ((clan.length === 1 && clan[0] === "thin_blooded") || (generation.length === 1 && generation[0].toLowerCase().search("childe") > -1)) {
 				if (predatorType.length === 0) { return [true, ""]; }
@@ -41,11 +41,11 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Choose your Attributes",
-		condition: (character: aut.classes.Character): [boolean, string] => {
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
 			const attributeDots = [0, 1, 4, 3, 1, 0];
 
-			for (const keys in character.data.attributes) {
-				const idx = character.data.attributes[keys].dot.current;
+			for (const keys in characterData.attributes) {
+				const idx = characterData.attributes[keys].dot.current;
 				attributeDots[idx] = attributeDots[idx] - 1;
 			}
 
@@ -56,13 +56,13 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Choose your Skills",
-		condition: (character: aut.classes.Character): [boolean, string] => {
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
 			const skillJackDots = [0, 10, 8, 1, 0, 0];
 			const skillBalancedDots = [0, 7, 5, 3, 0, 0];
 			const skillSpecialistDots = [0, 3, 3, 3, 1, 0];
 
-			for (const keys in character.data.skills) {
-				const idx = character.data.skills[keys].dot.current;
+			for (const keys in characterData.skills) {
+				const idx = characterData.skills[keys].dot.current;
 				if (idx === 0) continue;
 
 				skillJackDots[idx] = skillJackDots[idx] - 1;
@@ -85,9 +85,9 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Add Free Specialities",
-		condition: (character: aut.classes.Character): [boolean, string] => {
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
 			// 1) We create a list of skills with specialities and their dots
-			const charSkills = character.data.skills;
+			const charSkills = characterData.skills;
 			const characterSkills: { [key: string]: { dots: number; specialities: string[]; }; } = {};
 
 			for (const key in charSkills) {
@@ -98,7 +98,7 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 			}
 
 			// 2) We check if ONE of the listed specialities listed on predator type has been added
-			const predatorTypeName = character.data.basics.predator_type.select.current[0];
+			const predatorTypeName = characterData.basics.predator_type.select.current[0];
 			const hasPredatorType = (predatorTypeName !== undefined && predatorTypeName.length > 0 && predatorTypeName[0] !== "");
 
 			let hasPredatorSpeciality = false;
@@ -157,8 +157,8 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Add Advantages",
-		condition: (character: aut.classes.Character): [boolean, string] => {
-			const charAdvantages = character.data.advantages;
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
+			const charAdvantages = characterData.advantages;
 
 			// 1) We create an object that keeps the advantages the character has
 			const selectedAdvantages: { [key: string]: { dots: number; category: string; type: "merit" | "flaw"; }; } = {};
@@ -172,7 +172,7 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 			}
 
 			// 2) We check for the Predator type, if the character has one
-			const predatorTypeName = character.data.basics.predator_type.select.current?.[0];
+			const predatorTypeName = characterData.basics.predator_type.select.current?.[0];
 			let totalPredatorMeritDots = 0;
 			let totalPredatorFlawDots = 0;
 
@@ -279,8 +279,8 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 			const additionalMeritDots = Object.values(selectedAdvantages).reduce((n, x) => n + ((x.type === "merit") ? x.dots : 0), 0) - totalPredatorMeritDots;
 			const additionalFlawDots = Object.values(selectedAdvantages).reduce((n, x) => n + ((x.type === "flaw") ? x.dots : 0), 0) - totalPredatorFlawDots;
 
-			const clan = character.data.basics.clan.select.current;
-			const isAncillae = character.data.the_blood.generation.select.current[0].toLowerCase().search("ancillae") > -1;
+			const clan = characterData.basics.clan.select.current;
+			const isAncillae = characterData.the_blood.generation.select.current[0].toLowerCase().search("ancillae") > -1;
 
 			if (clan[0] === "thin_blooded") {
 				if (additionalMeritDots === additionalFlawDots
@@ -300,10 +300,10 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Add Disciplines",
-		condition: (character: aut.classes.Character): [boolean, string] => {
-			const charDisciplines = character.data.disciplines;
-			const charClan = character.data.basics.clan.select.current;
-			const predatorTypeName = character.data.basics.predator_type.select.current;
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
+			const charDisciplines = characterData.disciplines;
+			const charClan = characterData.basics.clan.select.current;
+			const predatorTypeName = characterData.basics.predator_type.select.current;
 			const hasPredator = (predatorTypeName.length > 0 && predatorTypeName[0] !== "");
 
 			if (charClan.length !== 1) return [false, "Select clan before selecting Disciplines."];
@@ -339,7 +339,7 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 			}
 
 			if (charClan[0] === "thin_blooded") {
-				const charAdvantages = character.data.advantages;
+				const charAdvantages = characterData.advantages;
 
 				const selectedAdvantages: { [key: string]: number; } = {};
 				for (const key in charAdvantages) {
@@ -397,9 +397,9 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Add Convictions and Touchstones",
-		condition: (character: aut.classes.Character): [boolean, string] => {
-			const charConvictions = character.data;
-			const charTouchstones = character.data;
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
+			const charConvictions = characterData;
+			const charTouchstones = characterData;
 
 			// Select one to three Convictions
 			// Create an equal number of Touchstones
@@ -409,10 +409,10 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	},
 	{
 		text: "Add Name, Ambition, and Desire",
-		condition: (character: aut.classes.Character): [boolean, string] => {
-			if (character.data.basics.name.text.current === "") return [false, "Character name cannot be empty."];
-			if (character.data.basics.ambition.text.current === "") return [false, "Character ambition cannot be empty."];
-			if (character.data.basics.desire.text.current === "") return [false, "Character desire cannot be empty."];
+		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
+			if (characterData.basics.name.text.current === "") return [false, "Character name cannot be empty."];
+			if (characterData.basics.ambition.text.current === "") return [false, "Character ambition cannot be empty."];
+			if (characterData.basics.desire.text.current === "") return [false, "Character desire cannot be empty."];
 
 			return [true, ""];
 		}

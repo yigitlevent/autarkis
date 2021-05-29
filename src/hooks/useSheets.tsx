@@ -6,7 +6,7 @@ import { ChronicleWrapper } from "../components/dashboard/ChronicleWrapper";
 type SheetsList = {
 	id: number;
 	data: {
-		category: aut.short.SheetCategory,
+		category: aut.SheetCategory,
 		ruleset: aut.ruleset.Names,
 		uuid?: string;
 	};
@@ -15,7 +15,7 @@ type SheetsList = {
 
 type UseSheetsReturns = [
 	SheetsList,
-	(category: aut.short.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string) => void,
+	(category: aut.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string) => void,
 	(id: number) => void,
 	(id: number, direction: "up" | "down") => void
 ];
@@ -40,7 +40,7 @@ export function useSheets(): UseSheetsReturns {
 		setSheets(tempArray);
 	}, [sheets]);
 
-	const addSheet = useCallback((category: aut.short.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string): void => {
+	const addSheet = useCallback((category: aut.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string): void => {
 		if (category === "chronicle") {
 			setSheets([
 				{

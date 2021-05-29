@@ -57,7 +57,7 @@ export function Dashboard(): JSX.Element {
 	const [rulesetSelect, setRulesetSelect] = useState<null | JSX.Element>(null);
 	const [selectedRuleset, setSelectedRuleset] = useState<undefined | aut.ruleset.Names>();
 
-	const createSheet = useCallback((category: aut.short.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => {
+	const createSheet = useCallback((category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => {
 		if (ruleset) {
 			setRulesetSelect(null);
 			if (category === "chronicle") addSheet(category, ruleset, uuid);

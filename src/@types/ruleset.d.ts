@@ -95,7 +95,7 @@ namespace aut {
 
 		interface GeneratorCondition {
 			text: string;
-			condition: (character: aut.classes.Character) => [boolean, string];
+			condition: (characterData: aut.data.GenericCharacterData) => [boolean, string];
 		}
 
 		type CharacterSheet = CharacterSheetBlock[];

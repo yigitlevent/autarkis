@@ -98,6 +98,50 @@ namespace aut {
 			condition: (characterData: aut.data.GenericCharacterData) => [boolean, string];
 		}
 
+		type BloodPotency = BloodPotencyRow[];
+
+		interface BloodPotencyRow {
+			[key: string]: number | string;
+			blood_surge: number;
+			mend_amount: number;
+			power_bonus: number;
+			rouse_check: number;
+			bane_severity: number;
+			feeding_penalty: string;
+		}
+
+		interface Clans {
+			[key: string]: {
+				name: string;
+				disciplines: string[];
+				bane: string;
+				compulsion: string;
+			};
+		}
+
+		interface Disciplines {
+			[key: string]: {
+				name: string;
+				powers?: DisciplineLevels[];
+				ritual_name?: [string, string];
+				rituals?: DisciplineLevels[];
+			};
+		}
+
+		interface DisciplineLevels {
+			[key: string]: DisciplinePower;
+		}
+
+		interface DisciplinePower {
+			name: string;
+			attribute: string;
+			cost: string;
+			description: string;
+			prerequisite?: string;
+		}
+
+		type InputTypes = "text" | "number" | "dot" | "checkbox" | "precheckbox" | "postcheckbox" | "pseudocheckbox" | "textarea" | "select";
+
 		type CharacterSheet = CharacterSheetBlock[];
 
 		interface CharacterSheetBlock {
@@ -149,50 +193,6 @@ namespace aut {
 				placeholder?: string;
 				appendGroupValue?: true;
 			};
-		}
-
-		type InputTypes = "text" | "number" | "dot" | "checkbox" | "precheckbox" | "postcheckbox" | "pseudocheckbox" | "textarea" | "select";
-
-		type BloodPotency = BloodPotencyRow[];
-
-		interface BloodPotencyRow {
-			[key: string]: number | string;
-			blood_surge: number;
-			mend_amount: number;
-			power_bonus: number;
-			rouse_check: number;
-			bane_severity: number;
-			feeding_penalty: string;
-		}
-
-		interface Clans {
-			[key: string]: {
-				name: string;
-				disciplines: string[];
-				bane: string;
-				compulsion: string;
-			};
-		}
-
-		interface Disciplines {
-			[key: string]: {
-				name: string;
-				powers?: DisciplineLevels[];
-				ritual_name?: [string, string];
-				rituals?: DisciplineLevels[];
-			};
-		}
-
-		interface DisciplineLevels {
-			[key: string]: DisciplinePower;
-		}
-
-		interface DisciplinePower {
-			name: string;
-			attribute: string;
-			cost: string;
-			description: string;
-			prerequisite?: string;
 		}
 
 	}

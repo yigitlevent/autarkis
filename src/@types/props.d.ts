@@ -50,21 +50,6 @@ namespace aut {
 			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 		}
 
-
-
-
-
-
-
-		interface Entrance {
-			setIsLogin: (b: boolean) => void;
-		}
-
-		interface Box {
-			children?: JSX.Element | JSX.Element[],
-			zIndex: number;
-		}
-
 		interface Icon {
 			children?: JSX.Element;
 			size: number;
@@ -73,10 +58,6 @@ namespace aut {
 			brightness?: boolean;
 			float?: string;
 			title?: boolean;
-		}
-
-		interface Topbox {
-			children?: JSX.Element | JSX.Element[];
 		}
 
 		interface ConfirmBox {

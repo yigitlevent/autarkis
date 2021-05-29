@@ -14,87 +14,30 @@ namespace aut {
 
 		type SheetCategory = "generator" | "character" | "chronicle";
 
-	}
-
-	namespace props {
-
-		interface Entrance {
-			setIsLogin: (b: boolean) => void;
+		interface GenericCharacterData {
+			[key: string]: {
+				[key: string]: {
+					text: aut.classes.Text;
+					toggle: aut.classes.Toggle;
+					dot: aut.classes.Dot;
+					checkbox: aut.classes.Checkbox;
+					pseudocheckbox: aut.classes.PseudoCheckbox;
+					textarea: aut.classes.Textarea;
+					select: aut.classes.Select;
+				};
+			};
 		}
 
-		interface MyListRow {
-			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; category: aut.short.SheetCategory; };
+		interface GenericCharacterDataLayout {
+			[key: string]: {
+				[key: string]: {
+					[key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select;
+				};
+			};
 		}
 
-		interface TestWrapper {
-			event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-			sheetDisplayType: aut.short.SheetDisplayType;
-			character: aut.classes.Character;
-			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-		}
-
-		interface Box {
-			children?: JSX.Element | JSX.Element[],
-			width?: string;
-			zIndex: number;
-		}
-
-		interface Icon {
-			children?: JSX.Element;
-			size: number;
-			name: string;
-			hover?: boolean;
-			brightness?: boolean;
-			float?: string;
-			title?: boolean;
-		}
-
-		interface Topbox {
-			children?: JSX.Element | JSX.Element[];
-		}
-
-		interface ConfirmBox {
-			title: string;
-			innerHTML: string | JSX.Element;
-			button: string;
-			callback: () => void;
-			close: () => void;
-		}
-
-		interface ChronicleSheet {
-			sheetDisplayType: aut.short.SheetDisplayType;
-			chronicle: aut.classes.Chronicle;
-			switchSheetDisplayType: (newType?: aut.short.SheetDisplayType) => void;
-		}
-
-		interface CharacterList {
-			chronicleUUID: string;
-			chronicleName: string;
-			sheetDisplayType: aut.short.SheetDisplayType;
-		}
-
-		interface CharacterSheet {
-			sheetDisplayType: aut.short.SheetDisplayType;
-			character: aut.classes.Character;
-			switchSheetDisplayType: (newType?: aut.short.SheetDisplayType) => void;
-		}
-
-		interface SheetBlock {
-			sheetDisplayType: aut.short.SheetDisplayType;
-			blockData: aut.ruleset.CharacterSheetBlock;
-			ruleset: aut.ruleset.Names;
-			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.short.Events) => void;
-		}
-
-		interface SheetRow {
-			sheetDisplayType: aut.short.SheetDisplayType;
-			blockTitle: string;
-			rowData: aut.ruleset.SheetRow;
-			ruleset: aut.ruleset.Names;
-			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.short.Events) => void;
-			changeSelected?: (values: Option[]) => void;
+		interface GenericChronicleData {
+			[key: string]: { [key: string]: Text | Toggle; };
 		}
 
 	}
@@ -145,60 +88,10 @@ namespace aut {
 		interface ProbabilityResult { [key: string]: number; }
 	}
 
-	namespace theme {
-
-		interface StyleProps extends ThemedStyledProps {
-			theme: Palette;
-			mainFont?: string;
-			italicFont?: string;
-		}
-
-		interface Palette {
-			surface: {
-				background: string;
-				color: string;
-			};
-			box: {
-				background: string;
-				border: string;
-			};
-			row: {
-				background: string;
-				border: string;
-			};
-			element: {
-				background: string;
-				backgroundLight: string;
-				border: string;
-			};
-			link: {
-				color: string;
-			};
-			success: {
-				color: string;
-				border: string;
-			};
-			warning: {
-				color: string;
-				border: string;
-			};
-			error: {
-				color: string;
-				border: string;
-			};
-			info: {
-				color: string;
-				border: string;
-			};
-			transparent: string;
-		}
-
-	}
-
 	namespace classes {
 
 		class Test {
-			_character: aut.classes.Character;
+			_data: aut.short.GenericCharacterData;
 			_ruleset: aut.ruleset.Names;
 
 			title: string;
@@ -220,11 +113,10 @@ namespace aut {
 			roll: (offlineTest: boolean) => aut.data.TestResult;
 		}
 
-		class Generator {
-
-		}
-
 		class AutarkisObject {
+			readonly uuid?: string;
+			readonly ruleset?: string;
+
 			changeValue: (event: aut.short.Events) => void;
 			placeSheetData: () => void;
 
@@ -236,34 +128,26 @@ namespace aut {
 		class Chronicle extends AutarkisObject {
 			readonly type = "chronicle";
 
-			data: { [key: string]: { [key: string]: Text | Switch; }; } = {};
+			data: aut.short.GenericChronicleData = {};
 		}
 
 		class Character extends AutarkisObject {
 			readonly type = "character";
 			readonly editable: boolean;
 
-			data: {
-				[key: string]: {
-					[key: string]: {
-						[key: string]: Text | Switch | Dot | Checkbox | PreCheckbox | PseudoCheckbox | Textarea;
-					};
-				};
-			} = {};
+			data: aut.short.GenericCharacterData = {};
+
+			changeSelected: (event: Option[], id: string) => void;
 
 			export: (event: React.FormEvent<HTMLInputElement>) => void;
 			import: (event: React.ChangeEvent<HTMLInputElement>) => void;
-		}
-
-		class PreCheckbox {
-			current: boolean;
 		}
 
 		class Text {
 			current: string;
 		}
 
-		class Switch {
+		class Toggle {
 			current: boolean;
 		}
 
@@ -288,116 +172,8 @@ namespace aut {
 			getEmpty: () => number;
 		}
 
-		class StringArray {
+		class Select {
 			current: string[];
-		}
-
-	}
-
-	namespace ruleset {
-
-		type Names = "v5_modern";
-
-		type TestFunction = (testData: aut.data.TestData) => aut.data.TestResult;
-		type ProbabilityFunction = (testData: aut.data.TestData) => aut.data.ProbabilityResult;
-
-		interface Ruleset<Character> {
-			basics: aut.ruleset.Basics;
-			character: Character;
-			characterSheet: aut.ruleset.CharacterSheetLayout;
-			characterMisc: {
-				[key: string]: any;
-			};
-			tests: aut.ruleset.TestSheets;
-		}
-
-		interface TestSheets { [key: string]: TestSheet; }
-
-		interface TestSheet {
-			title: string;
-			testFunction: aut.ruleset.TestFunction;
-			probabilityFunction: aut.ruleset.ProbabilityFunction;
-			children: (aut.ruleset.SheetRow & aut.ruleset.TestSheetExtras)[];
-		}
-
-		type DefaultValue = [string] | [string, string, aut.ruleset.InputTypes] | [string, string, "pseudocheckbox", string, "unmarked" | "count" | "count/3"];
-
-		interface TestSheetExtras {
-			addTo?: string;
-			isPool?: true;
-			difficulty?: true;
-			defaultChecked?: true;
-			defaultValue?: aut.ruleset.DefaultValue;
-		}
-
-		interface Basics {
-			[key: string]: string[] | { [key: string]: string; },
-			pseudoCheckboxInputs: { [key: string]: string; };
-			attributes: string[];
-			skills: string[];
-			disciplines: string[];
-		}
-
-		type CharacterSheetLayout = CharacterSheetBlock[];
-
-		interface CharacterSheetBlock {
-			title: string;
-			showTitle: boolean;
-			columns: ShetColumn[];
-		}
-
-		type ShetColumn = SheetRow[];
-
-		interface SheetRow {
-			title: string;
-
-			showTitle?: true;
-			boldTitle?: true;
-			isTestable?: true;
-			isReadOnly?: true;
-			align?: "center" | "right";
-
-			inputs: InputTypes[];
-
-			// text?: {};
-			// number?: {};
-			// precheckbox?: {};
-			// postcheckbox?: {};
-
-			dot?: {
-				amount: 5 | 6 | 10 | 15;
-			};
-
-			checkbox?: {
-				amount: 3 | 5 | 10 | 15;
-			};
-
-			pseudocheckbox?: {
-				amount: 3 | 5 | 10 | 15;
-				possibleValues: string[];
-			};
-
-			textarea?: {
-				amount: 2 | 3 | 4 | 5 | 6;
-			};
-
-			select?: {
-				categories: string[];
-			};
-		}
-
-		type InputTypes = "text" | "number" | "dot" | "checkbox" | "precheckbox" | "postcheckbox" | "pseudocheckbox" | "textarea" | "select";
-
-		type BloodPotency = BloodPotencyRow[];
-
-		interface BloodPotencyRow {
-			[key: string]: number | string;
-			blood_surge: number;
-			mend_amount: number;
-			power_bonus: number;
-			rouse_check: number;
-			bane_severity: number;
-			feeding_penalty: string;
 		}
 
 	}
@@ -438,7 +214,7 @@ namespace aut {
 			name: string;
 			player_name: string;
 			player_uuid: string;
-			data: aut.classes.Character;
+			data: aut.short.GenericCharacterData;
 			ruleset: aut.ruleset.Names;
 			editable: boolean;
 			chronicle_uuid: string;

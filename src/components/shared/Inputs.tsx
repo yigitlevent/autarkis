@@ -51,7 +51,7 @@ export const Dot = styled(Checkbox)`
 	border-radius: 100%;
 `;
 
-export const Switch = styled(Checkbox)`
+export const Toggle = styled(Checkbox)`
 	&::after {
 		content: "✘";
 		margin: -4px 1px 0px;
@@ -69,8 +69,8 @@ export const Switch = styled(Checkbox)`
 `;
 
 export const PseudoCheckbox = styled.input.attrs({ type: "text" })`
-	height: 14px !important;
-	width: 14px !important;
+	height: 12px !important;
+	width: 12px !important;
 	border: none!important;
 	background: ${(props: aut.theme.StyleProps) => props.theme.element.background}!important;
 	appearance: none;

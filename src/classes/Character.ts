@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 
-import { Checkbox, Dot } from "../rulesets/_generic";
+import { Checkbox, Dot, Toggle, PseudoCheckbox, Text, Textarea, Select } from "../rulesets/_generic";
 import { Rulesets } from "../rulesets/_rulesets";
 
 import { CleanString } from "../function/utility";
@@ -9,16 +9,72 @@ import { DatabaseClient } from "../hooks/useQueries";
 
 export class Character implements aut.classes.Character {
 	readonly type = "character";
+	readonly uuid;
+	readonly ruleset;
+
 	readonly editable: boolean = true;
 
-	data;
+	data: aut.short.GenericCharacterData = {};
 
 	constructor(rawData: undefined | aut.server.Character, ruleset: aut.ruleset.Names) {
-		this.data = new (Rulesets.getRuleset(ruleset)).character();
+		this.uuid = rawData?.uuid;
+		this.ruleset = rawData?.ruleset;
+
+		// Auto-generate data layout from sheet layout
+		const newData: { [key: string]: { [key: string]: { [key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select; }; }; } = {};
+		const sheetLayout = (Rulesets.getRuleset(ruleset)).characterSheet;
+		for (const blockKey in sheetLayout) {
+			const block = sheetLayout[blockKey];
+			const cleanBlockTitle = CleanString(block.title);
+			const columns = block.columns;
+
+			if (!(cleanBlockTitle in newData)) newData[cleanBlockTitle] = {};
+
+			for (const columnKey in columns) {
+				const column = columns[columnKey];
+
+				for (const rowKey in column) {
+					const row = column[rowKey];
+					const cleanRowTitle = CleanString(row.title);
+
+					if (!(cleanRowTitle in newData[cleanBlockTitle])) newData[cleanBlockTitle][cleanRowTitle] = {};
+
+					if (row.inputs.includes("text")) {
+						newData[cleanBlockTitle][cleanRowTitle].text = new Text();
+					}
+					if (row.inputs.includes("number")) {
+						newData[cleanBlockTitle][cleanRowTitle].number = new Text();
+					}
+					if (row.inputs.includes("dot") && row.dot) {
+						newData[cleanBlockTitle][cleanRowTitle].dot = new Dot(row.dot.amount);
+					}
+					if (row.inputs.includes("checkbox") && row.checkbox) {
+						newData[cleanBlockTitle][cleanRowTitle].checkbox = new Checkbox(row.checkbox.amount);
+					}
+					if (row.inputs.includes("precheckbox")) {
+						newData[cleanBlockTitle][cleanRowTitle].precheckbox = new Toggle();
+					}
+					if (row.inputs.includes("postcheckbox")) {
+						newData[cleanBlockTitle][cleanRowTitle].postcheckbox = new Toggle();
+					}
+					if (row.inputs.includes("pseudocheckbox") && row.pseudocheckbox) {
+						newData[cleanBlockTitle][cleanRowTitle].pseudocheckbox = new PseudoCheckbox(row.pseudocheckbox.amount, row.pseudocheckbox.possibleValues, ruleset);
+					}
+					if (row.inputs.includes("textarea")) {
+						newData[cleanBlockTitle][cleanRowTitle].textarea = new Textarea();
+					}
+					if (row.inputs.includes("select")) {
+						newData[cleanBlockTitle][cleanRowTitle].select = new Select();
+					}
+				}
+			}
+		}
+
+		this.data = newData as any;
 		this.data._primary.ruleset.text.current = ruleset;
 
 		if (rawData) {
-			const temp = rawData.data as any;
+			const temp = rawData.data;
 
 			for (const block in temp) {
 				if (!this.data[block]) continue;
@@ -27,16 +83,17 @@ export class Character implements aut.classes.Character {
 					if (!this.data[block][row]) continue;
 
 					for (const type in temp[block][row]) {
-						if (!this.data[block][row][type]) continue;
+						const tempRawRow = temp[block][row];
+						const tempDataRow = this.data[block][row];
 
-						this.data[block][row][type].current = temp[block][row][type].current;
+						this.data[block][row][type as keyof typeof tempDataRow].current = temp[block][row][type as keyof typeof tempRawRow].current;
 					}
 				}
 			}
 
 			this.data._primary.uuid.text.current = rawData.uuid;
 			this.data._primary.ruleset.text.current = rawData.ruleset;
-			this.data._primary.editable.switch.current = rawData.editable;
+			this.data._primary.editable.toggle.current = rawData.editable;
 
 			this.data._primary.player_uuid.text.current = rawData.player_uuid;
 			this.data._primary.chronicle_uuid.text.current = rawData.player_uuid;
@@ -53,7 +110,7 @@ export class Character implements aut.classes.Character {
 
 	changeValue(event: aut.short.Events): void {
 		const target = event.target as HTMLInputElement;
-		const targetName = target.id; 				// "attributes.manipulation.dot.1" 
+		const targetName = target.id; 					// "attributes.manipulation.dot.1" 
 		const names = targetName.split("."); 			// [ "attributes", "manipulation", "dot", "1" ]
 		const cleanName = names.slice(0, -1).join("."); // "attributes.manipulation.dot" 
 
@@ -62,14 +119,17 @@ export class Character implements aut.classes.Character {
 		const type = names[2];
 		const num = parseInt(names[3]);
 
-		if (type === "precheckbox") {
-			(this.data[block][row][type] as aut.classes.PreCheckbox).current = target.checked;
+		if (type === "postcheckbox") {
+			this.data[block][row].toggle.current = target.checked;
+		}
+		else if (type === "precheckbox") {
+			this.data[block][row].toggle.current = target.checked;
 		}
 		else if (type === "text") {
-			(this.data[block][row][type] as aut.classes.Text).current = target.value;
+			this.data[block][row].text.current = target.value;
 		}
 		else if (type === "textarea") {
-			(this.data[block][row][type] as aut.classes.Textarea).current = target.value;
+			this.data[block][row].textarea.current = target.value;
 		}
 		else if (type === "dot" || type === "checkbox") {
 			const max = (this.data[block][row][type] as aut.classes.Dot | aut.classes.Checkbox)._amount;
@@ -98,16 +158,29 @@ export class Character implements aut.classes.Character {
 		this.placeSheetData();
 	}
 
+	changeSelected(options: rbs.Option[], id: string): void {
+		const names = id.split("."); // [ "basics", "clan", "select" ]
+
+		const block = names[0];
+		const row = names[1];
+		const type = names[2];
+
+		if (type === "select") {
+			(this.data[block][row][type] as aut.classes.Select).current = options.map((v) => v.value);
+		}
+
+		this.calculateValues();
+	}
+
 	placeSheetData(): void {
 		for (const block in this.data) {
-			if (block === "_primary") continue;
-
 			for (const row in this.data[block]) {
 				for (const type in this.data[block][row]) {
-					const value = this.data[block][row][type].current;
+					const tempDataRow = this.data[block][row];
+					const value = this.data[block][row][type as keyof typeof tempDataRow].current;
 
 					if (value) {
-						if (type === "precheckbox") {
+						if (type === "precheckbox" || type === "postcheckbox") {
 							const input = document.getElementById(`${block}.${row}.${type}`) as HTMLInputElement;
 							if (input) input.checked = value as boolean;
 						}
@@ -143,11 +216,13 @@ export class Character implements aut.classes.Character {
 	export(event: React.FormEvent<HTMLInputElement>): void {
 		event.preventDefault();
 
-		if (this.data.basics.name.text.current.length > 0) {
+		const name = this.data.basics.name.text.current as string;
+
+		if (name.length > 0) {
 			const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data));
 			const downloadAnchorNode = document.createElement("a");
 			downloadAnchorNode.setAttribute("href", dataStr);
-			downloadAnchorNode.setAttribute("download", `${CleanString(this.data.basics.name.text.current)}.char.autarkis`);
+			downloadAnchorNode.setAttribute("download", `${CleanString(name)}.char.autarkis`);
 			document.body.appendChild(downloadAnchorNode); // required for firefox
 			downloadAnchorNode.click();
 			downloadAnchorNode.remove();
@@ -196,7 +271,7 @@ export class Character implements aut.classes.Character {
 
 		return new Promise<void>((resolve, reject) => {
 			DatabaseClient.from("characters").update(data)
-				.match({ uuid: this.data._primary.uuid.text.current }).single()
+				.match({ uuid: this.data._primary.uuid.text.current as string }).single()
 				.then((response) => {
 					if (response.error) { toast.error("Character cannot be updated."); reject(); }
 					else { toast.success("Character updated."); resolve(); }
@@ -207,7 +282,7 @@ export class Character implements aut.classes.Character {
 	delete(): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			DatabaseClient.from("characters").delete()
-				.match({ uuid: this.data._primary.uuid.text.current }).single()
+				.match({ uuid: this.data._primary.uuid.text.current as string }).single()
 				.then((response) => {
 					if (response.error) { toast.error("Character cannot be deleted."); reject(); }
 					else { toast.success("Character deleted."); resolve(); }
@@ -232,10 +307,10 @@ export class Character implements aut.classes.Character {
 
 		if (this.data.the_blood) {
 			// Health Calculation
-			this.data.the_blood.health.dot.current = 3 + this.data.attributes.stamina.dot.current;
+			this.data.the_blood.health.dot.current = 3 + (this.data.attributes.stamina.dot.current as number);
 
 			// Willpower Calculation
-			this.data.the_blood.willpower.dot.current = this.data.attributes.composure.dot.current + this.data.attributes.resolve.dot.current;
+			this.data.the_blood.willpower.dot.current = (this.data.attributes.composure.dot.current as number) + (this.data.attributes.resolve.dot.current as number);
 		}
 	}
 }

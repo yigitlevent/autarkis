@@ -10,10 +10,19 @@ export function CapitalizeFirstLetter(str: string): string {
 }
 
 export function CleanString(string: string): string {
-	return string.toLowerCase().replaceAll(" ", "_").replaceAll("/", "_").replaceAll(",", "_").replaceAll("-", "_");
+	return string.toLowerCase()
+		.replaceAll(" ", "_")
+		.replaceAll("(", "$")
+		.replaceAll(")", "$")
+		.replaceAll("/", "_")
+		.replaceAll(",", "_")
+		.replaceAll("'", "_")
+		.replaceAll("-", "_");
 }
 
 export function DirtyString(string: string): string {
+	string = string.replace("$", "(");
+	string = string.replace("$", ")");
 	const parts = string.split("_");
 	return parts.map((val) => CapitalizeFirstLetter(val)).join(" ");
 }

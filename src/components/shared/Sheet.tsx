@@ -13,25 +13,8 @@ export const Subtitle = styled.div<{ isClickable?: boolean; }>`
 	${p => (p.isClickable ? "cursor: pointer;" : "")}
 `;
 
-export const DashboardForm = styled.form`
+export const Dashboard = styled.div`
 	width: 100%;
-`;
-
-export const EntranceForm = styled.form`
-	width: 50%;
-	margin: 0 auto 20px;
-
-	grid-row: span 2;
-	height: max-content;
-	align-self: center;
-
-	& > input[type="text"],
-	& > input[type="email"],
-	& > input[type="password"],
-	& > input[type="number"] {
-		margin: 0 0 6px;
-		padding: 2px 5px;
-	}
 `;
 
 export const Extras = styled.span`
@@ -45,17 +28,18 @@ export const Extras = styled.span`
 	height: 0;
 `;
 
-export const BlockWrapper = styled.div`
+export const ColumnsWrapper = styled.div<{ display?: string; }>`
 	line-height: 1.5em;
 	width: 100%;
-	padding: 6px 10px 6px;
+	padding: 6px 4px 6px;
 	font-size: 0.9em;
 	text-align: center;
+	display: ${p => (p.display ? p.display : "block")};
 `;
 
-export const ColumnWrapper = styled.div`
-	width: 326px;
+export const RowsWrapper = styled.div`
+	width: 314px;
 	display: inline-grid;
-	margin: 5px 0;
+	margin: 0;
 	vertical-align: top;
 `;

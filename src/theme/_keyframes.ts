@@ -8,3 +8,12 @@ export const Spin = keyframes`
 		transform: rotate(360deg);
 	}
 `;
+
+export const HideLeft = keyframes`
+	from {
+		left: 0;
+	}
+	to {
+		left: -250px;
+	}
+`;

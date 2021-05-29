@@ -1,14 +1,10 @@
 import { Rulesets } from "./_rulesets";
 
-export class PreCheckbox implements aut.classes.PreCheckbox {
-	current = false;
-}
-
 export class Text implements aut.classes.Text {
 	current = "";
 }
 
-export class Switch implements aut.classes.Switch {
+export class Toggle implements aut.classes.Toggle {
 	current = false;
 }
 
@@ -47,7 +43,7 @@ export class PseudoCheckbox implements aut.classes.PseudoCheckbox {
 		this.current = Array<string>(size).fill("");
 
 		for (const name in possibleValues) {
-			this._pValues.push((Rulesets.getRuleset(ruleset)).basics.pseudoCheckboxInputs[possibleValues[name]]);
+			this._pValues.push((Rulesets.getRuleset(ruleset)).pseudoCheckboxInputs[possibleValues[name]]);
 		}
 	}
 
@@ -67,10 +63,10 @@ export class PseudoCheckbox implements aut.classes.PseudoCheckbox {
 	}
 
 	getAmount(value: string, ruleset: aut.ruleset.Names): number {
-		return this.current.filter((x) => x === (Rulesets.getRuleset(ruleset)).basics.pseudoCheckboxInputs[value]).length;
+		return this.current.filter((x) => x === (Rulesets.getRuleset(ruleset)).pseudoCheckboxInputs[value]).length;
 	}
 }
 
-export class StringArray implements aut.classes.StringArray {
+export class Select implements aut.classes.Select {
 	current: string[] = [];
 }

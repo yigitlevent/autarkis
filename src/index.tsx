@@ -1,6 +1,6 @@
-import { StrictMode, useCallback, useEffect, useState } from "react";
+import { Fragment, StrictMode, useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Session, Provider } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide } from "react-toastify";
@@ -17,22 +17,8 @@ import { DatabaseClient, GlobalQueryClient } from "./hooks/useQueries";
 import { Spinner } from "./components/shared/Spinner";
 import { StyledToast } from "./components/shared/StyledToast";
 
-import { MainBox } from "./components/shared/Box";
-import { Button } from "./components/shared/Inputs";
-import { Sidebar } from "./components/shared/Sidebar";
-
 import { Dashboard } from "./components/Dashboard";
-
-const MainWrapper = styled.div`
-	width: 100%;
-	margin: 0 auto;
-	padding: 4px 0;
-
-	display: grid;
-	grid-template-columns: 100%;
-	grid-template-rows: auto 1fr;
-	grid-gap: 12px;
-`;
+import { Topbar } from "./components/Topbar";
 
 const DarkPackLogo = styled.a`
 	display: block;
@@ -62,10 +48,6 @@ function App(): JSX.Element {
 	// TODO: Delete later
 	console.log(process.env.NODE_ENV);
 
-	const signIn = async (provider: Provider): Promise<void> => {
-		await DatabaseClient.auth.signIn({ provider: provider }, { redirectTo: process.env.REACT_APP_REDIRECT_URL });
-	};
-
 	const setSessionData = useCallback((session: Session | null) => {
 		if (session && session.user) {
 			setClientUsername(session.user.user_metadata.full_name);
@@ -78,6 +60,7 @@ function App(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
+		setClientState("presign");
 		const session = DatabaseClient.auth.session();
 		setSessionData(session);
 		const subscription = DatabaseClient.auth.onAuthStateChange((event, session) => { setSessionData(session); });
@@ -109,17 +92,13 @@ function App(): JSX.Element {
 			/>
 
 			<ClientContext.Provider value={{ clientState, clientUsername, setClientState, setClientUsername }}>
-				<MainWrapper>
-					{(clientState === "presign")
-						? <Spinner overlay={false} size={["100vw", "100vh"]} />
-						: (clientState === "signedin")
-							? <Dashboard />
-							: <MainBox>
-								<Button onClick={() => signIn("github")} value={"Sign in using Github"} />
-								<Sidebar />
-							</MainBox>
-					}
-				</MainWrapper>
+				{(clientState === "presign")
+					? <Spinner overlay={false} size={["100vw", "100vh"]} />
+					: <Fragment>
+						<Topbar />
+						{(clientState === "signedin") ? <Dashboard /> : null}
+					</Fragment>
+				}
 			</ClientContext.Provider>
 
 			<DarkPackLogo href="https://worldofdarkness.com/dark-pack" title="Dark Pack" target="_blank" rel="noopener noreferrer" />
@@ -130,7 +109,7 @@ function App(): JSX.Element {
 ReactDOM.render(
 	<StrictMode>
 		<QueryClientProvider client={GlobalQueryClient}>
-			<ReactQueryDevtools initialIsOpen={true} position={"top-right"} />
+			<ReactQueryDevtools initialIsOpen={true} position={"bottom-right"} />
 			<App />
 		</QueryClientProvider>
 	</StrictMode>,

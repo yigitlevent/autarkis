@@ -35,17 +35,23 @@ export const GlobalStyle = createGlobalStyle`
 		cursor: default;
 	}
 
+	html {
+		height: 100vh;
+		width: 100vw;
+		
+	}
+
+	body {
+		height: 100%;
+		width: 100%;
+	}
+
 	html,
 	body {
 		margin: 0;
 		padding: 0;
-		min-height: 100%;
-		width: 100%;
 		background-color: ${(props: aut.theme.StyleProps) => props.theme.surface.background};
-	}
-
-	body {
-		overflow-y: scroll;
+		overflow: hidden;
 	}
 
 	textarea {
@@ -107,8 +113,8 @@ export const GlobalStyle = createGlobalStyle`
 		}
 
 		&[type="checkbox"] {
-			height: 14px;
-			width: 14px;
+			height: 12px;
+			width: 12px;
 			margin: auto 1px !important;
 			padding: 0;
 			border: none;
@@ -220,6 +226,9 @@ export const GlobalStyle = createGlobalStyle`
 	#root {
 		width: 100%;
 		height: 100%;
+		margin: 0;
+		padding: 0;
+		overflow: hidden auto;
 	}
 
 	.italic {
@@ -275,12 +284,12 @@ export const GlobalStyle = createGlobalStyle`
 
 	// Basic Select
 	.bs_select {
-		width: 352px;
-		height: inherit;
 		background: ${(props: aut.theme.StyleProps) => props.theme.element.background};
 		display: block;
 		font-size: 1em;
-		overflow: hidden;
+		width: 99%;
+		height: 21px;
+		overflow: visible;
 	}
 
 	.bs_bar {
@@ -320,25 +329,29 @@ export const GlobalStyle = createGlobalStyle`
 
 	.bs_options {
 		display: block;
-		position: fixed;
 		max-height: 240px;
 		outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 		overflow-y: auto;
 		overflow-x: hidden;
 		width: inherit;
+		position: relative;
+		z-index: 123;
 	}
 
 	.bs_optionnew {
 		cursor: pointer;
-		width: inherit;
+		width: 100%;
 		padding: 2px 4px;
 		background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
-		border-bottom: 1px #aaa dashed;
+
+		&:not(:last-child) {
+			border-bottom: 1px #aaa dashed;
+		}
 	}
 
 	.bs_header {
 		font-size: 1.1em;
-		width: inherit;
+		width: 100%;
 		padding: 2px 4px;
 		text-transform: uppercase;
 		background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
@@ -347,7 +360,7 @@ export const GlobalStyle = createGlobalStyle`
 
 	.bs_option {
 		cursor: pointer;
-		width: inherit;
+		width: 100%;
 		padding: 2px 4px;
 		background: ${(props: aut.theme.StyleProps) => props.theme.element.background};
 		border-bottom: ${(props: aut.theme.StyleProps) => props.theme.element.border};

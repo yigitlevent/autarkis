@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { Text, Switch } from "./_generic";
+import { Text, Toggle } from "./_generic";
 
 export class GenericChronicle {
-	[key: string]: { [key: string]: Text | Switch; };
+	[key: string]: {
+		[key: string]: Text | Toggle;
+	};
 
 	uuid = { text: new Text() };
 	name = { text: new Text() };
@@ -15,7 +17,7 @@ export class GenericChronicle {
 	storyteller_uuid = { text: new Text() };
 	storyteller_name = { text: new Text() };
 
-	discord_enabled = { switch: new Switch() };
+	discord_enabled = { toggle: new Toggle() };
 	discord_server = { text: new Text() };
 	discord_channel = { text: new Text() };
 

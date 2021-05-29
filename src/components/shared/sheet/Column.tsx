@@ -1,10 +1,10 @@
 import { Fragment, useState } from "react";
 
-import { Subtitle, BlockWrapper, ColumnWrapper } from "../Sheet";
+import { Subtitle, ColumnsWrapper, RowsWrapper } from "../Sheet";
 
 import { Row } from "./Row";
 
-export function Column({ sheetDisplayType, blockData, ruleset, setTester: setDiceRoller, changeSheetValue }: aut.props.SheetBlock): JSX.Element {
+export function Column({ sheetDisplayType, blockData, ruleset, setTester, changeSheetValue, changeSelected }: aut.props.SheetBlock): JSX.Element {
 	const [isHidden, setIsHidden] = useState(false);
 
 	const columns = blockData.columns.map((column, index) => {
@@ -14,12 +14,13 @@ export function Column({ sheetDisplayType, blockData, ruleset, setTester: setDic
 				blockTitle={blockData.title}
 				rowData={row}
 				ruleset={ruleset}
-				setTester={setDiceRoller}
+				setTester={setTester}
 				changeSheetValue={changeSheetValue}
+				changeSelected={changeSelected}
 			/>);
 		});
 
-		return (<ColumnWrapper key={`${blockData.title}_${index}`}>{rows}</ColumnWrapper>);
+		return (<RowsWrapper key={`${blockData.title}_${index}`}>{rows}</RowsWrapper>);
 	});
 
 	return (
@@ -30,7 +31,7 @@ export function Column({ sheetDisplayType, blockData, ruleset, setTester: setDic
 				</Subtitle>
 				: null}
 
-			<BlockWrapper className={(isHidden) ? "hide" : ""}>{columns}</BlockWrapper>
+			<ColumnsWrapper className={(isHidden) ? "hide" : ""} display={(blockData.display === false) ? "none" : "block"}>{columns}</ColumnsWrapper>
 		</Fragment>
 	);
 }

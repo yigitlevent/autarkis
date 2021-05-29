@@ -1,23 +1,21 @@
-import { Fragment, createRef, useEffect, useState, useCallback, useContext } from "react";
+import { Fragment, useState, useCallback, useContext } from "react";
 
 import { Rulesets } from "../../../rulesets/_rulesets";
 
-import { ClientContext, SheetContext } from "../../../contexts/Contexts";
+import { ClientContext } from "../../../contexts/Contexts";
 
 import { ConfirmBox } from "../../shared/ConfirmBox";
 import { Icon } from "../../shared/Icon";
 import { Button, Submit } from "../../shared/Inputs";
-import { DashboardForm, Extras } from "../../shared/Sheet";
+import { Dashboard, Extras } from "../../shared/Sheet";
 import { Column } from "../../shared/sheet/Column";
 
 import { TestWrapper } from "../TestWrapper";
 
-export function CharacterSheet({ sheetDisplayType, character, switchSheetDisplayType }: aut.props.CharacterSheet): JSX.Element {
+export function CharacterSheet({ sheetID, removeSheet, moveSheet, characterObject }: aut.props.CharacterSheet): JSX.Element {
 	const { clientState } = useContext(ClientContext);
-	const { changeSheet } = useContext(SheetContext);
 
-	const formRef = createRef<HTMLFormElement>();
-	const importRef = createRef<HTMLInputElement>();
+	const [displayType, data, setters, database] = characterObject;
 
 	const [diceRollerElement, setDiceRollerElement] = useState<JSX.Element>(<Fragment />);
 	const [deleteBox, setDeleteBox] = useState<JSX.Element>(<Fragment />);
@@ -27,9 +25,8 @@ export function CharacterSheet({ sheetDisplayType, character, switchSheetDisplay
 			setDiceRollerElement(
 				<TestWrapper
 					event={event}
-					sheetDisplayType={sheetDisplayType}
-					character={character}
-					setTester={setDiceRoller}
+					characterObject={characterObject}
+					setDiceRoller={setDiceRoller}
 				/>
 			);
 		}
@@ -41,67 +38,67 @@ export function CharacterSheet({ sheetDisplayType, character, switchSheetDisplay
 	const deleteCharacter = useCallback((): void => {
 		setDeleteBox(
 			<ConfirmBox
-				title={`Delete ${character.data.basics.name.text.current}`}
+				title={`Delete ${data.basics.name.text.current}`}
 				innerHTML={"Are you sure that you want to delete this character?"}
 				button={"Delete"}
-				callback={() => { character.delete().then(() => { changeSheet(undefined, undefined, "none", true); }); }}
+				callback={() => { database.remove().then(() => { removeSheet(sheetID); }); }}
 				close={() => { setDeleteBox(<Fragment />); }}
 			/>
 		);
-	}, [character, changeSheet]);
+	}, [data.basics.name.text, database, removeSheet, sheetID]);
 
 	const changeSheetValue = useCallback((event: aut.short.Events) => {
-		if (sheetDisplayType !== "view") character.changeValue(event);
-	}, [character, sheetDisplayType]);
+		if (displayType !== "view") {
+			setters.changeValue(event);
+			// REMOVE: setChangeTime(Date.now());
+		}
+	}, [displayType, setters]);
 
-	useEffect(() => {
-		character.placeSheetData();
-	}, [character, sheetDisplayType]);
+	const changeSelected = useCallback((options: any, id?: string) => {
+		if (displayType !== "view" && id) {
+			setters.changeSelected(options, id);
+			// REMOVE: setChangeTime(Date.now());
+		}
+	}, [displayType, setters]);
 
 	return (
 		<Fragment>
-			{(character) ? diceRollerElement : <Fragment />}
+			{(data) ? diceRollerElement : <Fragment />}
 
-			{(character) ? deleteBox : <Fragment />}
+			{(data) ? deleteBox : <Fragment />}
 
-			<DashboardForm ref={formRef}>
+			<Dashboard>
 				<Extras>
-					<input className="hide" type="file" id="misc.file" ref={importRef} multiple={false}
-						onChange={(event) => { character.import(event); }} accept=".char.autarkis"
-					/>
-
 					<Icon size={24} name={"close"} hover brightness float={"right"} title>
-						<Button id="misc.close" value="" onClick={() => { changeSheet(undefined, undefined, "none", true); }} />
+						<Button id="misc.close" value="" onClick={() => { removeSheet(sheetID); }} />
 					</Icon>
 
-					{(sheetDisplayType !== "new")
-						? <Icon size={24} name={(sheetDisplayType === "view") ? "edit_off" : "edit_on"} hover brightness float={"right"} title>
-							<Button id="misc.edit_switch" value="" onClick={() => { switchSheetDisplayType(); }} />
+					{(displayType !== "new")
+						? <Icon size={24} name={(displayType === "view") ? "edit_off" : "edit_on"} hover brightness float={"right"} title>
+							<Button id="misc.edit_toggle" value="" onClick={() => { setters.setDisplayType(); }} />
 						</Icon>
 						: null
 					}
 
-					{(clientState !== "offline" && sheetDisplayType === "new")
+					{(clientState !== "offline" && displayType === "new")
 						? <Icon size={24} name={"save"} hover brightness float={"right"} title>
 							<Submit id="misc.submit" value={""} noBg
 								onClick={(event) => {
 									event.preventDefault();
-									character.insert()
-										.then(() => { changeSheet(undefined, undefined, "none", true); });
+									database.insert().then(() => { removeSheet(sheetID); });
 								}}
 							/>
 						</Icon>
 						: null
 					}
 
-					{(clientState !== "offline" && sheetDisplayType === "edit")
+					{(clientState !== "offline" && displayType === "edit")
 						? <Fragment>
 							<Icon size={24} name={"save"} hover brightness float={"right"} title>
 								<Submit id="misc.submit" value={""} noBg
 									onClick={(event) => {
 										event.preventDefault();
-										character.update()
-											.then(() => { changeSheet(undefined, undefined, "none", true); });
+										database.update().then(() => { removeSheet(sheetID); });
 									}}
 								/>
 							</Icon>
@@ -117,40 +114,38 @@ export function CharacterSheet({ sheetDisplayType, character, switchSheetDisplay
 						: null
 					}
 
-					<Icon size={24} name={"export"} hover brightness float={"right"} title>
-						<Button id="misc.export" value={""} onClick={(event) => { character.export(event); }} />
-					</Icon>
-
-					{(sheetDisplayType === "new" || sheetDisplayType === "edit")
-						? <Icon size={24} name={"import"} hover brightness float={"right"} title>
-							<Button id="misc.import" value={""} onClick={() => { importRef.current?.click(); }} />
-						</Icon>
-						: null
-					}
-
-					{(sheetDisplayType === "view" || clientState === "offline")
+					{(displayType === "view" || clientState === "offline")
 						? <Icon size={22} name={"roll"} hover brightness float={"right"} title>
 							<Button id="roll.standard.standard" value="" onClick={(event) => { setDiceRoller(event); }} />
 						</Icon>
 						: null
 					}
+
+					<Icon size={24} name={"arrow_left"} hover brightness float={"right"}>
+						<Button value="" title={"Move Left"} onClick={() => { moveSheet(sheetID, "up"); }} />
+					</Icon>
+
+					<Icon size={24} name={"arrow_right"} hover brightness float={"right"}>
+						<Button value="" title={"Move Right"} onClick={() => { moveSheet(sheetID, "down"); }} />
+					</Icon>
 				</Extras>
 
-				{(character)
-					? (Rulesets.getRuleset((character.data._primary.ruleset.text.current) as aut.ruleset.Names))
+				{(data)
+					? (Rulesets.getRuleset((data._primary.ruleset.text.current) as aut.ruleset.Names))
 						.characterSheet.map((block: aut.ruleset.CharacterSheetBlock) => {
-							return (<Column key={`${block.title}_${sheetDisplayType}`}
-								sheetDisplayType={sheetDisplayType}
+							return (<Column key={`${block.title}_${displayType}`}
+								sheetDisplayType={displayType}
 								blockData={block}
-								ruleset={character.data._primary.ruleset.text.current as aut.ruleset.Names}
+								ruleset={data._primary.ruleset.text.current as aut.ruleset.Names}
 								setTester={setDiceRoller}
 								changeSheetValue={changeSheetValue}
+								changeSelected={changeSelected}
 							/>);
 						})
 					: null
 				}
 
-			</DashboardForm>
+			</Dashboard>
 		</Fragment>
 	);
 }

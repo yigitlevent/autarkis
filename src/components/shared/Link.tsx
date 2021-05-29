@@ -21,7 +21,7 @@ export const IconLink = styled(Link)`
 	display: inline-block;
 	width: 24px;
 	height: 24px;
-	margin: 5px 3px;
+	margin: 3px 3px;
 	padding: 0;
 
 	& > svg {

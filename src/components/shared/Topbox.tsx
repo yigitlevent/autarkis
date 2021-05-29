@@ -1,13 +1,14 @@
 import styled from "styled-components";
 
-export const Topbox = styled.div`
+export const Topbox = styled.div<{ clickThrough?: boolean; }>`
 	width: 100vw;
 	height: 100vh;
-	background: ${(props: aut.theme.StyleProps) => props.theme.transparent};
+	background: ${p => (p.clickThrough) ? "none" : (props: aut.theme.StyleProps) => props.theme.transparent};
 	position: fixed;
 	top: 0;
 	left: 0;
 	z-index: 2000;
+	${p => (p.clickThrough) ? "pointer-events: none;" : ""}
 `;
 
 export const TopboxBox = styled.div<{ columns?: number; }>`
@@ -17,13 +18,15 @@ export const TopboxBox = styled.div<{ columns?: number; }>`
 	margin: 4px auto 0;
 
 	background: ${(props: aut.theme.StyleProps) => props.theme.box.background};
-	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+	border: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 
 	display: grid;
 	${p => (p.columns === 3 ? "grid-template-columns: 1fr 1fr 1fr;" : "grid-template-columns: 1fr 1fr;")}
 	grid-template-columns: ${p => (p.columns) ? `repeat(${p.columns}, 1fr)` : "1fr 1fr"};
 	grid-template-rows: auto;
 	grid-auto-rows: minmax(30px, auto);
+
+	pointer-events: all;
 `;
 
 export const TopboxTitle = styled.div<{ columns?: number; }>`

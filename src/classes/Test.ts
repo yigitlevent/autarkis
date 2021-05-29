@@ -1,11 +1,9 @@
-import { Option } from "react-basic-select";
-
 import { Dot, PseudoCheckbox } from "../rulesets/_generic";
 
 import { CleanString } from "../function/utility";
 
 export class Test implements aut.classes.Test {
-	_character: aut.classes.Character;
+	_data: aut.short.GenericCharacterData;
 	_ruleset: aut.ruleset.Names;
 
 	title: string;
@@ -20,8 +18,8 @@ export class Test implements aut.classes.Test {
 
 	misc: { [key: string]: number; } = {}; // HOLDS: difficulty: true
 
-	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, character: aut.classes.Character) {
-		this._character = character;
+	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, characterData: aut.short.GenericCharacterData) {
+		this._data = characterData;
 		this._ruleset = ruleset;
 
 		this.title = dataset.title;
@@ -40,15 +38,15 @@ export class Test implements aut.classes.Test {
 			if (children.defaultValue) {
 				if (children.addTo) {
 					if (!(children.addTo in this.poolContributors)) { this.poolContributors[children.addTo] = {}; }
-					this.poolContributors[children.addTo][cleanTitle] = this.getDefaultValue(children.defaultValue, this._character);
+					this.poolContributors[children.addTo][cleanTitle] = this.getDefaultValue(children.defaultValue, this._data);
 				}
 
 				if (children.isPool) {
-					this.pools[cleanTitle] = this.getDefaultValue(children.defaultValue, this._character);
+					this.pools[cleanTitle] = this.getDefaultValue(children.defaultValue, this._data);
 				}
 
 				if (children.difficulty) {
-					this.misc[cleanTitle] = this.getDefaultValue(children.defaultValue, this._character);
+					this.misc[cleanTitle] = this.getDefaultValue(children.defaultValue, this._data);
 				}
 			}
 
@@ -60,12 +58,12 @@ export class Test implements aut.classes.Test {
 		this.calculatePools();
 	}
 
-	private getDefaultValue(array: aut.ruleset.DefaultValue, character: aut.classes.Character): number {
+	private getDefaultValue(array: aut.ruleset.DefaultValue, characterData: aut.short.GenericCharacterData): number {
 		if (array.length === 3 || array.length === 5) {
-			const row = character.data[array[0]][array[1]];
+			const row = characterData[array[0]][array[1]];
 
 			if (array.length === 3) {
-				const value = row[array[2]].current as (string | number);
+				const value = row[array[2] as keyof typeof row].current as (string | number);
 				if (typeof value === "string") return parseInt(value);
 				return value;
 			}
@@ -117,9 +115,9 @@ export class Test implements aut.classes.Test {
 			if (el) el.value = combined[poolKey].toString();
 		}
 
-		for (const switchKey in this.flags) {
-			const el = document.getElementById(`roller.${switchKey}.postcheckbox`) as HTMLInputElement;
-			if (el) el.checked = this.flags[switchKey];
+		for (const toggleKey in this.flags) {
+			const el = document.getElementById(`roller.${toggleKey}.postcheckbox`) as HTMLInputElement;
+			if (el) el.checked = this.flags[toggleKey];
 		}
 	}
 
@@ -143,12 +141,12 @@ export class Test implements aut.classes.Test {
 		}
 	}
 
-	changeSelected(values: Option[]): void {
+	changeSelected(values: rbs.Option[]): void {
 		this.poolContributors["total_pool"]["ability_pool"] = 0;
 
 		for (const key in values) {
 			const option = values[key].value.split(" ");
-			const value = this._character.data[option[0]][option[1]].dot.current;
+			const value = this._data[option[0]][option[1]].dot.current;
 			this.poolContributors["total_pool"]["ability_pool"] += value as number;
 		}
 	}
@@ -161,10 +159,10 @@ export class Test implements aut.classes.Test {
 			flags: this.flags,
 			misc: this.misc,
 			character: {
-				uuid: this._character.data._primary.uuid.text.current as string,
-				name: this._character.data.basics.name.text.current as string,
-				blood_potency: this._character.data.the_blood.blood_potency.dot.current as number,
-				aggravated_damage: (this._character.data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
+				uuid: this._data._primary.uuid.text.current as string,
+				name: this._data.basics.name.text.current as string,
+				blood_potency: this._data.the_blood.blood_potency.dot.current as number,
+				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
 			}
 		};
 
@@ -179,10 +177,10 @@ export class Test implements aut.classes.Test {
 			flags: this.flags,
 			misc: this.misc,
 			character: {
-				uuid: this._character.data._primary.uuid.text.current as string,
-				name: this._character.data.basics.name.text.current as string,
-				blood_potency: this._character.data.the_blood.blood_potency.dot.current as number,
-				aggravated_damage: (this._character.data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
+				uuid: this._data._primary.uuid.text.current as string,
+				name: this._data.basics.name.text.current as string,
+				blood_potency: this._data.the_blood.blood_potency.dot.current as number,
+				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
 			}
 		};
 

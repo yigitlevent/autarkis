@@ -6,10 +6,15 @@ import { DatabaseClient } from "../hooks/useQueries";
 
 export class Chronicle implements aut.classes.Chronicle {
 	readonly type = "chronicle";
+	readonly uuid;
+	readonly ruleset;
 
-	data;
+	data: aut.short.GenericChronicleData = {};
 
 	constructor(rawData: undefined | aut.server.Chronicle, ruleset: aut.ruleset.Names) {
+		this.uuid = rawData?.uuid;
+		this.ruleset = rawData?.ruleset;
+
 		this.data = new GenericChronicle();
 		this.data.ruleset.text.current = ruleset;
 
@@ -22,7 +27,7 @@ export class Chronicle implements aut.classes.Chronicle {
 			this.data.storyteller_uuid.text.current = rawData.storyteller_uuid;
 			this.data.storyteller_name.text.current = rawData.storyteller_name;
 
-			this.data.discord_enabled.switch.current = rawData.discord_enabled;
+			this.data.discord_enabled.toggle.current = rawData.discord_enabled;
 			this.data.discord_server.text.current = rawData.discord_server;
 			this.data.discord_channel.text.current = rawData.discord_channel;
 
@@ -40,14 +45,14 @@ export class Chronicle implements aut.classes.Chronicle {
 		const targetID = target.id; 			// "basics.name" 
 		const name = targetID.split(".")[0]; 	// "basics"
 
-		if (target.type === "checkbox") this.data[name].switch.current = target.checked;
+		if (target.type === "checkbox") this.data[name].toggle.current = target.checked;
 		else if (target.type === "text") this.data[name].text.current = target.value;
 	}
 
 	placeSheetData(): void {
 		for (const block in this.data) {
 			const el = document.getElementById(`${block}`) as HTMLInputElement;
-			if (el && el.type === "checkbox") el.checked = this.data[block].switch.current as boolean;
+			if (el && el.type === "checkbox") el.checked = this.data[block].toggle.current as boolean;
 			else if (el && el.type === "text") el.value = this.data[block].text.current as string;
 		}
 	}
@@ -58,7 +63,7 @@ export class Chronicle implements aut.classes.Chronicle {
 			ruleset: this.data.ruleset.text.current,
 			storyteller_name: DatabaseClient.auth.user()?.user_metadata.full_name,
 			storyteller_uuid: DatabaseClient.auth.user()?.id,
-			discord_enabled: this.data.discord_enabled.switch.current,
+			discord_enabled: this.data.discord_enabled.toggle.current,
 			discord_server: this.data.discord_server.text.current,
 			discord_channel: this.data.discord_channel.text.current
 		};
@@ -74,7 +79,7 @@ export class Chronicle implements aut.classes.Chronicle {
 
 	update(): Promise<void> {
 		const data = {
-			discord_enabled: this.data.discord_enabled.switch.current,
+			discord_enabled: this.data.discord_enabled.toggle.current,
 			discord_server: this.data.discord_server.text.current,
 			discord_channel: this.data.discord_channel.text.current
 		};

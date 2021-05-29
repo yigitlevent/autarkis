@@ -1,5 +1,4 @@
 import { useState, useContext, useCallback, useEffect, Fragment } from "react";
-import { Option } from "react-basic-select";
 import styled from "styled-components";
 
 import { Rulesets } from "../../rulesets/_rulesets";
@@ -17,98 +16,108 @@ const Result = styled.div`
 	padding: 4px;
 `;
 
-export function TestWrapper({ event, sheetDisplayType, character, setTester: setDiceRoller }: aut.props.TestWrapper): JSX.Element {
+export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props.TestWrapper): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
+	const [displayType, data] = characterObject;
+
 	const [basics] = useState(() => {
-		const target = event.target as HTMLElement;
+		if (data) {
+			const target = event.target as HTMLElement;
 
-		const ruleset = character.data._primary.ruleset.text.current as aut.ruleset.Names;
-		const type = target.id.split(".")[2];
+			const ruleset = data._primary.ruleset.text.current as aut.ruleset.Names;
+			const type = target.id.split(".")[2];
 
-		const dataset: aut.ruleset.TestSheet = Rulesets.getRuleset(ruleset).tests[type];
+			const dataset: aut.ruleset.TestSheet = Rulesets.getRuleset(ruleset).tests[type];
 
-		return {
-			title: dataset.title,
-			type: type,
-			ruleset: ruleset,
-			tester: new Test(dataset, ruleset, character)
-		};
+			return {
+				title: dataset.title,
+				type: type,
+				ruleset: ruleset,
+				tester: new Test(dataset, ruleset, data)
+			};
+		}
 	});
 
 	const [probabilityTopbox, setProbabilityTopbox] = useState<JSX.Element>(<Fragment />);
 	const [resultTopbox, setResultTopbox] = useState<JSX.Element>(<Fragment />);
 
 	const changeSheetValue = useCallback((valueEvent: aut.short.Events): void => {
-		basics.tester.changeValue(valueEvent);
-		basics.tester.placeSheetData();
-	}, [basics.tester]);
+		if (basics) {
+			basics.tester.changeValue(valueEvent);
+			basics.tester.placeSheetData();
+		}
+	}, [basics]);
 
-	const changeSelected = useCallback((values: Option[]): void => {
-		basics.tester.changeSelected(values);
-		basics.tester.placeSheetData();
-	}, [basics.tester]);
+	const changeSelected = useCallback((values: rbs.Option[]): void => {
+		if (basics) {
+			basics.tester.changeSelected(values);
+			basics.tester.placeSheetData();
+		}
+	}, [basics]);
 
 	const roll = useCallback((offlineTest: boolean): void => {
-		const testResult = basics.tester.roll(offlineTest);
+		if (basics) {
+			const testResult = basics.tester.roll(offlineTest);
 
-		const resultElements: JSX.Element[] = [];
-		for (const key in testResult.test.results) {
-			resultElements.push(
-				<Result key={key}>
-					<b>{DirtyString(key)}</b>: {testResult.test.results[key].join(", ")}
-				</Result>
+			const resultElements: JSX.Element[] = [];
+			for (const key in testResult.test.results) {
+				resultElements.push(
+					<Result key={key}>
+						<b>{DirtyString(key)}</b>: {testResult.test.results[key].join(", ")}
+					</Result>
+				);
+			}
+
+			setResultTopbox(
+				<TopboxBox columns={1}>
+					<TopboxTitle columns={1}>{testResult.title}</TopboxTitle>
+					<Result>{testResult.test.result}</Result>
+					{resultElements}
+				</TopboxBox>
 			);
 		}
-
-		setResultTopbox(
-			<TopboxBox columns={1}>
-				<TopboxTitle columns={1}>{testResult.title}</TopboxTitle>
-				<Result>{testResult.test.result}</Result>
-				{resultElements}
-			</TopboxBox>
-		);
-
-	}, [basics.tester]);
+	}, [basics]);
 
 	const probability = useCallback((): void => {
-		const probabilities = basics.tester.calculateProbabilities();
+		if (basics) {
+			const probabilities = basics.tester.calculateProbabilities();
 
-		const elements = [];
+			const elements = [];
 
-		for (const key in probabilities) {
-			if (key.startsWith("_")) continue;
-			elements.push(<Result key={key}><b>{DirtyString(key)}</b>: {probabilities[key]}%</Result>);
+			for (const key in probabilities) {
+				if (key.startsWith("_")) continue;
+				elements.push(<Result key={key}><b>{DirtyString(key)}</b>: {probabilities[key]}%</Result>);
+			}
+
+			setProbabilityTopbox(
+				<TopboxBox columns={1}>
+					<TopboxTitle columns={1}>Probabilities</TopboxTitle>
+					{elements}
+				</TopboxBox>
+			);
 		}
-
-		setProbabilityTopbox(
-			<TopboxBox columns={1}>
-				<TopboxTitle columns={1}>Probabilities</TopboxTitle>
-				{elements}
-			</TopboxBox>
-		);
-
-	}, [basics.tester]);
+	}, [basics]);
 
 	useEffect(() => {
-		basics.tester.placeSheetData();
-	}, [basics.tester]);
+		basics?.tester.placeSheetData();
+	}, [basics?.tester]);
 
 	return (
 		<Topbox>
 			<TopboxBox>
-				<TopboxTitle>{basics.title}</TopboxTitle>
+				<TopboxTitle>{basics?.title}</TopboxTitle>
 
-				{(character)
-					? (Rulesets.getRuleset((character.data._primary.ruleset.text.current) as aut.ruleset.Names))
+				{(data && basics)
+					? (Rulesets.getRuleset((data._primary.ruleset.text.current) as aut.ruleset.Names))
 						.tests[basics.type].children.map((row, index) => {
 							return (
-								<TopboxChildren columns={1} span={(row.select) ? 2 : 1} key={`${character.data.basics.name}_${sheetDisplayType}_${index}`}>
+								<TopboxChildren columns={1} span={(row.select) ? 2 : 1} key={`${data.basics.name}_${displayType}_${index}`}>
 									<Row
-										sheetDisplayType={sheetDisplayType}
+										sheetDisplayType={displayType}
 										blockTitle={"roller"}
 										rowData={row}
-										ruleset={character.data._primary.ruleset.text.current as aut.ruleset.Names}
+										ruleset={data._primary.ruleset.text.current as aut.ruleset.Names}
 										setTester={setDiceRoller}
 										changeSheetValue={changeSheetValue}
 										changeSelected={changeSelected}

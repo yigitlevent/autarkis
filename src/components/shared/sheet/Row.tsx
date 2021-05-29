@@ -1,14 +1,15 @@
 import { Fragment, useContext, useState } from "react";
 import styled from "styled-components";
-import Select, { Group } from "react-basic-select";
+
+import { Rulesets } from "../../../rulesets/_rulesets";
 
 import { CleanString } from "../../../function/utility";
 
 import { ClientContext } from "../../../contexts/Contexts";
 
-import { Input, NumberInput, Textarea, Button, Checkbox, Switch, PseudoCheckbox, Dot, InputGroup } from "../../shared/Inputs";
+import { Input, NumberInput, Textarea, Button, Checkbox, Toggle, PseudoCheckbox, Dot, InputGroup } from "../../shared/Inputs";
 import { Icon } from "../../shared/Icon";
-import { Rulesets } from "../../../rulesets/_rulesets";
+import Select from "../Select";
 
 const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }>`
 	display: grid;
@@ -19,10 +20,11 @@ const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }
 	text-align: ${p => (p.align) ? p.align : "initial"};
 `;
 
-export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester: setDiceRoller, changeSheetValue, changeSelected }: aut.props.SheetRow): JSX.Element {
+export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester, changeSheetValue, changeSelected }: aut.props.SheetRow): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
 	const [nameString] = useState(`${(sheetDisplayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`);
+	// const [nameParts] = useState(`${(sheetDisplayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`.split("."));
 
 	const [gridData] = useState(() => {
 		const tempColumnWidths: string[] = [];
@@ -65,17 +67,17 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 		}
 
 		if (rowData.inputs.includes("dot") && rowData.dot) {
-			tempColumnWidths.push(`minmax(${rowData.dot.amount * 16}px, 1fr)`);
+			tempColumnWidths.push(`minmax(${rowData.dot.amount * 14}px, 1fr)`);
 			tempColumnAmount++;
 		}
 
 		if (rowData.inputs.includes("pseudocheckbox") && rowData.pseudocheckbox) {
-			tempColumnWidths.push(`minmax(${rowData.pseudocheckbox.amount * 16}px, 1fr)`);
+			tempColumnWidths.push(`minmax(${rowData.pseudocheckbox.amount * 14}px, 1fr)`);
 			tempColumnAmount++;
 		}
 
 		if (rowData.inputs.includes("checkbox") && rowData.checkbox) {
-			tempColumnWidths.push(`minmax(${rowData.checkbox.amount * 16}px, 1fr)`);
+			tempColumnWidths.push(`minmax(${rowData.checkbox.amount * 14}px, 1fr)`);
 			tempColumnAmount++;
 		}
 
@@ -95,8 +97,12 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					elements.push(<PseudoCheckbox
 						id={`${nameString}.pseudocheckbox.${i}`}
 						key={`${nameString}.pseudocheckbox.${i}`}
-						readOnly={(rowData.isReadOnly || sheetDisplayType === "view")}
-						onClick={changeSheetValue}
+						readOnly={true}
+						onClick={
+							(rowData.isReadOnly === true || sheetDisplayType === "view")
+								? undefined
+								: changeSheetValue
+						}
 					/>);
 				});
 		}
@@ -106,7 +112,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					elements.push(<Checkbox
 						id={`${nameString}.checkbox.${i}`}
 						key={`${nameString}.checkbox.${i}`}
-						disabled={(rowData.isReadOnly || sheetDisplayType === "view")}
+						disabled={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 						onClick={changeSheetValue}
 					/>);
 				});
@@ -117,7 +123,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					elements.push(<Dot
 						id={`${nameString}.dot.${i}`}
 						key={`${nameString}.dot.${i}`}
-						disabled={(rowData.isReadOnly || sheetDisplayType === "view")}
+						disabled={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 						onClick={changeSheetValue}
 					/>);
 				});
@@ -127,14 +133,14 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 	});
 
 	const createSelectOptions = (categories: string[]) => {
-		const options: Group[] = [];
+		const options: rbs.Group[] = [];
 
 		for (const category in categories) {
 			const name = categories[category];
 			options.push({
 				name: name,
 				value: name.toLowerCase(),
-				options: ((Rulesets.getRuleset(ruleset)).basics[name.toLowerCase()] as string[]).sort().map((v) => {
+				options: ((Rulesets.getRuleset(ruleset)).basicLists[CleanString(name)] as string[]).sort().map((v) => {
 					return { name: v, value: CleanString(v) };
 				})
 			});
@@ -149,7 +155,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 			{(rowData.inputs.includes("precheckbox"))
 				? <Checkbox key={`${nameString}.precheckbox`}
 					id={`${nameString}.precheckbox`}
-					disabled={(sheetDisplayType === "view")}
+					disabled={(sheetDisplayType === "view") ? true : false}
 					onClick={changeSheetValue}
 				/>
 				: null
@@ -157,7 +163,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 
 			{(rowData.isTestable && (sheetDisplayType === "view" || clientState === "offline"))
 				? <Icon size={18} name={"roll"} hover brightness title>
-					<Button id={`roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setDiceRoller(event); }} />
+					<Button id={`roll.${CleanString(blockTitle)}.${CleanString(rowData.title)}`} value="" onClick={(event) => { setTester(event); }} />
 				</Icon>
 				: null
 			}
@@ -167,15 +173,18 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 				: null
 			}
 
-			{(rowData.inputs.includes("select") && rowData.select && changeSelected)
+			{(rowData.inputs.includes("select") && rowData.select)
 				? <Select
 					options={createSelectOptions(rowData.select.categories)}
-					onSelectedChange={changeSelected}
-					multi={true}
-					search={true}
-					appendGroupValue={true}
+					onSelectedChange={(changeSelected) ? (values) => { changeSelected(values, `${nameString}.select`); } : undefined}
+					multi={(rowData.select.multi) ? true : false}
+					search={(rowData.select.search) ? true : false}
+					create={(rowData.select.create) ? true : false}
+					appendGroupValue={(rowData.select.appendGroupValue) ? true : false}
 					showAsText={true}
-					placeholder={rowData.title}
+					placeholder={(rowData.select.placeholder) ? rowData.select.placeholder : undefined}
+					disabled={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
+					defaultSelected={/* TODO: Figure this out (character?.data[nameParts[0]]) ? character?.data[nameParts[0]][nameParts[1]].select.current as string[] :*/ undefined}
 				/>
 				: null
 			}
@@ -186,16 +195,17 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					align={rowData.align}
 					id={`${nameString}.text`}
 					key={`${nameString}.text`}
-					readOnly={(rowData.isReadOnly || sheetDisplayType === "view") ? true : false}
+					readOnly={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 					onChange={changeSheetValue}
 				/>
 				: null
 			}
 
 			{(rowData.inputs.includes("postcheckbox"))
-				? <Switch key={`${nameString}.postcheckbox`}
+				? <Toggle key={`${nameString}.postcheckbox`}
 					id={`${nameString}.postcheckbox`}
 					onClick={changeSheetValue}
+					disabled={false}
 				/>
 				: null
 			}
@@ -206,11 +216,12 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					align={rowData.align}
 					id={`${nameString}.number`}
 					key={`${nameString}.number`}
-					readOnly={(rowData.isReadOnly) ? true : false}
+					readOnly={(rowData.isReadOnly === true) ? true : false}
 					onChange={changeSheetValue}
 				/>
 				: null
 			}
+
 			{(rowData.inputs.includes("dot") || rowData.inputs.includes("pseudocheckbox") || rowData.inputs.includes("checkbox"))
 				? <InputGroup>{inputGroup}</InputGroup>
 				: null
@@ -221,7 +232,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester:
 					height={rowData.textarea.amount * 24}
 					columns={gridData.columnAmount}
 					id={`${nameString}.textarea`}
-					readOnly={(rowData.isReadOnly || sheetDisplayType === "view")}
+					readOnly={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 					onChange={changeSheetValue}
 				/>
 				: null

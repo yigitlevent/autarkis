@@ -398,8 +398,8 @@ export const V5ModernGenerator: aut.ruleset.GeneratorConditions = [
 	{
 		text: "Add Convictions and Touchstones",
 		condition: (characterData: aut.data.GenericCharacterData): [boolean, string] => {
-			const charConvictions = characterData;
-			const charTouchstones = characterData;
+			// const charConvictions = characterData;
+			// const charTouchstones = characterData;
 
 			// Select one to three Convictions
 			// Create an equal number of Touchstones

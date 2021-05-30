@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { toast } from "react-toastify";
 
 import { Checkbox, Dot, Toggle, PseudoCheckbox, Text, Textarea, Select } from "../rulesets/_generic";
@@ -10,17 +10,19 @@ import { useSheetDisplayType } from "./useSheetDisplayType";
 import { DatabaseClient } from "./useQueries";
 
 export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?: string): aut.hooks.UseCharacterReturns {
+	const [isLoaded, setIsLoaded] = useState(false);
+
 	const [category] = useState("character");
 	const [ruleset] = useState<aut.ruleset.Names>(characterRuleset);
 	const [uuid] = useState<undefined | string>(characterUUID);
 	const [rawData, setRawData] = useState<aut.server.Character>();
 	const [displayType, setDisplayType] = useSheetDisplayType((characterUUID) ? "view" : "new");
 
+	const [revision, incrementRevision] = useReducer((state: number): number => { return state + 1; }, 0);
+
 	const generateDataLayout = useCallback((): aut.data.GenericCharacterDataLayout => {
 		const newData: { [key: string]: { [key: string]: { [key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select; }; }; } = {};
 		const sheetLayout = (Rulesets.getRuleset(ruleset)).characterSheet;
-
-		newData._primary.ruleset.text.current = characterRuleset;
 
 		for (const blockKey in sheetLayout) {
 			const block = sheetLayout[blockKey];
@@ -69,10 +71,12 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 			}
 		}
 
+		newData._primary.ruleset.text.current = characterRuleset;
+
 		return newData;
 	}, [characterRuleset, ruleset]);
 
-	const setLoadedData = useCallback((characterRawData: aut.server.Character, layout: aut.data.GenericCharacterDataLayout): aut.data.GenericCharacterDataLayout => {
+	const generateLoadedData = useCallback((characterRawData: aut.server.Character, layout: aut.data.GenericCharacterDataLayout): aut.data.GenericCharacterDataLayout => {
 		const temp = characterRawData.data as any;
 
 		for (const block in temp) {
@@ -105,8 +109,8 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 	const [data, setData] = useState<aut.data.GenericCharacterData>(generateDataLayout() as any);
 
 	// TODO: This is a ruleset-specific calculation, it should be moved into the ruleset
-	const calculateValues = useCallback((): void => {
-		const tempData = data;
+	const calculateValues = useCallback((characterData: aut.data.GenericCharacterData): aut.data.GenericCharacterData => {
+		const tempData = characterData;
 
 		// Everything that determined by Blood Potency
 		const bloodPotency = tempData.the_blood?.blood_potency.dot.current as number;
@@ -129,10 +133,12 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 			tempData.the_blood.willpower.dot.current = (tempData.attributes.composure.dot.current as number) + (tempData.attributes.resolve.dot.current as number);
 		}
 
-		setData(tempData);
-	}, [data]);
+		return tempData;
+	}, []);
 
 	const placeSheetData = useCallback((): void => {
+		console.log("char placeSheetData");
+
 		for (const block in data) {
 			for (const row in data[block]) {
 				for (const type in data[block][row]) {
@@ -221,32 +227,36 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 			(document.getElementById(targetName) as HTMLInputElement).value = newValue;
 		}
 
-		setData(tempData);
-	}, [data]);
+		setData({ ...calculateValues(tempData) });
+		incrementRevision();
+	}, [calculateValues, data]);
 
 	const changeSelected = useCallback((options: rbs.Option[], id: string): void => {
-		if (data) {
-			const names = id.split("."); // [ "basics", "clan", "select" ]
-			const block = names[0];
-			const row = names[1];
-			const type = names[2];
+		const names = id.split("."); // [ "basics", "clan", "select" ]
+		const block = names[0];
+		const row = names[1];
+		const type = names[2];
 
-			const tempData = data;
+		const tempData = data;
 
-			if (type === "select") tempData[block][row].select.current = options.map((v) => v.value);
+		if (type === "select") tempData[block][row].select.current = options.map((v) => v.value);
 
-			setData(tempData);
+		setData({ ...calculateValues(tempData) });
+		incrementRevision();
+	}, [calculateValues, data]);
+
+	useEffect(() => {
+		if (!isLoaded && rawData) {
+			if (rawData) setData({ ...calculateValues(generateLoadedData(rawData, data) as any) });
+			setIsLoaded(true);
 		}
-	}, [data]);
+		incrementRevision();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [calculateValues, rawData, generateLoadedData]);
 
 	useEffect(() => {
-		if (rawData) setData(setLoadedData(rawData, data) as any);
-	}, [rawData, data, setLoadedData]);
-
-	useEffect(() => {
-		calculateValues();
-		placeSheetData();
-	}, [calculateValues, data, placeSheetData]);
+		if (isLoaded) placeSheetData();
+	}, [isLoaded, placeSheetData, revision]);
 
 	useEffect(() => {
 		if (ruleset && uuid && !rawData) {
@@ -254,7 +264,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 				.select("*").eq("uuid", uuid).single()
 				.then((response: any) => {
 					if (response.error) return;
-					setRawData(response as aut.server.Character);
+					setRawData(response.data as aut.server.Character);
 				});
 		}
 	}, [category, rawData, ruleset, uuid]);
@@ -303,5 +313,5 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 		});
 	}, [data]);
 
-	return [displayType, data, { setDisplayType, changeValue, changeSelected }, {  insert, update, remove }];
+	return [displayType, data, { placeSheetData, setDisplayType, changeValue, changeSelected }, { insert, update, remove }, isLoaded];
 }

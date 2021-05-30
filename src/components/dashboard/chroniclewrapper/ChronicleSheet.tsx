@@ -100,12 +100,12 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 					: null
 				}
 
-				<Icon size={24} name={"arrow_left"} hover brightness float={"right"}>
-					<Button value="" title={"Move Left"} onClick={() => { moveSheet(sheetID, "up"); }} />
-				</Icon>
-
 				<Icon size={24} name={"arrow_right"} hover brightness float={"right"}>
 					<Button value="" title={"Move Right"} onClick={() => { moveSheet(sheetID, "down"); }} />
+				</Icon>
+
+				<Icon size={24} name={"arrow_left"} hover brightness float={"right"}>
+					<Button value="" title={"Move Left"} onClick={() => { moveSheet(sheetID, "up"); }} />
 				</Icon>
 			</Extras>
 

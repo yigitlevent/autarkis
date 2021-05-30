@@ -6,20 +6,20 @@ import { Spinner } from "../shared/Spinner";
 
 import { CharacterSheet } from "./characterwrapper/CharacterSheet";
 
-export function CharacterWrapper({ sheetID, removeSheet, moveSheet, characterData }: aut.props.CharacterSheetWrapper): JSX.Element {
-	const characterObject = useCharacter(characterData.ruleset, characterData.uuid);
+export function CharacterWrapper({ sheetID, removeSheet, moveSheet, ruleset, uuid }: aut.props.CharacterSheetWrapper): JSX.Element {
+	const [displayType, data, setters, database, isLoaded] = useCharacter(ruleset, uuid);
 
 	return (
-		(characterData === undefined)
+		(!isLoaded)
 			? <Spinner />
 			: <LargeBox>
-				<Title>{characterObject[0].toUpperCase()} CHARACTER</Title>
+				<Title>{displayType.toUpperCase()} CHARACTER</Title>
 
 				<CharacterSheet
 					sheetID={sheetID}
 					removeSheet={removeSheet}
 					moveSheet={moveSheet}
-					characterObject={characterObject}
+					characterObject={[displayType, data, setters, database, isLoaded]}
 				/>
 
 				{/*TODO: (category === "generator")

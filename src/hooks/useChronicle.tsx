@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { toast } from "react-toastify";
 
 import { GenericChronicle } from "../rulesets/GenericChronicle";
@@ -7,11 +7,15 @@ import { useSheetDisplayType } from "./useSheetDisplayType";
 import { DatabaseClient } from "./useQueries";
 
 export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?: string): aut.hooks.UseChronicleReturns {
+	const [isLoaded, setIsLoaded] = useState(false);
+
 	const [category] = useState("chronicle");
 	const [ruleset] = useState<aut.ruleset.Names>(chronicleRuleset);
 	const [uuid] = useState<undefined | string>(chronicleUUID);
 	const [rawData, setRawData] = useState<aut.server.Chronicle>();
 	const [displayType, setDisplayType] = useSheetDisplayType((chronicleUUID) ? "view" : "new");
+
+	const [revision, incrementRevision] = useReducer((state: number): number => { return state + 1; }, 0);
 
 	const generateDataLayout = useCallback((): aut.data.GenericCharacterDataLayout => {
 		const sheetLayout = new GenericChronicle();
@@ -40,16 +44,19 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 		const target = event.target as HTMLInputElement;
 		const targetID = target.id; 			// "basics.name" 
 		const name = targetID.split(".")[0]; 	// "basics"
-		
+
 		const tempData = data;
 
 		if (target.type === "checkbox") tempData[name].toggle.current = target.checked;
 		else if (target.type === "text") tempData[name].text.current = target.value;
-		
-		setData(tempData);
+
+		setData({ ...tempData });
+		incrementRevision();
 	}, [data]);
 
 	const placeSheetData = useCallback((): void => {
+		console.log("chro placeSheetData");
+
 		for (const block in data) {
 			const el = document.getElementById(`${block}`) as HTMLInputElement;
 			if (el && el.type === "checkbox") el.checked = data[block].toggle.current as boolean;
@@ -58,12 +65,17 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 	}, [data]);
 
 	useEffect(() => {
-		if (rawData) setData(setLoadedData(rawData, data) as any);
-	}, [rawData, data, setLoadedData]);
+		if (!isLoaded && rawData) {
+			setData({ ...setLoadedData(rawData, data) as any });
+			setIsLoaded(true);
+		}
+		incrementRevision();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [rawData, setLoadedData]);
 
 	useEffect(() => {
-		placeSheetData();
-	}, [data, placeSheetData]);
+		if (isLoaded) placeSheetData();
+	}, [isLoaded, placeSheetData, revision]);
 
 	useEffect(() => {
 		if (ruleset && uuid && !rawData) {
@@ -71,7 +83,7 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 				.select("*").eq("uuid", uuid).single()
 				.then((response: any) => {
 					if (response.error) return;
-					setRawData(response as aut.server.Chronicle);
+					setRawData(response.data as aut.server.Chronicle);
 				});
 		}
 	}, [category, rawData, ruleset, uuid]);
@@ -124,5 +136,5 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 		});
 	}, [data]);
 
-	return [displayType, data, { setDisplayType, changeValue }, { insert, update, remove }];
+	return [displayType, data, { placeSheetData, setDisplayType, changeValue }, { insert, update, remove }, isLoaded];
 }

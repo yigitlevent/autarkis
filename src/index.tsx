@@ -5,7 +5,7 @@ import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Slide } from "react-toastify";
 
-import styled, { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components";
 import "react-toastify/dist/ReactToastify.css";
 import { GlobalStyle } from "./theme/global";
 import { DarkTheme } from "./theme/_themes";
@@ -19,27 +19,6 @@ import { StyledToast } from "./components/shared/StyledToast";
 
 import { Dashboard } from "./components/Dashboard";
 import { Topbar } from "./components/Topbar";
-
-const DarkPackLogo = styled.a`
-	display: block;
-	height: 40px;
-	width: 60px;
-	margin: 3px;
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	z-index: 666;
-	
-	background: ${(props: aut.theme.StyleProps) => props.theme.box.background} url("./assets/dark_pack.png") no-repeat center center;
-	background-size: 60px 40px;
-	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
-
-	&:active,
-	&:focus {
-		border: none;
-		appearance: none;
-	}
-`;
 
 function App(): JSX.Element {
 	const [clientState, setClientState] = useState<aut.ClientState>("presign");
@@ -101,7 +80,6 @@ function App(): JSX.Element {
 				}
 			</ClientContext.Provider>
 
-			<DarkPackLogo href="https://worldofdarkness.com/dark-pack" title="Dark Pack" target="_blank" rel="noopener noreferrer" />
 		</ThemeProvider>
 	);
 }

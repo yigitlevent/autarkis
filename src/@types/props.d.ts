@@ -6,14 +6,16 @@ namespace aut {
 			sheetID: number;
 			removeSheet: (id: number) => void,
 			moveSheet: (id: number, direction: "up" | "down") => void;
-			chronicleData: { ruleset: aut.ruleset.Names; uuid?: string; }
+			ruleset: aut.ruleset.Names;
+			uuid?: string;
 		}
 
 		interface CharacterSheetWrapper {
 			sheetID: number;
 			removeSheet: (id: number) => void,
 			moveSheet: (id: number, direction: "up" | "down") => void;
-			characterData: { ruleset: aut.ruleset.Names; uuid?: string; };
+			ruleset: aut.ruleset.Names;
+			uuid?: string;
 		}
 
 		interface SheetList {

@@ -6,6 +6,7 @@ namespace aut {
 			aut.SheetDisplayType,
 			aut.GenericCharacterData,
 			{
+				placeSheetData: () => void,
 				setDisplayType: (newDisplayType?: aut.SheetDisplayType | undefined) => void,
 				changeValue: (event: aut.Events) => void,
 				changeSelected: (options: rbs.Option[], id: string) => void;
@@ -14,13 +15,15 @@ namespace aut {
 				insert: () => Promise<void>,
 				update: () => Promise<void>,
 				remove: () => Promise<void>;
-			}
+			},
+			boolean
 		];
 
 		type UseChronicleReturns = [
 			aut.SheetDisplayType,
 			aut.GenericChronicleData,
 			{
+				placeSheetData: () => void,
 				setDisplayType: (newDisplayType?: aut.SheetDisplayType | undefined) => void,
 				changeValue: (event: aut.Events) => void;
 			},
@@ -28,7 +31,8 @@ namespace aut {
 				insert: () => Promise<void>,
 				update: () => Promise<void>,
 				remove: () => Promise<void>;
-			}
+			},
+			boolean
 		];
 
 	}

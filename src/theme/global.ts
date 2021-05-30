@@ -231,6 +231,20 @@ export const GlobalStyle = createGlobalStyle`
 		overflow: hidden auto;
 	}
 
+	#root:after{
+		background: transparent url("./assets/logo.png") no-repeat center center;
+		background-size: auto;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		display: block;
+		content: "";
+		z-index: 0;
+		opacity: 0.2;
+		top: 0;
+	}
+
 	.italic {
 		font-family: ${(props: aut.theme.StyleProps) => props.italicFont};
 		letter-spacing: 0.3px;
@@ -259,8 +273,6 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	///// PACKAGE OVERRIDE STUFF
-
-	.grecaptcha-badge { visibility: hidden; }
 
 	/** Used to define container behavior: width, position: fixed etc... **/
 	.Toastify__toast-container {

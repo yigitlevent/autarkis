@@ -91,5 +91,5 @@ export const DarkTheme: aut.theme.Palette = {
 	},
 
 	transparent: "rgba(21,  21,  21,  0.8)",  // grey[925]
-	gradient: `linear-gradient(180deg, ${DarkColors.red[900]} 0%, ${DarkColors.grey[975]} 100%)`,
+	gradient: `linear-gradient(180deg, ${DarkColors.red[900]} 0%, rgba(0, 0, 0, 0.0) 100%)`,
 };

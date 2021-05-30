@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { useContext } from "react";
 import { Provider } from "@supabase/gotrue-js";
 import styled from "styled-components";
 
@@ -9,75 +9,56 @@ import { DatabaseClient } from "../hooks/useQueries";
 import { Icon } from "./shared/Icon";
 import { IconLink } from "./shared/Link";
 import { Button } from "./shared/Inputs";
-import { Divider } from "./shared/Divider";
-
-const ToggleWrapper = styled.div`
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 99;
-	
-	background: ${(props: aut.theme.StyleProps) => props.theme.box.background};
-	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
-	
-	height: 30px;
-	width: 30px;
-`;
 
 const TopbarWrapper = styled.div`
-	display: block;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: start;
+	align-items: center;
+	align-content: stretch;
+
 	width: 100vw;
-	height: 100vh;
-	
-	background: ${(props: aut.theme.StyleProps) => props.theme.gradient};
-
-	position: absolute;
-	top: 0;
-	left: 0;
-
+	height: max-content;
 	z-index: 100;
-	text-align: center;
+	position: sticky;
+	top: 0;
+	
+	background: ${(props: aut.theme.StyleProps) => props.theme.box.background};
+	border-bottom: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 
-	&.hideLeft {
-		top: -100vw;
-		transition-property: top;
-		transition: 1000ms;
+	& > * {
+		margin: 5px;
 	}
-
-	&.showLeft {
-		top: 0;
-		transition-property: top;
-		transition: 1000ms;
-	}
-`;
-
-const Logo = styled.div`
-	background: transparent url("./assets/logo.png") no-repeat center center;
-	background-size: 180px;
-	height: 180px;
-	width: 180px;
-	margin: 10px auto;
-	border: ${(props: aut.theme.StyleProps) => props.theme.row.border};
-	border-radius: 100%;
 `;
 
 const Title = styled.div`
-	font-size: 2.4em;
-	text-align: center;
-	margin-bottom: 12px;
+	flex: 1 1 auto;
+	font-size: 2em;
 `;
 
 const Subtitle = styled.div`
-	font-size: 0.4em;
+	flex: 0 0 auto;
+	font-size: 1em;
 `;
 
-const IconWrapper = styled.div`
+const DarkPackLogo = styled.a`
+	display: block;
+	height: 40px;
+	width: 60px;
+	
+	background: ${(props: aut.theme.StyleProps) => props.theme.box.background} url("./assets/dark_pack.png") no-repeat center center;
+	background-size: 60px 40px;
+	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+
+	&:active,
+	&:focus {
+		border: none;
+		appearance: none;
+	}
 `;
 
 export function Topbar(): JSX.Element {
 	const { clientUsername, clientState, setClientState } = useContext(ClientContext);
-
-	const [topbar, setTopbar] = useState(true);
 
 	const signOut = async (): Promise<void> => {
 		DatabaseClient.auth.signOut().then(() => { setClientState("signedout"); });
@@ -88,50 +69,35 @@ export function Topbar(): JSX.Element {
 	};
 
 	return (
-		<Fragment>
-			{(clientState === "signedin")
-				? <ToggleWrapper>
-					<IconLink onClick={() => setTopbar(!topbar)}>
-						<Icon size={24} name={"menu_toggle"} hover />
-					</IconLink>
-				</ToggleWrapper>
+		<TopbarWrapper>
+			<Title>
+				AUTARKIS
+				{(clientState === "offline") ? <Subtitle>(Offline)</Subtitle> : ""}
+			</Title>
+
+			{(clientState === "signedout")
+				? <Button onClick={() => signIn("github")} value={"Sign in using Github"} />
 				: null
 			}
 
-			<TopbarWrapper className={(topbar) ? "showLeft" : "hideLeft"}>
-				<Logo />
+			<Subtitle>{(clientState === "signedin") ? `Welcome, ${clientUsername}` : ""}</Subtitle>
 
-				<Title>
-					AUTARKIS
-					{(clientState === "offline") ? <Subtitle>(Offline)</Subtitle> : ""}
-				</Title>
+			{(clientState === "signedin")
+				? <IconLink onClick={signOut} title="Logout">
+					<Icon size={24} name={"logout"} hover />
+				</IconLink>
+				: null
+			}
 
-				<Divider title={(clientState === "signedin") ? `Welcome, ${clientUsername}` : undefined} />
+			<IconLink href="https://github.com/yigitlevent/autarkis" title="Autarkis Github Repository" target="_blank" rel="noopener noreferrer">
+				<Icon size={20} name={"github"} hover />
+			</IconLink>
 
-				{(clientState === "signedin")
-					? <Button onClick={() => setTopbar(!topbar)} value={"Click to Enter"} />
-					: null
-				}
+			<IconLink href="https://discord.gg/w23ayKCKKZ" title="Autarkis Bot Discord Server" target="_blank" rel="noopener noreferrer">
+				<Icon size={24} name={"discord"} hover />
+			</IconLink>
 
-				{(clientState === "signedout")
-					? <Button onClick={() => signIn("github")} value={"Sign in using Github"} />
-					: null
-				}
-
-				<IconWrapper>
-					<IconLink href="https://github.com/yigitlevent/autarkis" title="Autarkis Github Repository" target="_blank" rel="noopener noreferrer">
-						<Icon size={20} name={"github"} hover />
-					</IconLink>
-
-					<IconLink href="https://discord.gg/w23ayKCKKZ" title="Autarkis Bot Discord Server" target="_blank" rel="noopener noreferrer">
-						<Icon size={24} name={"discord"} hover />
-					</IconLink>
-
-					<IconLink onClick={signOut} title="Logout">
-						<Icon size={24} name={"logout"} hover />
-					</IconLink>
-				</IconWrapper>
-			</TopbarWrapper>
-		</Fragment>
+			<DarkPackLogo href="https://worldofdarkness.com/dark-pack" title="Dark Pack" target="_blank" rel="noopener noreferrer" />
+		</TopbarWrapper>
 	);
 }

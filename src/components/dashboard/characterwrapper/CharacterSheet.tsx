@@ -50,14 +50,12 @@ export function CharacterSheet({ sheetID, removeSheet, moveSheet, characterObjec
 	const changeSheetValue = useCallback((event: aut.Events) => {
 		if (displayType !== "view") {
 			setters.changeValue(event);
-			// REMOVE: setChangeTime(Date.now());
 		}
 	}, [displayType, setters]);
 
 	const changeSelected = useCallback((options: any, id?: string) => {
 		if (displayType !== "view" && id) {
 			setters.changeSelected(options, id);
-			// REMOVE: setChangeTime(Date.now());
 		}
 	}, [displayType, setters]);
 
@@ -121,12 +119,12 @@ export function CharacterSheet({ sheetID, removeSheet, moveSheet, characterObjec
 						: null
 					}
 
-					<Icon size={24} name={"arrow_left"} hover brightness float={"right"}>
-						<Button value="" title={"Move Left"} onClick={() => { moveSheet(sheetID, "up"); }} />
-					</Icon>
-
 					<Icon size={24} name={"arrow_right"} hover brightness float={"right"}>
 						<Button value="" title={"Move Right"} onClick={() => { moveSheet(sheetID, "down"); }} />
+					</Icon>
+
+					<Icon size={24} name={"arrow_left"} hover brightness float={"right"}>
+						<Button value="" title={"Move Left"} onClick={() => { moveSheet(sheetID, "up"); }} />
 					</Icon>
 				</Extras>
 

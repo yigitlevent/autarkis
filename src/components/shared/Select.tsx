@@ -1,7 +1,103 @@
 import { createRef, useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
+import styled from "styled-components";
 
-export default function Select(props: rbs.Select): JSX.Element {
+const SelectWrapper = styled.div<{ isDisabled: boolean; }>`
+	background:  ${p => (p.isDisabled) ? "none" : (props: aut.theme.StyleProps) => props.theme.element.background};
+	display: block;
+	font-size: 1em;
+	width: 99%;
+	height: 21px;
+	overflow: visible;
+`;
+
+const SelectBar = styled.div`
+	width: inherit;
+	height: 100%;
+	padding: 2px;
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	grid-template-rows: 1fr;
+`;
+
+const SelectSelectedAll = styled.div`
+	height: 100%;
+	width: 100%;
+	line-height: 1.3em;
+	padding: 0 2px;
+`;
+
+const SelectSelected = styled.div`
+	width: max-content;
+	height: 26px;
+	outline: ${(props: aut.theme.StyleProps) => props.theme.row.border};
+	margin: 0 2px 0 0;
+	padding: 2px 4px;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 1.4em;
+	background: transparent;
+`;
+
+const SelectInput = styled.input`
+	min-width: 60px;
+	display: inline-block;
+	background: none !important;
+	border: none !important;
+`;
+
+const SelectOptions = styled.div`
+	display: block;
+	max-height: 240px;
+	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: inherit;
+	position: relative;
+	z-index: 123;
+`;
+
+const SelectOptionNew = styled.div`
+	cursor: pointer;
+	width: 100%;
+	padding: 2px 4px;
+	background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
+
+	&:not(:last-child) {
+		border-bottom: 1px #aaa dashed;
+	}
+`;
+
+const SelectOptionHeader = styled.div`
+	font-size: 1.1em;
+	width: 100%;
+	padding: 2px 4px;
+	text-transform: uppercase;
+	background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
+	border-bottom: 1px #aaa dashed;
+`;
+
+const SelectOption = styled.div`
+	cursor: pointer;
+	width: 100%;
+	padding: 2px 4px;
+	background: ${(props: aut.theme.StyleProps) => props.theme.element.background};
+	border-bottom: ${(props: aut.theme.StyleProps) => props.theme.element.border};
+
+	&:hover:after {
+		content: " +";
+	}
+`;
+
+const SelectOptionSelected = styled(SelectOption)`
+	color: ${(props: aut.theme.StyleProps) => props.theme.success.color};
+	
+	&:hover:after {
+		content: " –";
+	}
+`;
+
+export function Select(props: rbs.Select): JSX.Element {
 	const flattenStringArray = (strings: string[]): rbs.Option[] => {
 		return strings.map((o) => { return { name: o, value: o.toLowerCase() }; });
 	};
@@ -93,18 +189,19 @@ export default function Select(props: rbs.Select): JSX.Element {
 	const selectedStrings = selectedOptions.map((v) => { return v.name; });
 
 	const filteredElements = filteredOptions.map((v) => {
-		return <div key={v.name}
-			className={`
-				${(v.header) ? "bs_header" : "bs_option"}
-				${(selectedOptions.findIndex((s) => s.value === v.value) > -1) ? "bs_option_selected" : ""}
-			`}
-			onClick={() => {
-				if (!v.header) selectOption(v);
-				if (props.closeOnSelect) setShowOptions(false);
-			}}
-		>
-			{v.name}
-		</div>;
+		if (v.header) {
+			return <SelectOptionHeader key={v.name}>{v.name}</SelectOptionHeader>;
+		}
+		else if (selectedOptions.findIndex((s) => s.value === v.value) > -1) {
+			return <SelectOptionSelected key={v.name} onClick={() => { selectOption(v); if (props.closeOnSelect) setShowOptions(false); }}>
+				{v.name}
+			</SelectOptionSelected>;
+		}
+		else {
+			return <SelectOption key={v.name} onClick={() => { selectOption(v); if (props.closeOnSelect) setShowOptions(false); }}>
+				{v.name}
+			</SelectOption>;
+		}
 	});
 
 	useEffect(() => {
@@ -150,54 +247,47 @@ export default function Select(props: rbs.Select): JSX.Element {
 	}, [setShowOptions]);
 
 	return (
-		<div className="bs_select">
+		<SelectWrapper className={"bs_select"} isDisabled={(props.disabled) ? true : false}>
 
-			<div className="bs_bar">
+			<SelectBar>
 
-				<div className="bs_selectedall">
+				<SelectSelectedAll>
 					{(props.showAsText) ? selectedStrings.join(", ") : selectedElements}
-				</div>
+				</SelectSelectedAll>
 
-				{(props.search || props.create)
-					? <input
-						ref={inputRef}
-						className="bs_input"
-						type="text"
-						readOnly={(props.disabled) ? props.disabled : undefined}
-						placeholder={(props.placeholder && selectedOptions.length === 0) ? props.placeholder : undefined}
-						value={inputValue}
-						onChange={(e) => { onChange(e); }}
-						onFocus={() => setShowOptions(true)}
-					/>
-					: <div className="bs_input" onClick={() => setShowOptions(true)}>
-						{(props.placeholder && selectedOptions.length === 0) ? props.placeholder : ""}
-					</div>
-				}
+				<SelectInput
+					ref={inputRef}
+					className={"bs_input"}
+					type="text"
+					readOnly={(props.disabled || !(props.search || props.create)) ? true : false}
+					placeholder={(props.placeholder && selectedOptions.length === 0) ? props.placeholder : undefined}
+					value={inputValue}
+					onChange={(e) => { onChange(e); }}
+					onFocus={() => { if (!props.disabled) setShowOptions(true); }}
+				/>
 
-			</div>
+			</SelectBar>
 
 			{(showOptions) ?
-				<div className="bs_options" ref={optionsRef}>
+				<SelectOptions ref={optionsRef}>
 
 					{(props.create && inputValue.length > 0)
-						? <div className="bs_optionnew"
-							onClick={() => {
-								if (inputRef.current) selectOption({ name: inputValue, value: inputValue.toLowerCase() });
-							}}>
+						? <SelectOptionNew
+							onClick={() => { if (inputRef.current) selectOption({ name: inputValue, value: inputValue.toLowerCase() }); }}>
 							{(props.createString) ? props.createString : "Create:"} &quot;{inputValue}&quot;
-						</div>
+						</SelectOptionNew>
 						: null
 					}
 
 					{(props.search && filteredElements.length === 0)
-						? <div className="bs_none">Searched value cannot be found...</div>
+						? <SelectOptionHeader>Searched value cannot be found...</SelectOptionHeader>
 						: filteredElements
 					}
 
-				</div>
+				</SelectOptions>
 				: null
 			}
 
-		</div>
+		</SelectWrapper>
 	);
 }

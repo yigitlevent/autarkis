@@ -52,6 +52,8 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 	return (
 		<Dashboard>
 
+			{sheetID}
+
 			{(data) ? deleteBox : <Fragment />}
 
 			<Extras>
@@ -117,12 +119,12 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 					<Row>
 						<label className="extra">Storyteller</label>
-						<input className="extra" type="text" id="storyteller_name" readOnly />
+						<input className="extra" type="text" id={`${sheetID}.storyteller_name`} readOnly />
 					</Row>
 
 					<Row>
 						<label className="extra">Chronicle Name</label>
-						<input className="extra" type="text" id="name"
+						<input className="extra" type="text" id={`${sheetID}.name`}
 							readOnly={(displayType !== "new") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -136,7 +138,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 					<Row>
 						<label className="extra">Bot Enabled</label>
-						<input className="extra" type="checkbox" id="discord_enabled"
+						<input className="extra" type="checkbox" id={`${sheetID}.discord_enabled`}
 							disabled={(displayType === "view") ? true : false}
 							onClick={changeSheetValue}
 						/>
@@ -144,7 +146,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 					<Row>
 						<label className="extra">Server ID</label>
-						<input className="extra" type="text" id="discord_server"
+						<input className="extra" type="text" id={`${sheetID}.discord_server`}
 							readOnly={(displayType === "view") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -152,7 +154,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 					<Row>
 						<label className="extra">Channel</label>
-						<input className="extra" type="text" id="discord_channel"
+						<input className="extra" type="text" id={`${sheetID}.discord_channel`}
 							readOnly={(displayType === "view") ? true : false}
 							onChange={changeSheetValue}
 						/>
@@ -162,7 +164,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 			</Wrapper>
 
-		</Dashboard >
+		</Dashboard>
 	);
 }
 

@@ -7,7 +7,7 @@ import { Spinner } from "../shared/Spinner";
 import { CharacterSheet } from "./characterwrapper/CharacterSheet";
 
 export function CharacterWrapper({ sheetID, removeSheet, moveSheet, ruleset, uuid }: aut.props.CharacterSheetWrapper): JSX.Element {
-	const [displayType, data, setters, database, isLoaded] = useCharacter(ruleset, uuid);
+	const [displayType, data, setters, database, isLoaded] = useCharacter(sheetID, ruleset, uuid);
 
 	return (
 		(!isLoaded)

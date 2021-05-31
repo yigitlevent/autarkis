@@ -9,8 +9,10 @@ import { CleanString } from "../function/utility";
 import { useSheetDisplayType } from "./useSheetDisplayType";
 import { DatabaseClient } from "./useQueries";
 
-export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?: string): aut.hooks.UseCharacterReturns {
+export function useCharacter(id: number, characterRuleset: aut.ruleset.Names, characterUUID?: string): aut.hooks.UseCharacterReturns {
 	const [isLoaded, setIsLoaded] = useState(false);
+
+	const [sheetID] = useState(id);
 
 	const [category] = useState("character");
 	const [ruleset] = useState<aut.ruleset.Names>(characterRuleset);
@@ -147,12 +149,12 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 
 					if (value) {
 						if (type === "precheckbox" || type === "postcheckbox") {
-							const input = document.getElementById(`${block}.${row}.${type}`) as HTMLInputElement;
+							const input = document.getElementById(`${sheetID}.${block}.${row}.${type}`) as HTMLInputElement;
 							if (input) input.checked = value as boolean;
 						}
 
 						if (type === "text" || type === "textarea") {
-							const input = document.getElementById(`${block}.${row}.${type}`) as HTMLInputElement;
+							const input = document.getElementById(`${sheetID}.${block}.${row}.${type}`) as HTMLInputElement;
 							if (input) input.value = value as string;
 						}
 
@@ -160,7 +162,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 							const amount = (data[block][row][type] as Checkbox | Dot)._amount;
 
 							for (let i = 0; i < amount; i++) {
-								const input = document.getElementById(`${block}.${row}.${type}.${i}`) as HTMLInputElement;
+								const input = document.getElementById(`${sheetID}.${block}.${row}.${type}.${i}`) as HTMLInputElement;
 								if (input) input.checked = (i < value) ? true : false;
 							}
 						}
@@ -169,7 +171,7 @@ export function useCharacter(characterRuleset: aut.ruleset.Names, characterUUID?
 							const length = (data[block][row][type].current as string[]).length;
 
 							for (let i = 0; i < length; i++) {
-								const input = document.getElementById(`${block}.${row}.${type}.${i}`) as HTMLInputElement;
+								const input = document.getElementById(`${sheetID}.${block}.${row}.${type}.${i}`) as HTMLInputElement;
 								if (input) input.value = (value as string[])[i];
 							}
 						}

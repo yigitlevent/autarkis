@@ -1,11 +1,11 @@
 import { Fragment, useCallback, useState } from "react";
-import styled from "styled-components";
+import Masonry from "react-masonry-css";
 
 import { Rulesets } from "../rulesets/_rulesets";
 
 import { useSheets } from "../hooks/useSheets";
 
-import Select from "./shared/Select";
+import { Select } from "./shared/Select";
 
 import { ChronicleList } from "./dashboard/ChronicleList";
 import { CharacterList } from "./dashboard/CharacterList";
@@ -13,54 +13,6 @@ import { ConfirmBox } from "./shared/ConfirmBox";
 
 import { CharacterWrapper } from "./dashboard/CharacterWrapper";
 import { ChronicleWrapper } from "./dashboard/ChronicleWrapper";
-
-const TopGrid = styled.div`
-	width: 100%;
-	max-width: 100%;
-	padding-top: 5px;
-	margin: 0;
-
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-evenly;
-
-	position: relative;
-	z-index: 10;
-
-	& > * {
-		width: 630px;
-		max-width: 100%;
-		height: max-content;
-		padding: 0;
-		flex: 0 0 auto;
-		margin: 3px;
-		min-height: 120px;
-	}
-`;
-
-const BottomGrid = styled.div`
-	width: 100%;
-	max-width: 100%;
-	padding-top: 5px;
-	margin: 0;
-
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-evenly;
-	
-	position: relative;
-	z-index: 10;
-
-	& > * {
-		width: 950px;
-		max-width: 100%;
-		height: max-content;
-		padding: 0;
-		flex: 0 1 auto;
-		margin: 3px;
-		min-height: 120px;
-	}
-`;
 
 export function Dashboard(): JSX.Element {
 	const [sheets, addSheet, removeSheet, moveSheet] = useSheets();
@@ -115,15 +67,21 @@ export function Dashboard(): JSX.Element {
 		<Fragment>
 			{rulesetSelect}
 
-			<TopGrid>
+			<Masonry
+				breakpointCols={{ default: 3, 1260: 2, 630: 1 }}
+				className="top-masonry" columnClassName="top-masonry-column"
+			>
 				<ChronicleList createSheet={createSheet} />
 				<CharacterList createSheet={createSheet} />
 				<CharacterList createSheet={createSheet} />
-			</TopGrid>
+			</Masonry>
 
-			<BottomGrid>
+			<Masonry
+				breakpointCols={{ default: 2, 950: 1 }}
+				className="bottom-masonry" columnClassName="bottom-masonry-column"
+			>
 				{bottomElements}
-			</BottomGrid>
+			</Masonry>
 		</Fragment>
 	);
 }

@@ -6,8 +6,10 @@ import { GenericChronicle } from "../rulesets/GenericChronicle";
 import { useSheetDisplayType } from "./useSheetDisplayType";
 import { DatabaseClient } from "./useQueries";
 
-export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?: string): aut.hooks.UseChronicleReturns {
+export function useChronicle(id: number, chronicleRuleset: aut.ruleset.Names, chronicleUUID?: string): aut.hooks.UseChronicleReturns {
 	const [isLoaded, setIsLoaded] = useState(false);
+
+	const [sheetID] = useState(id);
 
 	const [category] = useState("chronicle");
 	const [ruleset] = useState<aut.ruleset.Names>(chronicleRuleset);
@@ -58,11 +60,11 @@ export function useChronicle(chronicleRuleset: aut.ruleset.Names, chronicleUUID?
 		console.log("chro placeSheetData");
 
 		for (const block in data) {
-			const el = document.getElementById(`${block}`) as HTMLInputElement;
+			const el = document.getElementById(`${sheetID}.${block}`) as HTMLInputElement;
 			if (el && el.type === "checkbox") el.checked = data[block].toggle.current as boolean;
 			else if (el && el.type === "text") el.value = data[block].text.current as string;
 		}
-	}, [data]);
+	}, [data, sheetID]);
 
 	useEffect(() => {
 		if (!isLoaded && rawData) {

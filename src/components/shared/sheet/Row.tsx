@@ -9,7 +9,7 @@ import { ClientContext } from "../../../contexts/Contexts";
 
 import { Input, NumberInput, Textarea, Button, Checkbox, Toggle, PseudoCheckbox, Dot, InputGroup } from "../../shared/Inputs";
 import { Icon } from "../../shared/Icon";
-import Select from "../Select";
+import { Select } from "../Select";
 
 const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }>`
 	display: grid;
@@ -20,7 +20,7 @@ const RowWrapper = styled.div<{ columns: string; rows: string; align?: string; }
 	text-align: ${p => (p.align) ? p.align : "initial"};
 `;
 
-export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester, changeSheetValue, changeSelected }: aut.props.SheetRow): JSX.Element {
+export function Row({ sheetID, sheetDisplayType, blockTitle, rowData, ruleset, setTester, changeSheetValue, changeSelected }: aut.props.SheetRow): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
 	const [nameString] = useState(`${(sheetDisplayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`);
@@ -95,8 +95,8 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 			new Array<JSX.Element>(rowData.pseudocheckbox.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<PseudoCheckbox
-						id={`${nameString}.pseudocheckbox.${i}`}
-						key={`${nameString}.pseudocheckbox.${i}`}
+						id={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
+						key={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
 						readOnly={true}
 						onClick={
 							(rowData.isReadOnly === true || sheetDisplayType === "view")
@@ -110,8 +110,8 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 			new Array<JSX.Element>(rowData.checkbox.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<Checkbox
-						id={`${nameString}.checkbox.${i}`}
-						key={`${nameString}.checkbox.${i}`}
+						id={`${sheetID}.${nameString}.checkbox.${i}`}
+						key={`${sheetID}.${nameString}.checkbox.${i}`}
 						disabled={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 						onClick={changeSheetValue}
 					/>);
@@ -121,8 +121,8 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 			new Array<JSX.Element>(rowData.dot.amount).fill(<Fragment />)
 				.forEach((v, i) => {
 					elements.push(<Dot
-						id={`${nameString}.dot.${i}`}
-						key={`${nameString}.dot.${i}`}
+						id={`${sheetID}.${nameString}.dot.${i}`}
+						key={`${sheetID}.${nameString}.dot.${i}`}
 						disabled={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 						onClick={changeSheetValue}
 					/>);
@@ -153,8 +153,9 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 		<RowWrapper key={nameString} align={rowData.align} columns={gridData.columnWidths} rows={gridData.rowWidths}>
 
 			{(rowData.inputs.includes("precheckbox"))
-				? <Checkbox key={`${nameString}.precheckbox`}
-					id={`${nameString}.precheckbox`}
+				? <Checkbox
+					key={`${sheetID}.${nameString}.precheckbox`}
+					id={`${sheetID}.${nameString}.precheckbox`}
 					disabled={(sheetDisplayType === "view") ? true : false}
 					onClick={changeSheetValue}
 				/>
@@ -176,7 +177,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 			{(rowData.inputs.includes("select") && rowData.select)
 				? <Select
 					options={createSelectOptions(rowData.select.categories)}
-					onSelectedChange={(changeSelected) ? (values) => { changeSelected(values, `${nameString}.select`); } : undefined}
+					onSelectedChange={(changeSelected) ? (values: rbs.Option[]) => { changeSelected(values, `${nameString}.select`); } : undefined}
 					multi={(rowData.select.multi) ? true : false}
 					search={(rowData.select.search) ? true : false}
 					create={(rowData.select.create) ? true : false}
@@ -193,8 +194,8 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 				? <Input
 					type="text"
 					align={rowData.align}
-					id={`${nameString}.text`}
-					key={`${nameString}.text`}
+					id={`${sheetID}.${nameString}.text`}
+					key={`${sheetID}.${nameString}.text`}
 					readOnly={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 					onChange={changeSheetValue}
 				/>
@@ -202,8 +203,9 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 			}
 
 			{(rowData.inputs.includes("postcheckbox"))
-				? <Toggle key={`${nameString}.postcheckbox`}
-					id={`${nameString}.postcheckbox`}
+				? <Toggle
+					key={`${sheetID}.${nameString}.postcheckbox`}
+					id={`${sheetID}.${nameString}.postcheckbox`}
 					onClick={changeSheetValue}
 					disabled={false}
 				/>
@@ -214,8 +216,8 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 				? <NumberInput
 					type="number"
 					align={rowData.align}
-					id={`${nameString}.number`}
-					key={`${nameString}.number`}
+					id={`${sheetID}.${nameString}.number`}
+					key={`${sheetID}.${nameString}.number`}
 					readOnly={(rowData.isReadOnly === true) ? true : false}
 					onChange={changeSheetValue}
 				/>
@@ -231,7 +233,7 @@ export function Row({ sheetDisplayType, blockTitle, rowData, ruleset, setTester,
 				? <Textarea
 					height={rowData.textarea.amount * 24}
 					columns={gridData.columnAmount}
-					id={`${nameString}.textarea`}
+					id={`${sheetID}.${nameString}.textarea`}
 					readOnly={(rowData.isReadOnly === true || sheetDisplayType === "view") ? true : false}
 					onChange={changeSheetValue}
 				/>

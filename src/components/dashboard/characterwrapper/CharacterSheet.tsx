@@ -132,6 +132,7 @@ export function CharacterSheet({ sheetID, removeSheet, moveSheet, characterObjec
 					? (Rulesets.getRuleset((data._primary.ruleset.text.current) as aut.ruleset.Names))
 						.characterSheet.map((block: aut.ruleset.CharacterSheetBlock) => {
 							return (<Column key={`${block.title}_${displayType}`}
+								sheetID={sheetID}
 								sheetDisplayType={displayType}
 								blockData={block}
 								ruleset={data._primary.ruleset.text.current as aut.ruleset.Names}

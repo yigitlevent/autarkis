@@ -77,6 +77,7 @@ namespace aut {
 		}
 
 		interface SheetBlock {
+			sheetID: number;
 			sheetDisplayType: aut.SheetDisplayType;
 			blockData: aut.ruleset.CharacterSheetBlock;
 			ruleset: aut.ruleset.Names;
@@ -86,6 +87,7 @@ namespace aut {
 		}
 
 		interface SheetRow {
+			sheetID: number;
 			sheetDisplayType: aut.SheetDisplayType;
 			blockTitle: string;
 			rowData: aut.ruleset.SheetRow;

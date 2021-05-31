@@ -114,6 +114,7 @@ export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props
 							return (
 								<TopboxChildren columns={1} span={(row.select) ? 2 : 1} key={`${data.basics.name}_${displayType}_${index}`}>
 									<Row
+										sheetID={100000 /* this will break something, fix it later */}
 										sheetDisplayType={displayType}
 										blockTitle={"roller"}
 										rowData={row}

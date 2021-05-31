@@ -82,7 +82,7 @@ export const GlobalStyle = createGlobalStyle`
 	input {
 		padding: 0 3px;
 
-		&:hover {
+		&:hover:not(.bs_input) {
 			filter: brightness(140%);
 		}
 
@@ -148,7 +148,7 @@ export const GlobalStyle = createGlobalStyle`
 			padding: 0 5px;
 			-moz-appearance: textfield;
 
-			&:read-only {
+			&:read-only:not(.bs_input) {
 				background: none;
 				border:	none;
 				border-bottom: ${(props: aut.theme.StyleProps) => props.theme.element.border} !important;
@@ -294,99 +294,29 @@ export const GlobalStyle = createGlobalStyle`
 	.Toastify__toast-container--bottom-right {
 	}
 
-	// Basic Select
-	.bs_select {
-		background: ${(props: aut.theme.StyleProps) => props.theme.element.background};
-		display: block;
-		font-size: 1em;
-		width: 99%;
-		height: 21px;
-		overflow: visible;
-	}
+	// MASONRY
 
-	.bs_bar {
-		width: inherit;
-		height: 100%;
-		padding: 2px;
-		display: grid;
-		grid-template-columns: max-content 1fr;
-		grid-template-rows: 1fr;
-	}
-
-	.bs_selectedall {
-		height: 100%;
-		width: 100%;
-		line-height: 1.3em;
-		padding: 0 2px;
-	}
-
-	.bs_selected {
-		width: max-content;
-		height: 26px;
-		outline: ${(props: aut.theme.StyleProps) => props.theme.row.border};
-		margin: 0 2px 0 0;
-		padding: 2px 4px;
-		cursor: pointer;
-		display: inline-block;
-		line-height: 1.4em;
-		background: transparent;
-	}
-
-	.bs_input {
-		min-width: 60px;
-		display: inline-block;
-		background: inherit;
-		border: none;
-	}
-
-	.bs_options {
-		display: block;
-		max-height: 240px;
-		outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
-		overflow-y: auto;
-		overflow-x: hidden;
-		width: inherit;
+	.top-masonry {
+		display: flex;
+		width: auto;
+		z-index: 10;
 		position: relative;
-		z-index: 123;
 	}
 
-	.bs_optionnew {
-		cursor: pointer;
-		width: 100%;
-		padding: 2px 4px;
-		background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
-
-		&:not(:last-child) {
-			border-bottom: 1px #aaa dashed;
-		}
+	.top-masonry-column {
+		padding-left: 5px; 
+  		background-clip: padding-box;
 	}
 
-	.bs_header {
-		font-size: 1.1em;
-		width: 100%;
-		padding: 2px 4px;
-		text-transform: uppercase;
-		background: ${(props: aut.theme.StyleProps) => props.theme.row.background};
-		border-bottom: 1px #aaa dashed;
+	.bottom-masonry {
+		display: flex;
+		width: auto;
+		z-index: 10;
+		position: relative;
 	}
 
-	.bs_option {
-		cursor: pointer;
-		width: 100%;
-		padding: 2px 4px;
-		background: ${(props: aut.theme.StyleProps) => props.theme.element.background};
-		border-bottom: ${(props: aut.theme.StyleProps) => props.theme.element.border};
-
-		&:hover:after {
-			content: " +";
-		}
-	}
-
-	.bs_option_selected {
-		color: ${(props: aut.theme.StyleProps) => props.theme.success.color};
-		
-		&:hover:after {
-			content: " –";
-		}
+	.bottom-masonry-column {
+		padding-left: 5px; 
+  		background-clip: padding-box;
 	}
 `;

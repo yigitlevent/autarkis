@@ -19,7 +19,7 @@ const Result = styled.div`
 export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props.TestWrapper): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
-	const [displayType, data] = characterObject;
+	const { displayType, data } = characterObject;
 
 	const [basics] = useState(() => {
 		if (data) {
@@ -41,20 +41,6 @@ export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props
 
 	const [probabilityTopbox, setProbabilityTopbox] = useState<JSX.Element>(<Fragment />);
 	const [resultTopbox, setResultTopbox] = useState<JSX.Element>(<Fragment />);
-
-	const changeSheetValue = useCallback((valueEvent: aut.Events): void => {
-		if (basics) {
-			basics.tester.changeValue(valueEvent);
-			basics.tester.placeSheetData();
-		}
-	}, [basics]);
-
-	const changeSelected = useCallback((values: rbs.Option[]): void => {
-		if (basics) {
-			basics.tester.changeSelected(values);
-			basics.tester.placeSheetData();
-		}
-	}, [basics]);
 
 	const roll = useCallback((offlineTest: boolean): void => {
 		if (basics) {
@@ -115,13 +101,11 @@ export function TestWrapper({ event, characterObject, setDiceRoller }: aut.props
 								<TopboxChildren columns={1} span={(row.select) ? 2 : 1} key={`${data.basics.name}_${displayType}_${index}`}>
 									<Row
 										sheetID={100000 /* this will break something, fix it later */}
-										sheetDisplayType={displayType}
 										blockTitle={"roller"}
 										rowData={row}
 										ruleset={data._primary.ruleset.text.current as aut.ruleset.Names}
 										setTester={setDiceRoller}
-										changeSheetValue={changeSheetValue}
-										changeSelected={changeSelected}
+										sheetObject={characterObject}
 									/>
 								</TopboxChildren>
 							);

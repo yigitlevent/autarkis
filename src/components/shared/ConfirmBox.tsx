@@ -10,10 +10,13 @@ export function ConfirmBox({ title, innerHTML, button, callback, close }: aut.pr
 					{innerHTML}
 				</TopboxChildren>
 
-				<TopboxChildren columns={0} span={2} topBorder>
-					<TopboxButton id="r.misc.offline" value={button} onClick={() => callback()} />
-					<TopboxButton id="r.misc.close" value="Cancel" onClick={() => close()} />
-				</TopboxChildren>
+				{(callback || close)
+					? <TopboxChildren columns={0} span={2} topBorder>
+						{(callback) ? <TopboxButton id="r.misc.offline" value={button} onClick={callback} /> : null}
+						{(close) ? <TopboxButton id="r.misc.close" value="Cancel" onClick={close} /> : null}
+					</TopboxChildren>
+					: null
+				}
 			</TopboxBox>
 		</Topbox>
 	);

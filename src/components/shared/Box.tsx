@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const SmallBoxWrapper = styled.div`
 	background: ${(props: aut.theme.StyleProps) => props.theme.box.background};
 	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+	min-height: 110px;
 `;
 
 export function SmallBox({ children }: { children?: JSX.Element | JSX.Element[]; }): JSX.Element {

@@ -1,15 +1,9 @@
-import { Rulesets } from "./_rulesets";
-
 export class Text implements aut.classes.Text {
 	current = "";
 }
 
 export class Toggle implements aut.classes.Toggle {
 	current = false;
-}
-
-export class Textarea implements aut.classes.Textarea {
-	current = "";
 }
 
 export class Dot implements aut.classes.Dot {
@@ -39,34 +33,41 @@ export class PseudoCheckbox implements aut.classes.PseudoCheckbox {
 
 	current: string[];
 
-	constructor(size: number, possibleValues: string[], ruleset: aut.ruleset.Names) {
-		this.current = Array<string>(size).fill("");
+	constructor(size: number, possibleValues: string[]) {
+		this.current = Array<string>(size).fill("empty");
 
 		for (const name in possibleValues) {
-			this._pValues.push((Rulesets.getRuleset(ruleset)).pseudoCheckboxInputs[possibleValues[name]]);
+			this._pValues.push(possibleValues[name]);
 		}
+
 	}
 
 	nextValue(index: number): string {
 		const oldIndex = this._pValues.indexOf(this.current[index]);
-		if (oldIndex === this._pValues.length - 1) { this.current[index] = this._pValues[0]; }
-		else { this.current[index] = this._pValues[oldIndex + 1]; }
+
+		if (oldIndex === this._pValues.length - 1) this.current[index] = this._pValues[0];
+		else this.current[index] = this._pValues[oldIndex + 1];
+
 		return this.current[index];
 	}
 
 	getEmpty(): number {
-		return this.current.filter((x) => x === "").length;
+		return this.current.filter((x) => x === "empty").length;
 	}
 
 	getUnmarked(emptyDots: number): number {
 		return this.getEmpty() - emptyDots;
 	}
 
-	getAmount(value: string, ruleset: aut.ruleset.Names): number {
-		return this.current.filter((x) => x === (Rulesets.getRuleset(ruleset)).pseudoCheckboxInputs[value]).length;
+	getAmount(value: string): number {
+		return this.current.filter((x) => x === value).length;
 	}
 }
 
+export class Textarea implements aut.classes.Textarea {
+	current = "";
+}
+
 export class Select implements aut.classes.Select {
-	current: string[] = [];
+	current: rbs.Option[] = [];
 }

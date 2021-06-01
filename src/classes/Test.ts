@@ -3,7 +3,7 @@ import { Dot, PseudoCheckbox } from "../rulesets/_generic";
 import { CleanString } from "../function/utility";
 
 export class Test implements aut.classes.Test {
-	_data: aut.data.GenericCharacterData;
+	_data: aut.data.GenericData;
 	_ruleset: aut.ruleset.Names;
 
 	title: string;
@@ -18,7 +18,7 @@ export class Test implements aut.classes.Test {
 
 	misc: { [key: string]: number; } = {}; // HOLDS: difficulty: true
 
-	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, characterData: aut.data.GenericCharacterData) {
+	constructor(dataset: aut.ruleset.TestSheet, ruleset: aut.ruleset.Names, characterData: aut.data.GenericData) {
 		this._data = characterData;
 		this._ruleset = ruleset;
 
@@ -58,7 +58,7 @@ export class Test implements aut.classes.Test {
 		this.calculatePools();
 	}
 
-	private getDefaultValue(array: aut.ruleset.DefaultValue, characterData: aut.data.GenericCharacterData): number {
+	private getDefaultValue(array: aut.ruleset.DefaultValue, characterData: aut.data.GenericData): number {
 		if (array.length === 3 || array.length === 5) {
 			const row = characterData[array[0]][array[1]];
 
@@ -74,7 +74,7 @@ export class Test implements aut.classes.Test {
 					return (row.pseudocheckbox as PseudoCheckbox).getUnmarked(emptyDots);
 				}
 
-				const value = (row.pseudocheckbox as PseudoCheckbox).getAmount(array[3], this._ruleset);
+				const value = (row.pseudocheckbox as PseudoCheckbox).getAmount(array[3]);
 				if (array[4] === "count/3") { return Math.floor(value / 3); }
 
 				// array[4] === "count"
@@ -121,7 +121,7 @@ export class Test implements aut.classes.Test {
 		}
 	}
 
-	changeValue(event: aut.Events): void {
+	changeValue(event: aut.ReactInputEvent): void {
 		const target = event.target as HTMLInputElement;
 		const row = target.id.split(".")[1];
 		const type = target.id.split(".")[2];
@@ -162,7 +162,7 @@ export class Test implements aut.classes.Test {
 				uuid: this._data._primary.uuid.text.current as string,
 				name: this._data.basics.name.text.current as string,
 				blood_potency: this._data.the_blood.blood_potency.dot.current as number,
-				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
+				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross")
 			}
 		};
 
@@ -180,7 +180,7 @@ export class Test implements aut.classes.Test {
 				uuid: this._data._primary.uuid.text.current as string,
 				name: this._data.basics.name.text.current as string,
 				blood_potency: this._data.the_blood.blood_potency.dot.current as number,
-				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross", this._ruleset)
+				aggravated_damage: (this._data.the_blood.health.pseudocheckbox as PseudoCheckbox).getAmount("cross")
 			}
 		};
 

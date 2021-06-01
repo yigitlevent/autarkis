@@ -1,4 +1,4 @@
-export const V5ModernCharacterSheet: aut.ruleset.CharacterSheet = [
+export const V5ModernCharacterSheet: aut.sheet.Sheet = [
 	{
 		title: "_primary",
 		showTitle: false,
@@ -6,7 +6,7 @@ export const V5ModernCharacterSheet: aut.ruleset.CharacterSheet = [
 		columns: [
 			[
 				{ title: "uuid", showTitle: true, inputs: ["text"] },
-				{ title: "player_uuid", showTitle: true, inputs: ["text"] },
+				{ title: "user_uuid", showTitle: true, inputs: ["text"] },
 				{ title: "chronicle_uuid", showTitle: true, inputs: ["text"] }
 			],
 			[
@@ -31,7 +31,7 @@ export const V5ModernCharacterSheet: aut.ruleset.CharacterSheet = [
 				{ title: "Sect", showTitle: true, inputs: ["text"] },
 			],
 			[
-				{ title: "Player", showTitle: true, isReadOnly: true, inputs: ["text"] },
+				{ title: "User", showTitle: true, isReadOnly: true, inputs: ["text"] },
 				{ title: "Predator Type", showTitle: true, inputs: ["select"], select: { categories: ["Predator Types"], search: true, placeholder: "Select Predator type" } },
 				{ title: "Rank/Title", showTitle: true, inputs: ["text"] },
 			],

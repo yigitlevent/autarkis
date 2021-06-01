@@ -1,4 +1,6 @@
+import { useState } from "react";
 import styled from "styled-components";
+import { Icon } from "./Icon";
 
 export const InputGroup = styled.div`
 	cursor: default;
@@ -68,20 +70,16 @@ export const Toggle = styled(Checkbox)`
 	}
 `;
 
-export const PseudoCheckbox = styled.input.attrs({ type: "text" })`
+const PseudoCheckboxWrapper = styled.div`
 	height: 12px !important;
 	width: 12px !important;
 	border: none!important;
 	background: ${(props: aut.theme.StyleProps) => props.theme.element.background}!important;
-	appearance: none;
 	cursor: pointer !important;
 	margin: auto 1px !important;
 	vertical-align: middle;
 	display: inline-block !important;
-	text-align: center;
 	padding: 0 !important;
-	user-select: none;
-	caret-color: transparent;
 
 	&:read-only {
 		&:hover {
@@ -94,3 +92,13 @@ export const PseudoCheckbox = styled.input.attrs({ type: "text" })`
 		margin-left: 5px !important;
 	}
 `;
+
+export function PseudoCheckbox({ id, defaultValue, onClick }: { id: string, defaultValue?: string; onClick: () => string; }): JSX.Element {
+	const [value, setValue] = useState(defaultValue);
+
+	return (
+		<PseudoCheckboxWrapper id={id} onClick={() => { setValue(onClick()); }}>
+			<Icon size={12} name={`pcheck/${value}`} />
+		</PseudoCheckboxWrapper>
+	);
+}

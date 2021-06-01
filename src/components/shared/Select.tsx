@@ -2,6 +2,8 @@ import { createRef, useCallback, useEffect, useState } from "react";
 import Fuse from "fuse.js";
 import styled from "styled-components";
 
+import { CleanString, DirtyString } from "../../function/utility";
+
 const SelectWrapper = styled.div<{ isDisabled: boolean; }>`
 	background:  ${p => (p.isDisabled) ? "none" : (props: aut.theme.StyleProps) => props.theme.element.background};
 	display: block;
@@ -25,18 +27,6 @@ const SelectSelectedAll = styled.div`
 	width: 100%;
 	line-height: 1.3em;
 	padding: 0 2px;
-`;
-
-const SelectSelected = styled.div`
-	width: max-content;
-	height: 26px;
-	outline: ${(props: aut.theme.StyleProps) => props.theme.row.border};
-	margin: 0 2px 0 0;
-	padding: 2px 4px;
-	cursor: pointer;
-	display: inline-block;
-	line-height: 1.4em;
-	background: transparent;
 `;
 
 const SelectInput = styled.input`
@@ -99,7 +89,7 @@ const SelectOptionSelected = styled(SelectOption)`
 
 export function Select(props: rbs.Select): JSX.Element {
 	const flattenStringArray = (strings: string[]): rbs.Option[] => {
-		return strings.map((o) => { return { name: o, value: o.toLowerCase() }; });
+		return strings.map((o) => { return { name: DirtyString(o), value: CleanString(o) }; });
 	};
 
 	const flattenGroupArray = (groups: rbs.Group[], appendGroupValue?: boolean): rbs.Option[] => {

@@ -228,7 +228,7 @@ export const GlobalStyle = createGlobalStyle`
 		height: 100%;
 		margin: 0;
 		padding: 0;
-		overflow: hidden auto;
+		overflow: hidden scroll;
 	}
 
 	#root:after{
@@ -304,7 +304,7 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	.top-masonry-column {
-		padding-left: 5px; 
+		padding: 0 3px; 
   		background-clip: padding-box;
 	}
 
@@ -316,7 +316,7 @@ export const GlobalStyle = createGlobalStyle`
 	}
 
 	.bottom-masonry-column {
-		padding-left: 5px; 
+		padding: 0 3px; 
   		background-clip: padding-box;
 	}
 `;

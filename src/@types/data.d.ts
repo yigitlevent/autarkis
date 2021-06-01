@@ -2,11 +2,13 @@ namespace aut {
 
 	namespace data {
 
-		interface GenericCharacterData {
+		interface GenericData {
 			[key: string]: {
 				[key: string]: {
 					text: aut.classes.Text;
 					toggle: aut.classes.Toggle;
+					precheckbox: aut.classes.Toggle;
+					postcheckbox: aut.classes.Toggle;
 					dot: aut.classes.Dot;
 					checkbox: aut.classes.Checkbox;
 					pseudocheckbox: aut.classes.PseudoCheckbox;
@@ -16,16 +18,14 @@ namespace aut {
 			};
 		}
 
-		interface GenericCharacterDataLayout {
+		interface GenericDataLayout {
 			[key: string]: {
 				[key: string]: {
-					[key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select;
+					[key: string]: aut.classes.Text | aut.classes.Toggle
+					| aut.classes.Dot | aut.classes.Checkbox | aut.classes.PseudoCheckbox
+					| aut.classes.Textarea | aut.classes.Select;
 				};
 			};
-		}
-
-		interface GenericChronicleData {
-			[key: string]: { [key: string]: Text | Toggle; };
 		}
 
 		interface Roll {

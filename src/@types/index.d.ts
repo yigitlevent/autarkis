@@ -2,7 +2,7 @@ namespace aut {
 
 	type DispSet<T> = React.Dispatch<React.SetStateAction<T>>;
 
-	type Events = React.MouseEvent<HTMLInputElement, MouseEvent> | React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>;
+	type ReactInputEvent = React.MouseEvent<HTMLInputElement, MouseEvent>;
 
 	type ClientState = "offline" | "signedin" | "signedout" | "presign";
 

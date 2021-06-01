@@ -1,59 +1,36 @@
 import { Fragment, useState, useCallback, useContext } from "react";
-import styled from "styled-components";
+
+import { GenericChronicleSheet } from "../../../rulesets/GenericChronicle";
 
 import { ClientContext } from "../../../contexts/Contexts";
 
-import { Subtitle, Dashboard, Extras, RowsWrapper } from "../../shared/Sheet";
-import { Button, Submit } from "../../shared/Inputs";
-import { Icon } from "../../shared/Icon";
 import { ConfirmBox } from "../../shared/ConfirmBox";
-
-const Wrapper = styled.div` // TODO: Fix this, inherit from ColumnsWrapper
-	line-height: 1.5em;
-	width: 100%;
-	padding: 6px 10px 6px;
-	font-size: 0.9em;
-	text-align: center;
-	text-align: left;
-`;
-
-const Row = styled.div`
-	display: grid;
-	grid-template-columns: 140px 1fr;
-	grid-template-rows: 24px;
-	padding: 0 4px;
-	width: 100%;
-	margin: 2px auto 6px;
-`;
+import { Icon } from "../../shared/Icon";
+import { Button, Submit } from "../../shared/Inputs";
+import { Dashboard, Extras } from "../../shared/Sheet";
+import { Column } from "../../shared/sheet/Column";
 
 export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObject }: aut.props.ChronicleSheet): JSX.Element {
 	const { clientState } = useContext(ClientContext);
 
-	const [displayType, data, setters, database] = chronicleObject;
+	const { displayType, data, setDisplayType, database } = chronicleObject;
 
 	const [deleteBox, setDeleteBox] = useState<JSX.Element>(<Fragment />);
 
-	const deleteChronicle = useCallback((): void => {
+	const deleteCharacter = useCallback((): void => {
 		setDeleteBox(
 			<ConfirmBox
-				title={"Delete Chronicle"}
+				title={`Delete ${data.basics.name.text.current}`}
 				innerHTML={"Are you sure that you want to delete this chronicle?"}
 				button={"Delete"}
 				callback={() => { database.remove().then(() => { removeSheet(sheetID); }); }}
 				close={() => { setDeleteBox(<Fragment />); }}
 			/>
 		);
-	}, [database, removeSheet, sheetID]);
-
-	const changeSheetValue = useCallback((event: aut.Events) => {
-		if (displayType !== "view") setters.changeValue(event);
-	}, [displayType, setters]);
+	}, [data.basics.name.text, database, removeSheet, sheetID]);
 
 	return (
-		<Dashboard>
-
-			{sheetID}
-
+		<Fragment>
 			{(data) ? deleteBox : <Fragment />}
 
 			<Extras>
@@ -63,7 +40,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 
 				{(displayType !== "new")
 					? <Icon size={24} name={(displayType === "view") ? "edit_off" : "edit_on"} hover brightness float={"right"} title>
-						<Button id="misc.edit_toggle" value="" onClick={() => { setters.setDisplayType(); }} />
+						<Button id="misc.edit_toggle" value="" onClick={() => { setDisplayType(); }} />
 					</Icon>
 					: null
 				}
@@ -94,7 +71,7 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 							<Submit id="misc.submit" value={""} noBg
 								onClick={(event) => {
 									event.preventDefault();
-									deleteChronicle();
+									deleteCharacter();
 								}}
 							/>
 						</Icon>
@@ -111,60 +88,20 @@ export function ChronicleSheet({ sheetID, removeSheet, moveSheet, chronicleObjec
 				</Icon>
 			</Extras>
 
-			<Wrapper>
-
-				<RowsWrapper>
-
-					<Subtitle>Basics</Subtitle>
-
-					<Row>
-						<label className="extra">Storyteller</label>
-						<input className="extra" type="text" id={`${sheetID}.storyteller_name`} readOnly />
-					</Row>
-
-					<Row>
-						<label className="extra">Chronicle Name</label>
-						<input className="extra" type="text" id={`${sheetID}.name`}
-							readOnly={(displayType !== "new") ? true : false}
-							onChange={changeSheetValue}
-						/>
-					</Row>
-
-				</RowsWrapper>
-
-				<RowsWrapper>
-
-					<Subtitle>Discord</Subtitle>
-
-					<Row>
-						<label className="extra">Bot Enabled</label>
-						<input className="extra" type="checkbox" id={`${sheetID}.discord_enabled`}
-							disabled={(displayType === "view") ? true : false}
-							onClick={changeSheetValue}
-						/>
-					</Row>
-
-					<Row>
-						<label className="extra">Server ID</label>
-						<input className="extra" type="text" id={`${sheetID}.discord_server`}
-							readOnly={(displayType === "view") ? true : false}
-							onChange={changeSheetValue}
-						/>
-					</Row>
-
-					<Row>
-						<label className="extra">Channel</label>
-						<input className="extra" type="text" id={`${sheetID}.discord_channel`}
-							readOnly={(displayType === "view") ? true : false}
-							onChange={changeSheetValue}
-						/>
-					</Row>
-
-				</RowsWrapper>
-
-			</Wrapper>
-
-		</Dashboard>
+			<Dashboard>
+				{(data)
+					? GenericChronicleSheet.map((block: aut.sheet.SheetBlock) => {
+						return (<Column
+							key={`${block.title}_${displayType}`}
+							sheetID={sheetID}
+							blockData={block}
+							ruleset={data._primary.ruleset.text.current as aut.ruleset.Names}
+							sheetObject={chronicleObject}
+						/>);
+					})
+					: null
+				}
+			</Dashboard>
+		</Fragment>
 	);
 }
-

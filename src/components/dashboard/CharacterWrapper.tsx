@@ -1,4 +1,4 @@
-import { useCharacter } from "../../hooks/useCharacter";
+import { useSheet } from "../../hooks/useSheet";
 
 import { LargeBox } from "../shared/Box";
 import { Title } from "../shared/Sheet";
@@ -7,19 +7,21 @@ import { Spinner } from "../shared/Spinner";
 import { CharacterSheet } from "./characterwrapper/CharacterSheet";
 
 export function CharacterWrapper({ sheetID, removeSheet, moveSheet, ruleset, uuid }: aut.props.CharacterSheetWrapper): JSX.Element {
-	const [displayType, data, setters, database, isLoaded] = useCharacter(sheetID, ruleset, uuid);
+	const characterObject = useSheet("character", ruleset, uuid);
+
+	console.log(characterObject);
 
 	return (
-		(!isLoaded)
+		(!characterObject.isLoaded)
 			? <Spinner />
 			: <LargeBox>
-				<Title>{displayType.toUpperCase()} CHARACTER</Title>
+				<Title>{characterObject.displayType.toUpperCase()} CHARACTER</Title>
 
 				<CharacterSheet
 					sheetID={sheetID}
 					removeSheet={removeSheet}
 					moveSheet={moveSheet}
-					characterObject={[displayType, data, setters, database, isLoaded]}
+					characterObject={characterObject}
 				/>
 
 				{/*TODO: (category === "generator")

@@ -1,5 +1,5 @@
 namespace aut {
-	
+
 	namespace ruleset {
 
 		type Names = "v5_modern";
@@ -8,14 +8,14 @@ namespace aut {
 		type ProbabilityFunction = (testData: aut.data.TestData) => aut.data.ProbabilityResult;
 
 		interface Ruleset {
-			pseudoCheckboxInputs: { [key: string]: string; };
 			basicLists: aut.ruleset.BasicLists;
-			characterSheet: aut.ruleset.CharacterSheet;
+			characterSheet: aut.sheet.Sheet;
 			generatorConditions: aut.ruleset.GeneratorConditions;
 			characterMisc: {
 				[key: string]: any;
 			};
 			tests: aut.ruleset.TestSheets;
+			characterCalculations: (sheetData: aut.data.GenericData) => aut.data.GenericData;
 		}
 
 		interface TestSheets { [key: string]: TestSheet; }
@@ -24,7 +24,7 @@ namespace aut {
 			title: string;
 			testFunction: aut.ruleset.TestFunction;
 			probabilityFunction: aut.ruleset.ProbabilityFunction;
-			children: (aut.ruleset.SheetRow & aut.ruleset.TestSheetExtras)[];
+			children: (aut.sheet.SheetRow & aut.ruleset.TestSheetExtras)[];
 		}
 
 		type CharacterAdvantages = {
@@ -95,7 +95,7 @@ namespace aut {
 
 		interface GeneratorCondition {
 			text: string;
-			condition: (characterData: aut.data.GenericCharacterData) => [boolean, string];
+			condition: (characterData: aut.data.GenericData) => [boolean, string];
 		}
 
 		type BloodPotency = BloodPotencyRow[];
@@ -138,61 +138,6 @@ namespace aut {
 			cost: string;
 			description: string;
 			prerequisite?: string;
-		}
-
-		type InputTypes = "text" | "number" | "dot" | "checkbox" | "precheckbox" | "postcheckbox" | "pseudocheckbox" | "textarea" | "select";
-
-		type CharacterSheet = CharacterSheetBlock[];
-
-		interface CharacterSheetBlock {
-			title: string;
-			showTitle: boolean;
-			display?: boolean;
-			columns: SheetColumn[];
-		}
-
-		type SheetColumn = SheetRow[];
-
-		interface SheetRow {
-			title: string;
-
-			showTitle?: true;
-			boldTitle?: true;
-			isTestable?: true;
-			isReadOnly?: true;
-			align?: "center" | "right";
-
-			inputs: InputTypes[];
-
-			// text?: {};
-			// number?: {};
-
-			// precheckbox?: {};
-			// postcheckbox?: {};
-			pseudocheckbox?: {
-				amount: 3 | 5 | 10 | 15;
-				possibleValues: string[];
-			};
-			checkbox?: {
-				amount: 3 | 5 | 10 | 15;
-			};
-
-			dot?: {
-				amount: 5 | 6 | 10 | 15;
-			};
-
-			textarea?: {
-				amount: 2 | 3 | 4 | 5 | 6;
-			};
-
-			select?: {
-				categories: string[];
-				multi?: true;
-				create?: true;
-				search?: true;
-				placeholder?: string;
-				appendGroupValue?: true;
-			};
 		}
 
 	}

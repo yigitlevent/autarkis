@@ -18,11 +18,11 @@ export function Dashboard(): JSX.Element {
 	const [sheets, addSheet, removeSheet, moveSheet] = useSheets();
 
 	const [rulesetSelect, setRulesetSelect] = useState<null | JSX.Element>(null);
-	const [selectedRuleset, setSelectedRuleset] = useState<undefined | aut.ruleset.Names>();
 
 	const createSheet = useCallback((category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => {
 		if (ruleset) {
-			setRulesetSelect(null);
+			console.log(ruleset);
+
 			if (category === "chronicle") addSheet(category, ruleset, uuid);
 			else addSheet(category, ruleset, uuid);
 		}
@@ -30,17 +30,20 @@ export function Dashboard(): JSX.Element {
 			setRulesetSelect(
 				<ConfirmBox
 					title={"Select Ruleset"} button={"Continue"}
-					callback={() => createSheet(category, selectedRuleset, uuid)} close={() => setRulesetSelect(null)}
 					innerHTML={
 						<Select
 							options={Rulesets.getRulesetNames()} placeholder={"Select a Ruleset"} closeOnSelect
-							onOptionSelect={(option) => { setSelectedRuleset(option.value as aut.ruleset.Names); }}
+							onOptionSelect={(option) => {
+								setRulesetSelect(null);
+								if (category === "chronicle") addSheet(category, option.value as aut.ruleset.Names, uuid);
+								else addSheet(category, option.value as aut.ruleset.Names, uuid);
+							}}
 						/>
 					}
 				/>
 			);
 		}
-	}, [addSheet, selectedRuleset]);
+	}, [addSheet]);
 
 	const bottomElements = sheets.map((x) => {
 		if (x.category === "chronicle") {

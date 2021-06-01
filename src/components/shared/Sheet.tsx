@@ -4,6 +4,7 @@ export const Title = styled.div`
 	font-size: 1.6em;
 	border-bottom: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 	margin: 6px 10px 0;
+	padding-top: 3px;
 `;
 
 export const Subtitle = styled.div<{ isClickable?: boolean; }>`
@@ -19,13 +20,9 @@ export const Dashboard = styled.div`
 
 export const Extras = styled.span`
 	float: right;
-	width: auto;
-	height: auto;
-	padding: 0;
 	position: relative;
-	right: 10px;
-	top: -28px;
-	height: 0;
+	right: 11px;
+	top: -27px;
 `;
 
 export const ColumnsWrapper = styled.div<{ display?: string; }>`

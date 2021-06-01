@@ -2,6 +2,7 @@ import { V5ModernBloodPotency, V5ModernClans, V5ModernDisciplines, V5ModernSkill
 import { V5Tests } from "./V5Modern/V5ModernTests";
 import { V5ModernCharacterSheet } from "./V5Modern/V5ModernCharacter";
 import { V5ModernGenerator } from "./V5Modern/V5ModernGenerator";
+import { V5CharacterCalculations } from "./V5Modern/V5CharacterCalculations";
 
 const V5ModernBasicLists: aut.ruleset.BasicLists = {
 	attributes: V5ModernCharacterSheet[2].columns.flat().map((v) => v.title),
@@ -16,11 +17,12 @@ const V5ModernBasicLists: aut.ruleset.BasicLists = {
 		"13th (Childe)", "12th (Childe)",
 		"13th (Neonate)", "12th (Neonate)",
 		"11th (Neonate)", "10th (Ancillae)"
-	]
+	],
+	experience_systems: ["Freeform", "V5 Modern Costs"],
+	character_types: ["Freeform", "V5 Modern Generated"],
 };
 
 export const V5Modern: aut.ruleset.Ruleset = {
-	pseudoCheckboxInputs: { empty: "", slash: "╱", cross: "╳", square: "⯀" },
 	basicLists: V5ModernBasicLists,
 	characterSheet: V5ModernCharacterSheet,
 	generatorConditions: V5ModernGenerator,
@@ -32,5 +34,6 @@ export const V5Modern: aut.ruleset.Ruleset = {
 		disciplines: V5ModernDisciplines,
 		skill_distributions: V5ModernSkillDistributions
 	},
-	tests: V5Tests
+	tests: V5Tests,
+	characterCalculations: V5CharacterCalculations
 };

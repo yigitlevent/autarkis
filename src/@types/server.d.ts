@@ -5,12 +5,15 @@ namespace aut {
 		interface Chronicle {
 			uuid: string;
 			name: string;
-			storyteller_name: string;
-			storyteller_uuid: string;
+
+			user_name: string;
+			user_uuid: string;
+
 			ruleset: aut.ruleset.Names;
-			discord_enabled: boolean;
-			discord_server: string;
-			discord_channel: string;
+			editable: boolean;
+
+			data: aut.GenericData;
+
 			created_at: string;
 			updated_at: string;
 		}
@@ -18,13 +21,15 @@ namespace aut {
 		interface Character {
 			uuid: string;
 			name: string;
-			player_name: string;
-			player_uuid: string;
-			data: aut.GenericCharacterData;
+
+			user_name: string;
+			user_uuid: string;
+
 			ruleset: aut.ruleset.Names;
 			editable: boolean;
-			chronicle_uuid: string;
-			chronicle_name: string;
+
+			data: aut.GenericData;
+
 			created_at: string;
 			updated_at: string;
 		}

@@ -4,7 +4,7 @@ import { Subtitle, ColumnsWrapper, RowsWrapper } from "../Sheet";
 
 import { Row } from "./Row";
 
-export function Column({ sheetID, sheetDisplayType, blockData, ruleset, setTester, changeSheetValue, changeSelected }: aut.props.SheetBlock): JSX.Element {
+export function Column({ sheetID, blockData, ruleset, setTester, sheetObject }: aut.props.SheetColumn): JSX.Element {
 	const [isHidden, setIsHidden] = useState(false);
 
 	const columns = blockData.columns.map((column, index) => {
@@ -12,13 +12,11 @@ export function Column({ sheetID, sheetDisplayType, blockData, ruleset, setTeste
 			return (<Row 
 				key={`${row.title}_${index}_${i}`}
 				sheetID={sheetID}
-				sheetDisplayType={sheetDisplayType}
 				blockTitle={blockData.title}
 				rowData={row}
 				ruleset={ruleset}
 				setTester={setTester}
-				changeSheetValue={changeSheetValue}
-				changeSelected={changeSelected}
+				sheetObject={sheetObject}
 			/>);
 		});
 

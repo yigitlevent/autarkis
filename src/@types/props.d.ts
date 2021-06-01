@@ -31,24 +31,23 @@ namespace aut {
 			sheetID: number;
 			removeSheet: (id: number) => void,
 			moveSheet: (id: number, direction: "up" | "down") => void;
-			characterObject: aut.hooks.UseCharacterReturns;
+			characterObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface ChronicleSheet {
 			sheetID: number;
 			removeSheet: (id: number) => void,
 			moveSheet: (id: number, direction: "up" | "down") => void;
-			chronicleObject: aut.hooks.UseChronicleReturns;
+			chronicleObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface GeneratorBox {
-			ruleset?: aut.ruleset.Names;
-			character: aut.classes.Character;
+			characterObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface TestWrapper {
 			event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-			characterObject: aut.hooks.UseCharacterReturns;
+			characterObject: aut.hooks.UseSheetReturns;
 			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 		}
 
@@ -66,8 +65,8 @@ namespace aut {
 			title: string;
 			innerHTML: string | JSX.Element;
 			button: string;
-			callback: () => void;
-			close: () => void;
+			callback?: () => void;
+			close?: () => void;
 		}
 
 		interface CharacterList {
@@ -76,25 +75,21 @@ namespace aut {
 			sheetDisplayType: aut.SheetDisplayType;
 		}
 
-		interface SheetBlock {
+		interface SheetColumn {
 			sheetID: number;
-			sheetDisplayType: aut.SheetDisplayType;
-			blockData: aut.ruleset.CharacterSheetBlock;
+			blockData: aut.sheet.SheetBlock;
 			ruleset: aut.ruleset.Names;
-			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.Events) => void;
-			changeSelected: (values: Option[], id?: string) => void;
+			setTester?: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+			sheetObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface SheetRow {
 			sheetID: number;
-			sheetDisplayType: aut.SheetDisplayType;
 			blockTitle: string;
-			rowData: aut.ruleset.SheetRow;
+			rowData: aut.sheet.SheetRow;
 			ruleset: aut.ruleset.Names;
-			setTester: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-			changeSheetValue: (event: aut.Events) => void;
-			changeSelected: (values: Option[], id?: string) => void;
+			setTester?: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+			sheetObject: aut.hooks.UseSheetReturns;
 		}
 
 	}

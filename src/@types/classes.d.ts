@@ -3,7 +3,7 @@ namespace aut {
 	namespace classes {
 
 		class Test {
-			_data: aut.GenericCharacterData;
+			_data: autCharacterData;
 			_ruleset: aut.ruleset.Names;
 
 			title: string;
@@ -55,7 +55,7 @@ namespace aut {
 		}
 
 		class Select {
-			current: string[];
+			current: rbs.Option[];
 		}
 
 	}

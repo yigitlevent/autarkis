@@ -9,7 +9,6 @@ export const InputGroup = styled.div`
 
 export const Input = styled.input<{ align?: string; columns?: number; }>`
 	height: 21px !important;
-	width: 99% !important;
 	text-align: ${p => (p.align) ? p.align : "initial"};
 	grid-column: span ${p => p.columns};
 `;

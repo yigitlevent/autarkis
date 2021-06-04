@@ -91,63 +91,6 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 		return { rowWidths: tempRowWidths.join(" "), columnWidths: tempColumnWidths.join(" "), columnAmount: tempColumnAmount };
 	});
 
-	const setInputGroup = useCallback((newValue: number, id: string, type: "dot" | "checkbox") => {
-		const amount = rowData[type]?.amount;
-		const isChecked = (document.getElementById(`${id}.${type}.${newValue}`) as HTMLInputElement).checked;
-
-		if (field && amount) {
-			field[type].current = newValue + 1;
-
-			for (let n = 0; n < amount; n++) {
-				const el = document.getElementById(`${id}.${type}.${n}`) as HTMLInputElement;
-				if (el && n === newValue) el.checked = (isChecked) ? true : false;
-				else if (el) el.checked = (n < newValue) ? true : false;
-			}
-		}
-	}, [field, rowData]);
-
-	const [inputGroup] = useState(() => {
-		const elements: JSX.Element[] = [<Fragment key={0} />];
-
-		if (rowData.pseudocheckbox) {
-			new Array<JSX.Element>(rowData.pseudocheckbox.amount).fill(<Fragment />)
-				.forEach((v, i) => {
-					elements.push(<PseudoCheckbox
-						key={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
-						id={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
-						onClick={() => { if (field) return field.pseudocheckbox.nextValue(i); return ""; }}
-						defaultValue={(field) ? [...field.pseudocheckbox.current][i] : undefined}
-					/>);
-				});
-		}
-		else if (rowData.checkbox) {
-			new Array<JSX.Element>(rowData.checkbox.amount).fill(<Fragment />)
-				.forEach((v, i) => {
-					elements.push(<Checkbox
-						id={`${sheetID}.${nameString}.checkbox.${i}`}
-						key={`${sheetID}.${nameString}.checkbox.${i}`}
-						disabled={(rowData.isReadOnly === true || displayType === "view") ? true : false}
-						defaultChecked={(field) ? i < field.checkbox.current : undefined}
-						onClick={() => { setInputGroup(i, `${sheetID}.${nameString}`, "checkbox"); }}
-					/>);
-				});
-		}
-		else if (rowData.dot) {
-			new Array<JSX.Element>(rowData.dot.amount).fill(<Fragment />)
-				.forEach((v, i) => {
-					elements.push(<Dot
-						id={`${sheetID}.${nameString}.dot.${i}`}
-						key={`${sheetID}.${nameString}.dot.${i}`}
-						disabled={(rowData.isReadOnly === true || displayType === "view") ? true : false}
-						defaultChecked={(field) ? i < field.dot.current : undefined}
-						onClick={() => { setInputGroup(i, `${sheetID}.${nameString}`, "dot"); }}
-					/>);
-				});
-		}
-
-		return elements;
-	});
-
 	const createSelectGroupOptions = (categories: string[]): rbs.Group[] => {
 		const options: rbs.Group[] = [];
 
@@ -165,6 +108,101 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 		return options;
 	};
 
+	const [text, setText] = useState<string | undefined>(field.text?.current);
+	const [number, setNumber] = useState<string | undefined>(field.number?.current);
+
+	const [dot, setDot] = useState<number | undefined>(field.dot?.current);
+	const [checkbox, setCheckbox] = useState<number | undefined>(field.checkbox?.current);
+	const [pseudocheckbox, setPseudocheckbox] = useState<string[] | undefined>(field.pseudocheckbox?.current);
+
+	const [precheckbox, setPrecheckbox] = useState<boolean | undefined>(field.precheckbox?.current);
+	const [postcheckbox, setPostcheckbox] = useState<boolean | undefined>(field.postcheckbox?.current);
+
+	const [textarea, setTextarea] = useState<string | undefined>(field.textarea?.current);
+	const [select, setSelect] = useState<rbs.Option[] | undefined>(field.select?.current);
+
+	const setInputGroup = useCallback((type: "dot" | "checkbox", newValue: number, id: string): void => {
+		const amount = rowData[type]?.amount;
+		const element = document.getElementById(`${id}.${type}.${newValue}`) as HTMLInputElement;
+		const isChecked = element?.checked;
+
+		if (field && amount && isChecked) {
+			for (let n = 0; n < amount; n++) {
+				const el = document.getElementById(`${id}.${type}.${n}`) as HTMLInputElement;
+				if (el && n === newValue) el.checked = (isChecked) ? true : false;
+				else if (el) el.checked = (n < newValue) ? true : false;
+			}
+		}
+	}, [field, rowData]);
+
+	const changeEvent = useCallback((type: aut.sheet.InputTypes, value: any): void => {
+		field[type as keyof typeof field].current = value as any;
+
+		if (type === "text") setText(value);
+		else if (type === "number") setNumber(value);
+
+		else if (type === "dot") setDot(value);
+		else if (type === "checkbox") setCheckbox(value);
+		else if (type === "pseudocheckbox") setPseudocheckbox(value);
+
+		else if (type === "precheckbox") setPrecheckbox(value);
+		else if (type === "postcheckbox") setPostcheckbox(value);
+
+		else if (type === "textarea") setTextarea(value);
+		else if (type === "select") setSelect(value);
+	}, [field]);
+
+	const [inputGroup] = useState(() => {
+		const elements: JSX.Element[] = [<Fragment key={0} />];
+
+		if (rowData.pseudocheckbox) {
+			new Array<JSX.Element>(rowData.pseudocheckbox.amount).fill(<Fragment />)
+				.forEach((v, i) => {
+					elements.push(<PseudoCheckbox
+						key={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
+						id={`${sheetID}.${nameString}.pseudocheckbox.${i}`}
+						defaultValue={(pseudocheckbox) ? pseudocheckbox[i] : undefined}
+						onClick={() => {
+							if (field) {
+								const nextValue = field.pseudocheckbox.nextValue(i);
+								setPseudocheckbox(field.pseudocheckbox.current);
+								return nextValue;
+							}
+							return "";
+						}}
+					/>);
+				});
+		}
+		else if (rowData.checkbox) {
+			new Array<JSX.Element>(rowData.checkbox.amount).fill(<Fragment />)
+				.forEach((v, i) => {
+					elements.push(<Checkbox
+						id={`${sheetID}.${nameString}.checkbox.${i}`}
+						key={`${sheetID}.${nameString}.checkbox.${i}`}
+						disabled={(rowData.isReadOnly === true || displayType === "view") ? true : false}
+						checked={(checkbox) ? i < checkbox : undefined}
+						onClick={() => { setInputGroup("checkbox", i, `${sheetID}.${nameString}`); }}
+						onChange={() => { changeEvent("checkbox", i); }}
+					/>);
+				});
+		}
+		else if (rowData.dot) {
+			new Array<JSX.Element>(rowData.dot.amount).fill(<Fragment />)
+				.forEach((v, i) => {
+					elements.push(<Dot
+						id={`${sheetID}.${nameString}.dot.${i}`}
+						key={`${sheetID}.${nameString}.dot.${i}`}
+						disabled={(rowData.isReadOnly === true || displayType === "view") ? true : false}
+						checked={(dot) ? i < dot : undefined}
+						onClick={() => { setInputGroup("dot", i, `${sheetID}.${nameString}`); }}
+						onChange={() => { changeEvent("dot", i); }}
+					/>);
+				});
+		}
+
+		return elements;
+	});
+
 	return (
 		<RowWrapper key={nameString} align={rowData.align} columns={gridData.columnWidths} rows={gridData.rowWidths}>
 
@@ -173,8 +211,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					key={`${sheetID}.${nameString}.precheckbox`}
 					id={`${sheetID}.${nameString}.precheckbox`}
 					disabled={(displayType === "view") ? true : false}
-					defaultChecked={(field) ? field.precheckbox.current : undefined}
-					onClick={(event) => { if (field) field.precheckbox.current = (event.target as HTMLInputElement).checked; }}
+					checked={precheckbox}
+					onChange={(event) => { changeEvent("precheckbox", event.target.checked); }}
 				/>
 				: null
 			}
@@ -201,8 +239,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					showAsText={true}
 					placeholder={(rowData.select.placeholder) ? rowData.select.placeholder : undefined}
 					disabled={(rowData.isReadOnly === true || displayType === "view") ? true : false}
-					defaultSelected={(field) ? field.select.current : undefined}
-					onSelectedChange={(options: rbs.Option[]) => { if (field) field.select.current = options; }}
+					defaultSelected={select}
+					onSelectedChange={(options: rbs.Option[]) => { changeEvent("select", options); }}
 				/>
 				: null
 			}
@@ -214,8 +252,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					id={`${sheetID}.${nameString}.text`}
 					key={`${sheetID}.${nameString}.text`}
 					readOnly={(rowData.isReadOnly === true || displayType === "view") ? true : false}
-					defaultValue={(field) ? field.text.current : undefined}
-					onChange={(event) => { if (field) field.text.current = event.target.value; }}
+					value={text}
+					onChange={(event) => { changeEvent("text", event.target.value); }}
 				/>
 				: null
 			}
@@ -225,8 +263,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					key={`${sheetID}.${nameString}.postcheckbox`}
 					id={`${sheetID}.${nameString}.postcheckbox`}
 					disabled={false}
-					defaultChecked={(field) ? field.postcheckbox.current : undefined}
-					onClick={(event) => { if (field) field.postcheckbox.current = (event.target as HTMLInputElement).checked; }}
+					checked={postcheckbox}
+					onChange={(event) => { changeEvent("postcheckbox", event.target.checked); }}
 				/>
 				: null
 			}
@@ -238,8 +276,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					id={`${sheetID}.${nameString}.number`}
 					key={`${sheetID}.${nameString}.number`}
 					readOnly={(rowData.isReadOnly === true) ? true : false}
-					defaultValue={(field) ? field.text.current : undefined}
-					onChange={(event) => { if (field) field.text.current = event.target.value; }}
+					defaultValue={number}
+					onChange={(event) => { changeEvent("number", event.target.value); }}
 				/>
 				: null
 			}
@@ -255,8 +293,8 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 					columns={gridData.columnAmount}
 					id={`${sheetID}.${nameString}.textarea`}
 					readOnly={(rowData.isReadOnly === true || displayType === "view") ? true : false}
-					defaultValue={(field) ? field.textarea.current : undefined}
-					onChange={(event) => { if (field) field.textarea.current = event.target.value; }}
+					defaultValue={textarea}
+					onChange={(event) => { changeEvent("textarea", event.target.value); }}
 				/>
 				: null
 			}

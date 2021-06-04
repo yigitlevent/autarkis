@@ -8,6 +8,6 @@ namespace aut {
 
 	type SheetDisplayType = "new" | "edit" | "view";
 
-	type SheetCategory = "generator" | "character" | "chronicle";
+	type SheetCategory = "character" | "chronicle";
 
 }

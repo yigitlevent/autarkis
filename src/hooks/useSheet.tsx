@@ -19,7 +19,7 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 	const [rawData, setRawData] = useState<aut.server.Character | aut.server.Chronicle>();
 	const [displayType, setDisplayType] = useSheetDisplayType((sheetUUID) ? "view" : "new");
 
-	const [revision, incrementRevision] = useReducer((state: number): number => { return state + 1; }, 0);
+	const [revision, newRevision] = useReducer((state: number): number => { return state + 1; }, 0);
 
 	const generateDataLayout = useCallback((): aut.data.GenericDataLayout => {
 		const newData: { [key: string]: { [key: string]: { [key: string]: Text | Toggle | Dot | Checkbox | PseudoCheckbox | Textarea | Select; }; }; } = {};
@@ -105,17 +105,24 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 	}, [category, ruleset]);
 
 	useEffect(() => {
+		console.log("useEffect 1");
 		if (!isLoaded && (rawData || !uuid)) {
 			if (rawData) {
-				setData({ ...calculateValues(generateLoadedData(rawData, data) as any)});
+				setData({ ...calculateValues(generateLoadedData(rawData, data) as any) });
 			}
 			setIsLoaded(true);
 		}
-		incrementRevision();
+		newRevision();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [calculateValues, rawData, generateLoadedData]);
 
 	useEffect(() => {
+		console.log(revision);
+		//setData({ ...calculateValues(data) });
+	}, [revision]);
+
+	useEffect(() => {
+		console.log("useEffect 2");
 		if (ruleset && uuid && !rawData) {
 			DatabaseClient.from((category === "chronicle") ? "chronicles" : "characters")
 				.select("*").eq("uuid", uuid).single()
@@ -146,7 +153,7 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 						tempData._primary.user_uuid.text.current = response.data[0].user_uuid;
 
 						tempData._primary.ruleset.text.current = response.data[0].ruleset;
-						tempData._primary.editable.toggle.current = response.data[0].editable;
+						tempData._primary.editable.postcheckbox.current = response.data[0].editable;
 
 						tempData._primary.created_at.text.current = response.data[0].created_at;
 						tempData._primary.updated_at.text.current = response.data[0].updated_at;
@@ -185,5 +192,5 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 		});
 	}, [category, data._primary.uuid.text]);
 
-	return { displayType, data, setDisplayType, database: { insert, update, remove }, isLoaded };
+	return { displayType, data, setDisplayType, newRevision, database: { insert, update, remove }, isLoaded };
 }

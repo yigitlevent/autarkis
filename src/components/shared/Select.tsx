@@ -8,7 +8,7 @@ const SelectWrapper = styled.div<{ isDisabled: boolean; }>`
 	background:  ${p => (p.isDisabled) ? "none" : (props: aut.theme.StyleProps) => props.theme.element.background};
 	display: block;
 	font-size: 1em;
-	width: 99%;
+	width: 100%;
 	height: 21px;
 	overflow: visible;
 `;
@@ -39,7 +39,7 @@ const SelectInput = styled.input`
 const SelectOptions = styled.div`
 	display: block;
 	max-height: 240px;
-	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+	border: ${(props: aut.theme.StyleProps) => props.theme.box.border};
 	overflow-y: auto;
 	overflow-x: hidden;
 	width: inherit;

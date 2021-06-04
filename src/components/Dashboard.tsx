@@ -13,18 +13,19 @@ import { ConfirmBox } from "./shared/ConfirmBox";
 
 import { CharacterWrapper } from "./dashboard/CharacterWrapper";
 import { ChronicleWrapper } from "./dashboard/ChronicleWrapper";
+import { TestWrapper } from "./dashboard/TestWrapper";
 
 export function Dashboard(): JSX.Element {
-	const [sheets, addSheet, removeSheet, moveSheet] = useSheets();
+	const [sheets, sheet] = useSheets();
 
 	const [rulesetSelect, setRulesetSelect] = useState<null | JSX.Element>(null);
 
-	const createSheet = useCallback((category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => {
+	const createSheet = useCallback((category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string) => {
 		if (ruleset) {
 			console.log(ruleset);
 
-			if (category === "chronicle") addSheet(category, ruleset, uuid);
-			else addSheet(category, ruleset, uuid);
+			if (category === "chronicle") sheet.add({ category, ruleset, uuid });
+			else sheet.add({ category, ruleset, uuid });
 		}
 		else {
 			setRulesetSelect(
@@ -35,35 +36,28 @@ export function Dashboard(): JSX.Element {
 							options={Rulesets.getRulesetNames()} placeholder={"Select a Ruleset"} closeOnSelect
 							onOptionSelect={(option) => {
 								setRulesetSelect(null);
-								if (category === "chronicle") addSheet(category, option.value as aut.ruleset.Names, uuid);
-								else addSheet(category, option.value as aut.ruleset.Names, uuid);
+								if (category === "chronicle") sheet.add({ category, ruleset: option.value as aut.ruleset.Names, uuid });
+								else sheet.add({ category, ruleset: option.value as aut.ruleset.Names, uuid });
 							}}
 						/>
 					}
 				/>
 			);
 		}
-	}, [addSheet]);
+	}, [sheet]);
 
-	const bottomElements = sheets.map((x) => {
+	const bottomElements = sheets.map((x): JSX.Element => {
 		if (x.category === "chronicle") {
-			return (
-				<ChronicleWrapper
-					key={x.id} sheetID={x.id}
-					removeSheet={removeSheet} moveSheet={moveSheet}
-					ruleset={x.ruleset} uuid={x.uuid}
-				/>
-			);
+			return <ChronicleWrapper key={x.id} sheetID={x.id} sheet={sheet} ruleset={x.ruleset} uuid={x.uuid} />;
 		}
-		else {
-			return (
-				<CharacterWrapper
-					key={x.id} sheetID={x.id}
-					removeSheet={removeSheet} moveSheet={moveSheet}
-					ruleset={x.ruleset} uuid={x.uuid}
-				/>
-			);
+		else if (x.category === "character") {
+			return <CharacterWrapper key={x.id} sheetID={x.id} sheet={sheet} ruleset={x.ruleset} uuid={x.uuid} />;
 		}
+		else if (x.category.startsWith("test")) {
+			if (x.characterData) return <TestWrapper key={x.id} sheetID={x.id} sheet={sheet} characterData={x.characterData} />;
+			else return <Fragment />;
+		}
+		else return <Fragment />;
 	});
 
 	return (

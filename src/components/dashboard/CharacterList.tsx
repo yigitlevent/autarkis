@@ -13,7 +13,7 @@ import { Icon } from "../shared/Icon";
 import { Button } from "../shared/Inputs";
 import { SmallBox } from "../shared/Box";
 
-import { SheetListRow } from "./mylists/SheetListRow";
+import { SheetListRow } from "./lists/SheetListRow";
 
 export function CharacterList({ createSheet }: aut.props.SheetList): JSX.Element {
 	const { clientState } = useContext(ClientContext);
@@ -30,12 +30,6 @@ export function CharacterList({ createSheet }: aut.props.SheetList): JSX.Element
 						onClick={() => {
 							createSheet("character", undefined, undefined);
 						}}
-					/>
-				</Icon>
-
-				<Icon size={24} name={"generated"} hover brightness>
-					<Button value={""} title={"New Generated Character"}
-						onClick={() => createSheet("generator", undefined, undefined)}
 					/>
 				</Icon>
 			</IconBox>

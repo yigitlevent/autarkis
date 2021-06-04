@@ -37,7 +37,7 @@ export const GenericChronicleSheet: aut.sheet.Sheet = [
 	},
 	{
 		title: "Basics",
-		showTitle: true,
+		showTitle: false,
 		columns: [
 			[
 				{ title: "Name", showTitle: true, inputs: ["text"] },

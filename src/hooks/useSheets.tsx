@@ -1,22 +1,8 @@
-import { useCallback,  useState } from "react";
+import { useCallback, useState } from "react";
 
-type SheetsList = {
-	id: number;
-	category: aut.SheetCategory,
-	ruleset: aut.ruleset.Names,
-	uuid?: string;
-}[];
-
-type UseSheetsReturns = [
-	SheetsList,
-	(category: aut.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string) => void,
-	(id: number) => void,
-	(id: number, direction: "up" | "down") => void
-];
-
-export function useSheets(): UseSheetsReturns {
+export function useSheets(): aut.hooks.UseSheetsReturns {
 	const [counter, setCounter] = useState(0);
-	const [sheets, setSheets] = useState<SheetsList>([]);
+	const [sheets, setSheets] = useState<aut.hooks.SheetsList>([]);
 
 	const removeSheet = useCallback((id: number): void => {
 		const tempArray = sheets;
@@ -44,10 +30,14 @@ export function useSheets(): UseSheetsReturns {
 		}
 	}, [sheets]);
 
-	const addSheet = useCallback((category: aut.SheetCategory, ruleset: aut.ruleset.Names, uuid?: string): void => {
-		setSheets([{ id: counter, category, ruleset, uuid }, ...sheets]);
+	const addSheet = useCallback(({ category, ruleset, uuid, characterData }: { category: aut.SheetCategory | string, ruleset: aut.ruleset.Names; uuid?: string; characterData?: aut.data.GenericData; }): void => {
+		setSheets([{ id: counter, category, ruleset, uuid, characterData }, ...sheets]);
 		setCounter(counter + 1);
 	}, [counter, sheets]);
 
-	return [sheets, addSheet, removeSheet, moveSheet];
+	const getSheet = useCallback((sheetID: number): aut.hooks.Sheet | undefined => {
+		return sheets.find((x) => x.id === sheetID);
+	}, [sheets]);
+
+	return [sheets, { add: addSheet, remove: removeSheet, move: moveSheet, get: getSheet }];
 }

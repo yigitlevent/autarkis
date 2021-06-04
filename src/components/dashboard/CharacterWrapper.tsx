@@ -1,34 +1,36 @@
+import { useEffect } from "react";
 import { useSheet } from "../../hooks/useSheet";
 
 import { LargeBox } from "../shared/Box";
-import { Title } from "../shared/Sheet";
 import { Spinner } from "../shared/Spinner";
 
+import { WrapperTitle } from "./wrapper/WrapperTitle";
 import { CharacterSheet } from "./characterwrapper/CharacterSheet";
 
-export function CharacterWrapper({ sheetID, removeSheet, moveSheet, ruleset, uuid }: aut.props.CharacterSheetWrapper): JSX.Element {
+export function CharacterWrapper({ sheetID, sheet, ruleset, uuid }: aut.props.SheetWrapper): JSX.Element {
 	const characterObject = useSheet("character", ruleset, uuid);
 
-	console.log(characterObject);
+	useEffect(() => {
+		console.log("CharacterWrapper");
+	}, [characterObject]);
 
 	return (
 		(!characterObject.isLoaded)
 			? <Spinner />
 			: <LargeBox>
-				<Title>{characterObject.displayType.toUpperCase()} CHARACTER</Title>
+
+				<WrapperTitle
+					sheetID={sheetID}
+					sheet={sheet}
+					category={"character"}
+					object={characterObject}
+				/>
 
 				<CharacterSheet
 					sheetID={sheetID}
-					removeSheet={removeSheet}
-					moveSheet={moveSheet}
+					sheet={sheet}
 					characterObject={characterObject}
 				/>
-
-				{/*TODO: (category === "generator")
-					? <GeneratorBox ruleset={ruleset} character={character} />
-					: <Fragment />
-				*/}
-
 			</LargeBox>
 	);
 }

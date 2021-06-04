@@ -26,7 +26,7 @@ const Button = styled.div<{ hover?: boolean; }>`
 	}
 `;
 
-export function SheetListRow({ sheetData, createSheet: addSheet }: aut.props.SheetListRow): JSX.Element {
+export function SheetListRow({ sheetData, createSheet }: aut.props.SheetListRow): JSX.Element {
 	const [data] = useState(() => {
 		const dateTime = dayjs(sheetData.date).format("HH:mm:ss DD/MM/YYYY");
 
@@ -55,7 +55,7 @@ export function SheetListRow({ sheetData, createSheet: addSheet }: aut.props.She
 				<Icon size={21} name={"secret_key"} hover brightness />
 			</Button>
 
-			<Link className="name" onClick={() => { addSheet(data.category, data.ruleset, data.uuid); }}>{data.name}</Link>
+			<Link className="name" onClick={() => { createSheet(data.category, data.ruleset, data.uuid); }}>{data.name}</Link>
 
 			<span className={"hide"}>{data.creator}</span>
 		</Row>

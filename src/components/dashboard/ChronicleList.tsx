@@ -11,7 +11,7 @@ import { Subtitle } from "../shared/Sheet";
 import { Spinner } from "../shared/Spinner";
 import { Icon } from "../shared/Icon";
 
-import { SheetListRow } from "./mylists/SheetListRow";
+import { SheetListRow } from "./lists/SheetListRow";
 import { Button } from "../shared/Inputs";
 import { SmallBox } from "../shared/Box";
 

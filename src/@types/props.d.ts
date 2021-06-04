@@ -2,53 +2,48 @@ namespace aut {
 
 	namespace props {
 
-		interface ChronicleSheetWrapper {
+		interface SheetWrapper {
 			sheetID: number;
-			removeSheet: (id: number) => void,
-			moveSheet: (id: number, direction: "up" | "down") => void;
+			sheet: aut.hooks.SheetMethods;
 			ruleset: aut.ruleset.Names;
 			uuid?: string;
 		}
 
-		interface CharacterSheetWrapper {
+		interface TestWrapper {
 			sheetID: number;
-			removeSheet: (id: number) => void,
-			moveSheet: (id: number, direction: "up" | "down") => void;
-			ruleset: aut.ruleset.Names;
-			uuid?: string;
+			sheet: aut.hooks.SheetMethods;
+			characterData: aut.data.GenericData;
 		}
 
 		interface SheetList {
-			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
+			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string) => void;
 		}
 
 		interface SheetListRow {
 			sheetData: { name: null | string; uuid: string; date: string; creator: string; ruleset: undefined | aut.ruleset.Names; category: aut.SheetCategory; };
-			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string | undefined) => void;
+			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string) => void;
 		}
 
-		interface CharacterSheet {
+		interface Sheet {
 			sheetID: number;
-			removeSheet: (id: number) => void,
-			moveSheet: (id: number, direction: "up" | "down") => void;
+			sheet: aut.hooks.SheetMethods;
+		}
+
+		interface WrapperTitle extends Sheet {
+			category: string;
+			object: aut.hooks.UseSheetReturns;
+		}
+
+		interface CharacterSheet extends Sheet {
 			characterObject: aut.hooks.UseSheetReturns;
 		}
 
-		interface ChronicleSheet {
-			sheetID: number;
-			removeSheet: (id: number) => void,
-			moveSheet: (id: number, direction: "up" | "down") => void;
+		interface ChronicleSheet extends Sheet {
 			chronicleObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface GeneratorBox {
 			characterObject: aut.hooks.UseSheetReturns;
-		}
-
-		interface TestWrapper {
-			event: React.MouseEvent<HTMLDivElement, MouseEvent>;
-			characterObject: aut.hooks.UseSheetReturns;
-			setDiceRoller: (event?: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 		}
 
 		interface Icon {

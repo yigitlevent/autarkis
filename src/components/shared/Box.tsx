@@ -17,6 +17,7 @@ export function SmallBox({ children }: { children?: JSX.Element | JSX.Element[];
 export const LargeBoxWrapper = styled.div`
 	background: ${(props: aut.theme.StyleProps) => props.theme.box.background};
 	outline: ${(props: aut.theme.StyleProps) => props.theme.box.border};
+	min-height: 110px;
 `;
 
 export function LargeBox({ children }: { children?: JSX.Element | JSX.Element[]; }): JSX.Element {

@@ -1,24 +1,29 @@
 import { useSheet } from "../../hooks/useSheet";
 
-import { SmallBox as LargeBox } from "../shared/Box";
-import { Title } from "../shared/Sheet";
+import { SmallBox } from "../shared/Box";
 import { Spinner } from "../shared/Spinner";
 
+import { WrapperTitle } from "./wrapper/WrapperTitle";
 import { ChronicleSheet } from "./chroniclewrapper/ChronicleSheet";
 
-export function ChronicleWrapper({ sheetID, removeSheet, moveSheet, ruleset, uuid }: aut.props.ChronicleSheetWrapper): JSX.Element {
+export function ChronicleWrapper({ sheetID, sheet, ruleset, uuid }: aut.props.SheetWrapper): JSX.Element {
 	const chronicleObject = useSheet("chronicle", ruleset, uuid);
 
 	return (
 		(!chronicleObject.isLoaded)
 			? <Spinner />
-			: <LargeBox>
-				<Title>{chronicleObject.displayType.toUpperCase()} CHRONICLE</Title>
+			: <SmallBox>
+
+				<WrapperTitle
+					sheetID={sheetID}
+					sheet={sheet}
+					category={"chronicle"}
+					object={chronicleObject}
+				/>
 
 				<ChronicleSheet
 					sheetID={sheetID}
-					removeSheet={removeSheet}
-					moveSheet={moveSheet}
+					sheet={sheet}
 					chronicleObject={chronicleObject}
 				/>
 
@@ -31,6 +36,6 @@ export function ChronicleWrapper({ sheetID, removeSheet, moveSheet, ruleset, uui
 					: <Fragment />
 				*/}
 
-			</LargeBox >
+			</SmallBox >
 	);
 }

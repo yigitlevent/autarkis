@@ -6,13 +6,17 @@ namespace aut {
 			[key: string]: {
 				[key: string]: {
 					text: aut.classes.Text;
-					toggle: aut.classes.Toggle;
+					number: aut.classes.Text;
+
 					precheckbox: aut.classes.Toggle;
 					postcheckbox: aut.classes.Toggle;
+
 					dot: aut.classes.Dot;
 					checkbox: aut.classes.Checkbox;
 					pseudocheckbox: aut.classes.PseudoCheckbox;
+
 					textarea: aut.classes.Textarea;
+
 					select: aut.classes.Select;
 				};
 			};
@@ -21,9 +25,11 @@ namespace aut {
 		interface GenericDataLayout {
 			[key: string]: {
 				[key: string]: {
-					[key: string]: aut.classes.Text | aut.classes.Toggle
+					[key: string]: aut.classes.Text 
+					| aut.classes.Toggle
 					| aut.classes.Dot | aut.classes.Checkbox | aut.classes.PseudoCheckbox
-					| aut.classes.Textarea | aut.classes.Select;
+					| aut.classes.Textarea 
+					| aut.classes.Select;
 				};
 			};
 		}

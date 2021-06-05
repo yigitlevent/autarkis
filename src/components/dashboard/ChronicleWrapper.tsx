@@ -7,7 +7,7 @@ import { WrapperTitle } from "./wrapper/WrapperTitle";
 import { ChronicleSheet } from "./chroniclewrapper/ChronicleSheet";
 
 export function ChronicleWrapper({ sheetID, sheet, ruleset, uuid }: aut.props.SheetWrapper): JSX.Element {
-	const chronicleObject = useSheet("chronicle", ruleset, uuid);
+	const chronicleObject = useSheet("campaign", ruleset, uuid);
 
 	return (
 		(!chronicleObject.isLoaded)
@@ -17,14 +17,14 @@ export function ChronicleWrapper({ sheetID, sheet, ruleset, uuid }: aut.props.Sh
 				<WrapperTitle
 					sheetID={sheetID}
 					sheet={sheet}
-					category={"chronicle"}
+					category={"campaign"}
 					object={chronicleObject}
 				/>
 
 				<ChronicleSheet
 					sheetID={sheetID}
 					sheet={sheet}
-					chronicleObject={chronicleObject}
+					campaignObject={chronicleObject}
 				/>
 
 				{/*(displayType !== "new")

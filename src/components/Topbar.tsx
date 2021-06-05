@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 import { ClientContext } from "../contexts/Contexts";
 
-import { DatabaseClient } from "../hooks/useQueries";
+import { DatabaseClient } from "../index";
 
 import { Icon } from "./shared/Icon";
 import { IconLink } from "./shared/Link";

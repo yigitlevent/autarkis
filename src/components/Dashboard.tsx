@@ -7,8 +7,7 @@ import { useSheets } from "../hooks/useSheets";
 
 import { Select } from "./shared/Select";
 
-import { ChronicleList } from "./dashboard/ChronicleList";
-import { CharacterList } from "./dashboard/CharacterList";
+import { GenericList } from "./dashboard/GenericList";
 import { ConfirmBox } from "./shared/ConfirmBox";
 
 import { CharacterWrapper } from "./dashboard/CharacterWrapper";
@@ -24,7 +23,7 @@ export function Dashboard(): JSX.Element {
 		if (ruleset) {
 			console.log(ruleset);
 
-			if (category === "chronicle") sheet.add({ category, ruleset, uuid });
+			if (category === "campaign") sheet.add({ category, ruleset, uuid });
 			else sheet.add({ category, ruleset, uuid });
 		}
 		else {
@@ -36,7 +35,7 @@ export function Dashboard(): JSX.Element {
 							options={Rulesets.getRulesetNames()} placeholder={"Select a Ruleset"} closeOnSelect
 							onOptionSelect={(option) => {
 								setRulesetSelect(null);
-								if (category === "chronicle") sheet.add({ category, ruleset: option.value as aut.ruleset.Names, uuid });
+								if (category === "campaign") sheet.add({ category, ruleset: option.value as aut.ruleset.Names, uuid });
 								else sheet.add({ category, ruleset: option.value as aut.ruleset.Names, uuid });
 							}}
 						/>
@@ -47,7 +46,7 @@ export function Dashboard(): JSX.Element {
 	}, [sheet]);
 
 	const bottomElements = sheets.map((x): JSX.Element => {
-		if (x.category === "chronicle") {
+		if (x.category === "campaign") {
 			return <ChronicleWrapper key={x.id} sheetID={x.id} sheet={sheet} ruleset={x.ruleset} uuid={x.uuid} />;
 		}
 		else if (x.category === "character") {
@@ -68,9 +67,7 @@ export function Dashboard(): JSX.Element {
 				breakpointCols={{ default: 3, 1260: 2, 630: 1 }}
 				className="top-masonry" columnClassName="top-masonry-column"
 			>
-				<ChronicleList createSheet={createSheet} />
-				<CharacterList createSheet={createSheet} />
-				<CharacterList createSheet={createSheet} />
+				<GenericList category={"campaign"} tableName={"campaigns"} createSheet={createSheet} />
 			</Masonry>
 
 			<Masonry

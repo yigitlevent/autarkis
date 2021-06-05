@@ -91,7 +91,7 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 		return { rowWidths: tempRowWidths.join(" "), columnWidths: tempColumnWidths.join(" "), columnAmount: tempColumnAmount };
 	});
 
-	const createSelectGroupOptions = (categories: string[]): rbs.Group[] => {
+	const createSelectGroupOptions = (categories: string[]): string[] | rbs.Group[] => {
 		const options: rbs.Group[] = [];
 
 		for (const category in categories) {

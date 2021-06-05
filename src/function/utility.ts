@@ -27,9 +27,11 @@ export function DirtyString(string: string): string {
 	return parts.map((val) => CapitalizeFirstLetter(val)).join(" ");
 }
 
-export function SortObjects(array?: any[]): any[] | undefined {
-	if (!array) return undefined;
-	return array.sort((a, b) => { return a.name.localeCompare(b.name); });
+export function SortObjects<T>(array?: T[]): T[] | undefined {
+	if (array && array.every(x => ("name" in x))) {
+		return array.sort((a: any, b: any) => { return a.name.localeCompare(b.name); });
+	}
+	return undefined;
 }
 
 export function GetOrdinalSuffix(n: number): string {

@@ -23,13 +23,18 @@ const V5ModernBasicLists: aut.ruleset.BasicLists = {
 };
 
 export const V5Modern: aut.ruleset.Ruleset = {
+	namings: {
+		campaign: "Chronicle",
+		character: "Character",
+		group: "Coterie"
+	},
 	basicLists: V5ModernBasicLists,
 	characterSheet: V5ModernCharacterSheet,
 	generatorConditions: V5ModernGenerator,
 	characterMisc: {
 		bloodPotency: V5ModernBloodPotency,
 		clans: V5ModernClans,
-		pradetor_types: V5ModernPredatorTypes,
+		predator_types: V5ModernPredatorTypes,
 		character_advantages: V5ModernCharacterAdvantages,
 		disciplines: V5ModernDisciplines,
 		skill_distributions: V5ModernSkillDistributions

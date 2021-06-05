@@ -23,7 +23,7 @@ export const GenericChronicleSheet: aut.sheet.Sheet = [
 		columns: [
 			[
 				{ title: "uuid", showTitle: true, inputs: ["text"] },
-				{ title: "storyteller_uuid", showTitle: true, inputs: ["text"] }
+				{ title: "user_uuid", showTitle: true, inputs: ["text"] }
 			],
 			[
 				{ title: "editable", showTitle: true, inputs: ["postcheckbox"] },
@@ -41,32 +41,20 @@ export const GenericChronicleSheet: aut.sheet.Sheet = [
 		columns: [
 			[
 				{ title: "Name", showTitle: true, inputs: ["text"] },
-				{ title: "Storyteller", showTitle: true, inputs: ["text"] },
-				{ title: "User", showTitle: true, inputs: ["text"] },
-				{ title: "Experience System", inputs: ["select"], select: { categories: ["Experience Systems"], placeholder: "Select Experience System" } },
-				{ title: "Character Type", inputs: ["select"], select: { categories: ["Character Types"], placeholder: "Select Character Type" } },
-			],
-			[
-				{ title: "Description", showTitle: true, inputs: ["textarea"], textarea: { amount: 4 } }
-			],
-			[
-				{ title: "Notes", showTitle: true, inputs: ["textarea"], textarea: { amount: 4 } }
-			]
-		]
-	},
-	{
-		title: "Discord Bot",
-		showTitle: true,
-		columns: [
-			[
-				{ title: "Enabled", showTitle: true, inputs: ["postcheckbox"] }
-			],
-			[
-				{ title: "Server", showTitle: true, inputs: ["text"] }
-			],
-			[
+				{ title: "User", showTitle: true, isReadOnly: true, inputs: ["text"] },
+
+				{ title: "empty", inputs: [] },
+
+				{ title: "Discord", showTitle: true, inputs: ["postcheckbox"] },
+				{ title: "Server", showTitle: true, inputs: ["text"] },
 				{ title: "Channel", showTitle: true, inputs: ["text"] }
+			],
+			[
+				{ title: "Description", showTitle: true, inputs: ["textarea"], textarea: { amount: 5 } }
+			],
+			[
+				{ title: "Notes", showTitle: true, inputs: ["textarea"], textarea: { amount: 5 } }
 			]
 		]
-	},
+	}
 ];

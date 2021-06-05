@@ -7,7 +7,14 @@ namespace aut {
 		type TestFunction = (testData: aut.data.TestData) => aut.data.TestResult;
 		type ProbabilityFunction = (testData: aut.data.TestData) => aut.data.ProbabilityResult;
 
+		interface Namings {
+			campaign: string;
+			character: string;
+			group: string;
+		}
+
 		interface Ruleset {
+			namings: Namings;
 			basicLists: aut.ruleset.BasicLists;
 			characterSheet: aut.sheet.Sheet;
 			generatorConditions: aut.ruleset.GeneratorConditions;

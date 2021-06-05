@@ -3,7 +3,7 @@ import { GenericChronicleSheet } from "../../../rulesets/GenericChronicle";
 import { Dashboard } from "../../shared/Sheet";
 import { Column } from "../../shared/sheet/Column";
 
-export function ChronicleSheet({ sheetID, /*sheet,*/ chronicleObject }: aut.props.ChronicleSheet): JSX.Element {
+export function ChronicleSheet({ sheetID, /*sheet,*/ campaignObject: chronicleObject }: aut.props.CampaignSheet): JSX.Element {
 	const { displayType, data } = chronicleObject;
 
 	return (

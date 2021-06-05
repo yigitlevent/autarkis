@@ -18,13 +18,13 @@ export function WrapperTitle({ sheetID, sheet, category, object }: aut.props.Wra
 		setDeleteBox(
 			<ConfirmBox
 				title={`Delete ${data.basics.name.text.current}`}
-				innerHTML={"Are you sure that you want to delete this chronicle?"}
+				innerHTML={`Are you sure that you want to delete this ${category}?`}
 				button={"Delete"}
 				callback={() => { database.remove().then(() => { sheet.remove(sheetID); }); }}
 				close={() => { setDeleteBox(<Fragment />); }}
 			/>
 		);
-	}, [data.basics.name.text, database, sheet, sheetID]);
+	}, [category, data.basics.name.text, database, sheet, sheetID]);
 
 	return (
 		<Fragment>

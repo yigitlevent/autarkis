@@ -16,6 +16,8 @@ namespace aut {
 		}
 
 		interface SheetList {
+			category: aut.SheetCategory;
+			tableName: aut.server.TableNames;
 			createSheet: (category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string) => void;
 		}
 
@@ -30,7 +32,7 @@ namespace aut {
 		}
 
 		interface WrapperTitle extends Sheet {
-			category: string;
+			category: aut.SheetCategory;
 			object: aut.hooks.UseSheetReturns;
 		}
 
@@ -38,8 +40,8 @@ namespace aut {
 			characterObject: aut.hooks.UseSheetReturns;
 		}
 
-		interface ChronicleSheet extends Sheet {
-			chronicleObject: aut.hooks.UseSheetReturns;
+		interface CampaignSheet extends Sheet {
+			campaignObject: aut.hooks.UseSheetReturns;
 		}
 
 		interface GeneratorBox {
@@ -65,8 +67,8 @@ namespace aut {
 		}
 
 		interface CharacterList {
-			chronicleUUID: string;
-			chronicleName: string;
+			campaignUUID: string;
+			campaignName: string;
 			sheetDisplayType: aut.SheetDisplayType;
 		}
 

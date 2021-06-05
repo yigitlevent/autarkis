@@ -1,8 +1,6 @@
 import { Fragment, StrictMode, useCallback, useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { Session } from "@supabase/supabase-js";
-import { QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { createClient, Session } from "@supabase/supabase-js";
 import { Slide } from "react-toastify";
 
 import { ThemeProvider } from "styled-components";
@@ -12,13 +10,13 @@ import { DarkTheme } from "./theme/_themes";
 
 import { ClientContext } from "./contexts/Contexts";
 
-import { DatabaseClient, GlobalQueryClient } from "./hooks/useQueries";
-
 import { Spinner } from "./components/shared/Spinner";
 import { StyledToast } from "./components/shared/StyledToast";
 
 import { Dashboard } from "./components/Dashboard";
 import { Topbar } from "./components/Topbar";
+
+export const DatabaseClient = createClient(process.env.REACT_APP_DATABASE_URL as string, process.env.REACT_APP_DATABASE_KEY as string);
 
 function App(): JSX.Element {
 	const [clientState, setClientState] = useState<aut.ClientState>("presign");
@@ -40,8 +38,10 @@ function App(): JSX.Element {
 
 	useEffect(() => {
 		setClientState("presign");
+
 		const session = DatabaseClient.auth.session();
 		setSessionData(session);
+
 		const subscription = DatabaseClient.auth.onAuthStateChange((event, session) => { setSessionData(session); });
 		return () => { subscription?.data?.unsubscribe(); };
 	}, [setSessionData]);
@@ -84,12 +84,4 @@ function App(): JSX.Element {
 	);
 }
 
-ReactDOM.render(
-	<StrictMode>
-		<QueryClientProvider client={GlobalQueryClient}>
-			<ReactQueryDevtools initialIsOpen={true} position={"bottom-right"} />
-			<App />
-		</QueryClientProvider>
-	</StrictMode>,
-	document.getElementById("root")
-);
+ReactDOM.render(<StrictMode><App /></StrictMode>, document.getElementById("root"));

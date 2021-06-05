@@ -19,8 +19,8 @@ export const List = styled.div`
 `;
 
 export const EmptyListError = styled.div`
-	font-size: 1em;
+	font-size: 0.9em;
 	font-style: italic;
-	margin: 20px 12px;
+	margin: 28px 16px;
 	color: ${(props: aut.theme.StyleProps) => props.theme.error.color};
 `;

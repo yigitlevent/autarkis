@@ -7,16 +7,17 @@ import { Rulesets } from "../rulesets/_rulesets";
 
 import { CleanString } from "../function/utility";
 
-import { useSheetDisplayType } from "./useSheetDisplayType";
-import { DatabaseClient } from "./useQueries";
+import { DatabaseClient } from "../index";
 
-export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset: aut.ruleset.Names, sheetUUID?: string): aut.hooks.UseSheetReturns {
+import { useSheetDisplayType } from "./useSheetDisplayType";
+
+export function useSheet(sheetCategory: aut.SheetCategory, sheetRuleset: aut.ruleset.Names, sheetUUID?: string): aut.hooks.UseSheetReturns {
 	const [isLoaded, setIsLoaded] = useState(false);
 
-	const [category] = useState(sheetCategory);
+	const [category] = useState<aut.SheetCategory>(sheetCategory);
 	const [ruleset] = useState<aut.ruleset.Names>(sheetRuleset);
 	const [uuid] = useState<undefined | string>(sheetUUID);
-	const [rawData, setRawData] = useState<aut.server.Character | aut.server.Chronicle>();
+	const [rawData, setRawData] = useState<aut.server.DataReturn>();
 	const [displayType, setDisplayType] = useSheetDisplayType((sheetUUID) ? "view" : "new");
 
 	const [revision, newRevision] = useReducer((state: number): number => { return state + 1; }, 0);
@@ -77,7 +78,7 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 		return newData;
 	}, [category, ruleset, sheetRuleset]);
 
-	const generateLoadedData = useCallback((sheetRawData: aut.server.Character | aut.server.Chronicle, sheetLayout: aut.data.GenericDataLayout): aut.data.GenericDataLayout => {
+	const generateLoadedData = useCallback((sheetRawData: aut.server.DataReturn, sheetLayout: aut.data.GenericDataLayout): aut.data.GenericDataLayout => {
 		const temp = sheetRawData.data as any;
 
 		for (const block in temp) {
@@ -124,30 +125,30 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 	useEffect(() => {
 		console.log("useEffect 2");
 		if (ruleset && uuid && !rawData) {
-			DatabaseClient.from((category === "chronicle") ? "chronicles" : "characters")
+			DatabaseClient.from((category === "campaign") ? "campaigns" : "characters")
 				.select("*").eq("uuid", uuid).single()
 				.then((response: any) => {
 					if (response.error) return;
-					setRawData(response.data as (aut.server.Character | aut.server.Chronicle));
+					setRawData(response.data as aut.server.DataReturn);
 				});
 		}
 	}, [category, rawData, ruleset, uuid]);
 
 	const insert = useCallback((): Promise<void> => {
-		const dataObject = {
+		const dataObject: aut.server.DataInsert = {
 			name: data.basics.name.text.current,
-			ruleset: data._primary.ruleset.text.current,
-			user_name: DatabaseClient.auth.user()?.user_metadata.full_name,
-			user_uuid: DatabaseClient.auth.user()?.id,
+			user_uuid: DatabaseClient.auth.user()?.id as string,
 			data: data
 		};
 
 		return new Promise<void>((resolve, reject) => {
-			DatabaseClient.from((category === "character") ? "characters" : "chronicles").insert(dataObject)
+			DatabaseClient.from((category === "character") ? "characters" : "campaigns").insert(dataObject)
 				.then((response) => {
 					if (response.error) { toast.error("Sheet cannot be inserted."); reject(); }
 					else {
 						const tempData = data;
+
+						console.log(tempData);
 
 						tempData._primary.uuid.text.current = response.data[0].uuid;
 						tempData._primary.user_uuid.text.current = response.data[0].user_uuid;
@@ -167,12 +168,12 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 	}, [calculateValues, category, data]);
 
 	const update = useCallback((): Promise<void> => {
-		const dataObject = {
+		const dataObject: aut.server.DataUpdate = {
 			data: data
 		};
 
 		return new Promise<void>((resolve, reject) => {
-			DatabaseClient.from((category === "character") ? "characters" : "chronicles").update(dataObject)
+			DatabaseClient.from((category === "character") ? "characters" : "campaigns").update(dataObject)
 				.match({ uuid: data._primary.uuid.text.current as string }).single()
 				.then((response) => {
 					if (response.error) { toast.error("Sheet cannot be updated."); reject(); }
@@ -183,7 +184,7 @@ export function useSheet(sheetCategory: "character" | "chronicle", sheetRuleset:
 
 	const remove = useCallback((): Promise<void> => {
 		return new Promise<void>((resolve, reject) => {
-			DatabaseClient.from((category === "character") ? "characters" : "chronicles").delete()
+			DatabaseClient.from((category === "character") ? "characters" : "campaigns").delete()
 				.match({ uuid: data._primary.uuid.text.current as string }).single()
 				.then((response) => {
 					if (response.error) { toast.error("Sheet cannot be deleted."); reject(); }

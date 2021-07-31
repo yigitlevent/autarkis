@@ -28,8 +28,21 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 	const [nameString] = useState(`${(displayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`);
 	const [nameParts] = useState(`${(displayType) ? CleanString(blockTitle) : "???"}.${CleanString(rowData.title)}`.split("."));
 	const [field] = useState(data[nameParts[0]]?.[nameParts[1]]);
+	
+	const [text, setText] = useState<string | undefined>(field.text?.current);
+	const [number, setNumber] = useState<string | undefined>(field.number?.current);
 
-	const [gridData] = useState(() => {
+	const [dot, setDot] = useState<number | undefined>(field.dot?.current);
+	const [checkbox, setCheckbox] = useState<number | undefined>(field.checkbox?.current);
+	const [pseudocheckbox, setPseudocheckbox] = useState<string[] | undefined>(field.pseudocheckbox?.current);
+
+	const [precheckbox, setPrecheckbox] = useState<boolean | undefined>(field.precheckbox?.current);
+	const [postcheckbox, setPostcheckbox] = useState<boolean | undefined>(field.postcheckbox?.current);
+
+	const [textarea, setTextarea] = useState<string | undefined>(field.textarea?.current);
+	const [select, setSelect] = useState<rbs.Option[] | undefined>(field.select?.current);
+
+	const [gridLayoutData] = useState(() => {
 		const tempColumnWidths: string[] = [];
 		const tempRowWidths: string[] = ["24px"];
 		let tempColumnAmount: number = 1;
@@ -107,19 +120,6 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 
 		return options;
 	};
-
-	const [text, setText] = useState<string | undefined>(field.text?.current);
-	const [number, setNumber] = useState<string | undefined>(field.number?.current);
-
-	const [dot, setDot] = useState<number | undefined>(field.dot?.current);
-	const [checkbox, setCheckbox] = useState<number | undefined>(field.checkbox?.current);
-	const [pseudocheckbox, setPseudocheckbox] = useState<string[] | undefined>(field.pseudocheckbox?.current);
-
-	const [precheckbox, setPrecheckbox] = useState<boolean | undefined>(field.precheckbox?.current);
-	const [postcheckbox, setPostcheckbox] = useState<boolean | undefined>(field.postcheckbox?.current);
-
-	const [textarea, setTextarea] = useState<string | undefined>(field.textarea?.current);
-	const [select, setSelect] = useState<rbs.Option[] | undefined>(field.select?.current);
 
 	const setInputGroup = useCallback((type: "dot" | "checkbox", newValue: number, id: string): void => {
 		const amount = rowData[type]?.amount;
@@ -204,7 +204,7 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 	});
 
 	return (
-		<RowWrapper key={nameString} align={rowData.align} columns={gridData.columnWidths} rows={gridData.rowWidths}>
+		<RowWrapper key={nameString} align={rowData.align} columns={gridLayoutData.columnWidths} rows={gridLayoutData.rowWidths}>
 
 			{(rowData.inputs.includes("precheckbox"))
 				? <Checkbox
@@ -290,7 +290,7 @@ export function Row({ sheetID, blockTitle, rowData, ruleset, setTester, sheetObj
 			{(rowData.inputs.includes("textarea") && rowData.textarea)
 				? <Textarea
 					height={rowData.textarea.amount * 23}
-					columns={gridData.columnAmount}
+					columns={gridLayoutData.columnAmount}
 					id={`${sheetID}.${nameString}.textarea`}
 					readOnly={(rowData.isReadOnly === true || displayType === "view") ? true : false}
 					defaultValue={textarea}

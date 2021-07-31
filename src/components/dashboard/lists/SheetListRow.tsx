@@ -12,7 +12,7 @@ dayjs.extend(utc);
 const Row = styled.div`
 	margin: 6px 0;
 	display: grid;
-	grid-template-columns: 30px 30px 30px 30px 1fr;
+	grid-template-columns: 30px 30px 1fr;
 	grid-template-rows: 22px;
 	padding: 2px 0 2px 5px;
 `;

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { DatabaseClient } from "../index";
 
 export function useList(isOnline: boolean, tableName: aut.server.TableNames, userUUID?: string): [aut.server.DataReturn[] | undefined, boolean, boolean, () => Promise<void>] {
-
 	const [list, setList] = useState<undefined | aut.server.DataReturn[]>();
 	const [error, setError] = useState(false);
 	const [done, setDone] = useState(false);

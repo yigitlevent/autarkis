@@ -21,8 +21,6 @@ export function Dashboard(): JSX.Element {
 
 	const createSheet = useCallback((category: aut.SheetCategory, ruleset?: aut.ruleset.Names, uuid?: string) => {
 		if (ruleset) {
-			console.log(ruleset);
-
 			if (category === "campaign") sheet.add({ category, ruleset, uuid });
 			else sheet.add({ category, ruleset, uuid });
 		}

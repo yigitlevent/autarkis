@@ -25,8 +25,6 @@ export function GenericList({ category, tableName, createSheet }: aut.props.Shee
 	const [listElement, setListElement] = useState<JSX.Element>(<Spinner />);
 
 	useEffect(() => {
-		console.log(clientState, list, error, done);
-
 		if (clientState === "offline") {
 			setListElement(<EmptyListError>Cannot get {category} list in offline mode.</EmptyListError>);
 		}

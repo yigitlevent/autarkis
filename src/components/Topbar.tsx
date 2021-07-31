@@ -17,7 +17,7 @@ const TopbarWrapper = styled.div`
 	align-items: center;
 	align-content: stretch;
 
-	width: 100vw;
+	width: 100%;
 	height: max-content;
 	z-index: 100;
 	position: sticky;

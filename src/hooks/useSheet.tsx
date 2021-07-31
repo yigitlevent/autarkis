@@ -106,7 +106,6 @@ export function useSheet(sheetCategory: aut.SheetCategory, sheetRuleset: aut.rul
 	}, [category, ruleset]);
 
 	useEffect(() => {
-		console.log("useEffect 1");
 		if (!isLoaded && (rawData || !uuid)) {
 			if (rawData) {
 				setData({ ...calculateValues(generateLoadedData(rawData, data) as any) });
@@ -117,13 +116,12 @@ export function useSheet(sheetCategory: aut.SheetCategory, sheetRuleset: aut.rul
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [calculateValues, rawData, generateLoadedData]);
 
-	useEffect(() => {
+	/*useEffect(() => {
 		console.log(revision);
 		//setData({ ...calculateValues(data) });
-	}, [revision]);
+	}, [revision]);*/
 
 	useEffect(() => {
-		console.log("useEffect 2");
 		if (ruleset && uuid && !rawData) {
 			DatabaseClient.from((category === "campaign") ? "campaigns" : "characters")
 				.select("*").eq("uuid", uuid).single()
@@ -134,6 +132,29 @@ export function useSheet(sheetCategory: aut.SheetCategory, sheetRuleset: aut.rul
 		}
 	}, [category, rawData, ruleset, uuid]);
 
+	const update = useCallback((internalData?: aut.data.GenericData): Promise<void> => {
+		const dataObject: aut.server.DataUpdate = (internalData) ? { data: internalData } : { data: data };
+
+		return new Promise<void>((resolve, reject) => {
+			DatabaseClient.from((category === "character") ? "characters" : "campaigns").update(dataObject)
+				.match((internalData)
+					? { uuid: internalData._primary.uuid.text.current as string }
+					: { uuid: data._primary.uuid.text.current as string }
+				)
+				.single()
+				.then((response) => {
+					if (response.error) {
+						toast.error("Sheet cannot be updated.");
+						reject();
+					}
+					else {
+						toast.success("Sheet updated.");
+						resolve();
+					}
+				});
+		});
+	}, [category, data]);
+
 	const insert = useCallback((): Promise<void> => {
 		const dataObject: aut.server.DataInsert = {
 			name: data.basics.name.text.current,
@@ -141,46 +162,33 @@ export function useSheet(sheetCategory: aut.SheetCategory, sheetRuleset: aut.rul
 			data: data
 		};
 
+		dataObject.data.basics.user.text.current = DatabaseClient.auth.user()?.user_metadata.full_name;
+
 		return new Promise<void>((resolve, reject) => {
 			DatabaseClient.from((category === "character") ? "characters" : "campaigns").insert(dataObject)
 				.then((response) => {
-					if (response.error) { toast.error("Sheet cannot be inserted."); reject(); }
+					if (response.error) {
+						toast.error("Sheet cannot be inserted.");
+						reject();
+					}
 					else {
-						const tempData = data;
-
-						console.log(tempData);
+						const tempData = response.data[0].data;
 
 						tempData._primary.uuid.text.current = response.data[0].uuid;
 						tempData._primary.user_uuid.text.current = response.data[0].user_uuid;
 
-						tempData._primary.ruleset.text.current = response.data[0].ruleset;
-						tempData._primary.editable.postcheckbox.current = response.data[0].editable;
-
 						tempData._primary.created_at.text.current = response.data[0].created_at;
 						tempData._primary.updated_at.text.current = response.data[0].updated_at;
 
-						setData({ ...calculateValues(tempData as any) });
+						const calculatedData = calculateValues(tempData as any);
+						setData({ ...calculatedData });
+						update({ ...calculatedData });
 
-						toast.success("Sheet inserted."); resolve();
+						resolve();
 					}
 				});
 		});
-	}, [calculateValues, category, data]);
-
-	const update = useCallback((): Promise<void> => {
-		const dataObject: aut.server.DataUpdate = {
-			data: data
-		};
-
-		return new Promise<void>((resolve, reject) => {
-			DatabaseClient.from((category === "character") ? "characters" : "campaigns").update(dataObject)
-				.match({ uuid: data._primary.uuid.text.current as string }).single()
-				.then((response) => {
-					if (response.error) { toast.error("Sheet cannot be updated."); reject(); }
-					else { toast.success("Sheet updated."); resolve(); }
-				});
-		});
-	}, [category, data]);
+	}, [calculateValues, category, data, update]);
 
 	const remove = useCallback((): Promise<void> => {
 		return new Promise<void>((resolve, reject) => {
